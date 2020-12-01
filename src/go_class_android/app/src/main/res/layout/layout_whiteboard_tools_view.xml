@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="4dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/click"
+        style="@style/tools_text_style"
+        android:drawableTop="@drawable/drawable_tools_click"
+        android:text="@string/click" />
+
+    <TextView
+        android:id="@+id/select"
+        style="@style/tools_text_style"
+        android:drawableTop="@drawable/drawable_tools_select"
+        android:text="@string/select" />
+
+    <TextView
+        android:id="@+id/drag"
+        style="@style/tools_text_style"
+        android:drawableTop="@drawable/drawable_tools_drag"
+        android:text="@string/drag" />
+
+    <TextView
+        android:id="@+id/brush"
+        style="@style/tools_text_style"
+        android:drawableTop="@drawable/drawable_tools_brush"
+        android:text="@string/brush" />
+
+    <TextView
+        android:id="@+id/laser"
+        style="@style/tools_text_style"
+        android:drawableTop="@drawable/drawable_tools_laser"
+        android:text="@string/pointer" />
+
+    <TextView
+        android:id="@+id/text"
+        style="@style/tools_text_style"
+        android:drawableTop="@drawable/drawable_tools_text"
+        android:text="@string/text" />
+
+<!--    <TextView
+        android:id="@+id/rectangle"
+        style="@style/tools_text_style"
+        android:drawableTop="@drawable/drawable_tools_rectangle"
+        android:text="@string/rectangle" />
+
+    <TextView
+        android:id="@+id/ellipse"
+        style="@style/tools_text_style"
+        android:drawableTop="@drawable/drawable_tools_ellipse"
+        android:text="@string/ellipse" />
+
+    <TextView
+        android:id="@+id/line"
+        style="@style/tools_text_style"
+        android:drawableTop="@drawable/drawable_tools_line"
+        android:text="@string/line" />-->
+
+    <TextView
+        android:id="@+id/shape"
+        style="@style/tools_text_style"
+        android:drawableTop="@drawable/drawable_tools_shape"
+        android:text="@string/shape" />
+
+    <TextView
+        android:id="@+id/style"
+        style="@style/tools_text_style"
+        android:drawableTop="@drawable/drawable_tools_style"
+        android:text="@string/style" />
+
+    <TextView
+        android:id="@+id/eraser"
+        style="@style/tools_text_style"
+        android:drawableTop="@drawable/drawable_tools_eraser"
+        android:text="@string/eraser" />
+
+    <TextView
+        android:id="@+id/clear"
+        style="@style/tools_text_style"
+        android:drawableTop="@drawable/drawable_tools_clear"
+        android:text="@string/clear" />
+
+    <TextView
+        android:id="@+id/undo"
+        style="@style/tools_text_style"
+        android:drawableTop="@drawable/drawable_tools_undo"
+        android:text="@string/undo" />
+
+    <TextView
+        android:id="@+id/redo"
+        style="@style/tools_text_style"
+        android:drawableTop="@drawable/drawable_tools_redo"
+        android:text="@string/redo" />
+
+    <TextView
+        android:id="@+id/save_image"
+        style="@style/tools_text_style"
+        android:drawableTop="@drawable/drawable_tools_save"
+        android:text="@string/save_image" />
+
+    <TextView
+        android:id="@+id/clear_cur_page"
+        style="@style/tools_text_style"
+        android:visibility="gone"
+        android:drawableTop="@drawable/drawable_tools_clear"
+        android:text="@string/clear_cur_page" />
+
+</LinearLayout>

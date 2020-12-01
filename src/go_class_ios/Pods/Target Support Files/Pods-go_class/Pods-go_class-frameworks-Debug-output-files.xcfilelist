@@ -1,0 +1,3 @@
+${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ZegoDocsView.framework
+${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ZegoLiveRoom.framework
+${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ZegoWhiteboardView.framework

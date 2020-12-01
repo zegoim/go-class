@@ -1,0 +1,101 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="44dp">
+
+        <ImageView
+            android:id="@+id/setting_back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:scaleType="center"
+            android:src="@drawable/fanhui" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="调试界面"
+            android:textColor="@color/text_black"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/setting_save"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:gravity="center"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="@string/save"
+            android:textColor="@color/text_blue"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/settings"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="更改文本框的默认值(修改立即生效，应用关闭后失效):" />
+
+        <EditText
+            android:id="@+id/text_default"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/upload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="上传文件" />
+
+    <TextView
+        android:id="@+id/abi"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/video_version"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/docs_version"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/whiteboard_version"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/app_version"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:gravity="center" />
+
+</LinearLayout>

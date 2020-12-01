@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_drawer_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_whiteboard_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/main_end_layout"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- 切白板，切页等控制 -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main_top_layout"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/main_top_whiteboard_name"
+                android:layout_width="155dp"
+                android:layout_height="28dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/drawable_top_button"
+                android:drawableEnd="@drawable/xialajiantou"
+                android:ellipsize="middle"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="10dp"
+                android:singleLine="true"
+                android:textColor="@color/text_black"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/main_top_sheet_name"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/main_top_sheet_name"
+                android:layout_width="110dp"
+                android:layout_height="28dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/drawable_top_button"
+                android:drawableEnd="@drawable/xialajiantou"
+                android:ellipsize="middle"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="10dp"
+                android:singleLine="true"
+                android:textColor="@color/text_black"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/main_top_whiteboard_name"
+                app:layout_constraintEnd_toStartOf="@+id/main_top_page_layout"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/main_top_whiteboard_name"
+                app:layout_constraintTop_toTopOf="@id/main_top_whiteboard_name" />
+
+            <LinearLayout
+                android:id="@+id/main_top_page_layout"
+                android:layout_width="110dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/drawable_top_button"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="@id/main_top_whiteboard_name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/main_top_sheet_name"
+                app:layout_constraintTop_toTopOf="@id/main_top_whiteboard_name">
+
+                <ImageView
+                    android:id="@+id/main_page_prev"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@null"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/fanyezuo" />
+
+                <TextView
+                    android:id="@+id/main_page_index"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textColor="@color/text_black"
+                    android:textSize="12sp" />
+
+                <ImageView
+                    android:id="@+id/main_page_next"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@null"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/fanyeyou" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/main_top_preview"
+                android:layout_width="57dp"
+                android:layout_height="28dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/preview_bg_selector"
+                android:drawableStart="@drawable/preview_left_drawable_selector"
+                android:drawablePadding="5dp"
+                android:gravity="center_vertical"
+                android:paddingStart="10dp"
+                android:text="@string/preview"
+                android:textColor="@color/preview_btn_text_color"
+                android:textSize="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <!--（以上是）切白板，切页等控制 -->
+
+        <!-- 底部功能按钮（摄像头、麦克风、共享、邀请、成员）-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main_bottom_layout"
+            android:layout_width="match_parent"
+            android:layout_height="49dp"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <TextView
+                android:id="@+id/main_bottom_camera"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="8dp"
+                android:drawableTop="@drawable/drawable_camera"
+                android:gravity="center"
+                android:text="@string/camera"
+                android:textColor="@color/color_tools_text"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/main_bottom_mic"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/main_bottom_mic"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="8dp"
+                android:drawableTop="@drawable/drawable_micphone"
+                android:gravity="center"
+                android:text="@string/micphone"
+                android:textColor="@color/color_tools_text"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/main_bottom_share"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/main_bottom_camera"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/main_bottom_share"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="8dp"
+                android:drawableTop="@drawable/gongxiang"
+                android:gravity="center"
+                android:text="@string/share"
+                android:textColor="@color/text_black2"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/main_bottom_invite"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/main_bottom_mic"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/main_bottom_invite"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="8dp"
+                android:drawableTop="@drawable/yaoqing"
+                android:gravity="center"
+                android:text="@string/invite"
+                android:textColor="@color/text_black2"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/main_bottom_member"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/main_bottom_share"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/main_bottom_member"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="8dp"
+                android:drawableTop="@drawable/chengyuan"
+                android:gravity="center"
+                android:text="@string/member"
+                android:textColor="@color/text_black2"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/main_bottom_invite"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/bottom_member_count"
+                android:layout_width="14dp"
+                android:layout_height="9dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="19dp"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="6sp"
+                app:layout_constraintBottom_toBottomOf="@id/main_bottom_member"
+                app:layout_constraintEnd_toEndOf="@id/main_bottom_member" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <!--（以上是）底部功能按钮（摄像头、麦克风、共享、邀请、成员）-->
+
+        <!-- 无白板或文件时的底部展示 -->
+        <im.zego.goclass.widget.CenterBackgroundView
+            android:id="@+id/main_whiteboard_container_background"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/main_bottom_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- viewHolder 层叠在里面 -->
+        <im.zego.goclass.widget.WhiteboardContainer
+            android:id="@+id/container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/main_bottom_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/main_top_layout" />
+
+        <!-- 叠加在 Container 底部，供动态ppt翻页翻步 -->
+        <RelativeLayout
+            android:id="@+id/main_step_layout"
+            android:layout_width="70dp"
+            android:layout_height="28dp"
+            android:layout_marginBottom="14dp"
+            android:background="@drawable/drawable_top_button"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/main_bottom_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ImageView
+                android:id="@+id/main_step_prev"
+                android:layout_width="34.5dp"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:background="@null"
+                android:paddingStart="12dp"
+                android:paddingEnd="10.5dp"
+                android:src="@drawable/arrow_left_2" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="12dp"
+                android:layout_centerInParent="true"
+                android:background="#edeff3" />
+
+            <ImageView
+                android:id="@+id/main_step_next"
+                android:layout_width="34.5dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@null"
+                android:paddingStart="10.5dp"
+                android:paddingEnd="12dp"
+                android:src="@drawable/arrow_right_2" />
+        </RelativeLayout>
+        <!--（以上是）叠加在Container底部，供动态ppt翻页翻步 -->
+
+        <!-- 纵向的白板工具条 -->
+        <im.zego.goclass.widget.WhiteboardToolsView
+            android:id="@+id/main_whiteboard_tools_view"
+            android:layout_width="32dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:scrollbars="none"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/main_bottom_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/main_top_layout" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- 整个坐席区在里面 -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_end_layout"
+        android:layout_width="165dp"
+        android:layout_height="match_parent"
+        android:background="#fbfcff"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/main_whiteboard_layout">
+
+        <im.zego.goclass.widget.SeatVideoWindow
+            android:id="@+id/seat_video_window"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" />
+
+        <im.zego.goclass.widget.ChatWindow
+            android:id="@+id/chat_window"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="90dp"
+            android:visibility="gone"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:id="@+id/docs_preview_list_parent"
+        android:layout_width="175dp"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        app:layout_constraintRight_toRightOf="@id/main_end_layout">
+
+        <View
+            android:id="@+id/shadow"
+            android:layout_width="10dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/preview_list_left_shadow" />
+
+        <im.zego.goclass.widget.ZegoDocsPreview
+            android:id="@+id/docs_preview_list"
+            android:layout_width="165dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:visibility="visible" />
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

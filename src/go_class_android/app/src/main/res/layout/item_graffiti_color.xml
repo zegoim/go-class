@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clickable="true">
+
+    <im.zego.goclass.widget.CircleImageView
+        android:id="@+id/color_img_wbtool"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_gravity="center"
+        app:civ_border_color="#fff"
+        app:civ_border_width="1dp"
+        app:srcCompat="@android:color/transparent"
+        app:civ_circle_background_color="#ff0000" />
+
+    <ImageView
+        android:id="@+id/ticker_center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/toolbar_icon_selectcolor_white2" />
+</FrameLayout>

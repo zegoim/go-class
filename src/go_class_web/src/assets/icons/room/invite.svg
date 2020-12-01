@@ -1,0 +1,8 @@
+<svg version="1.1" id="图层_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve">
+<path class="hover-stroke" fill="none" stroke="#585C62" stroke-width="2.4" d="M14,4.5L14,4.5c2.5,0,4.5,2,4.5,4.5l0,0c0,2.5-2,4.5-4.5,4.5l0,0c-2.5,0-4.5-2-4.5-4.5l0,0
+	C9.5,6.5,11.5,4.5,14,4.5z"/>
+<path class="hover-stroke" fill="none" stroke="#585C62" stroke-width="2.4" stroke-miterlimit="10" d="M6.5,29v-7.5c0-2.2,1.8-4,4-4h8"/>
+<line class="hover-stroke" fill="none" stroke="#585C62" stroke-width="2.4" stroke-miterlimit="10" x1="22.5" y1="18" x2="22.5" y2="27"/>
+<line class="hover-stroke" fill="none" stroke="#585C62" stroke-width="2.4" stroke-miterlimit="10" x1="27" y1="22.5" x2="18" y2="22.5"/>
+</svg>

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+  
+  <polygon class="hover-fill" fill="#b1b4bb" fill-rule="evenodd" points="17 5 3 5 4 3 17 3 17 5"/>
+  <polygon class="hover-fill" fill="#b1b4bb" fill-rule="evenodd" points="9 5 6 17 10 17 12 5 9 5"/>
+</svg>

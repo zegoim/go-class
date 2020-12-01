@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <path class="hover-fill" fill="#585c62" d="M16.41,3,9.06,9.3H5.5a2.21,2.21,0,0,0-2.2,2.2v9a2.21,2.21,0,0,0,2.2,2.2H9.06L16.41,29H17.7V3ZM15.3,24.89,9.94,20.3H5.7V11.7H9.94L15.3,7.11Z"/>
+  <line class="hover-stroke" fill="none" stroke="#585c62" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2.4px" x1="20.3" y1="12.15" x2="27.9" y2="19.75"/>
+  <line class="hover-stroke" fill="none" stroke="#585c62" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2.4px" x1="27.9" y1="12.15" x2="20.3" y2="19.75"/>
+</svg>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#0044ff</color>
+    <color name="colorPrimaryDark">#0044ff</color>
+    <color name="colorAccent">#0044ff</color>
+
+    <color name="text_black">#18191a</color>
+    <color name="text_black2">#585c62</color>
+    <color name="text_black3">#2d2e32</color>
+    <color name="text_hint_color">#b1b4bd</color>
+    <color name="text_blue">#0044ff</color>
+    <color name="text_gray">#6f7078</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="list_item_divider">#e5e5e5</color>
+
+    <color name="default_color">#f54326</color>
+
+    <array name="graffiti_color">
+        <item>#ffffff</item>
+        <item>#b3b3b3</item>
+        <item>#333333</item>
+        <item>#000000</item>
+        <item>@color/default_color</item>
+        <item>#fc7802</item>
+        <item>#fbe600</item>
+        <item>#41bb54</item>
+        <item>#00eae7</item>
+        <item>#4c9efe</item>
+        <item>#fa7d7d</item>
+        <item>#825fd0</item>
+    </array>
+</resources>

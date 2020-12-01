@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:context="im.zego.goclass.activities.JoinActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="44dp">
+
+        <ImageView
+            android:id="@+id/join_entrance_setting"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="11dp"
+            android:background="@null"
+            android:scaleType="center"
+            android:src="@drawable/shezhi" />
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/join_welcome"
+        android:textColor="@color/text_black2"
+        android:textSize="24sp" />
+
+    <EditText
+        android:id="@+id/join_room_id"
+        android:layout_width="match_parent"
+        android:layout_height="49dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="40dp"
+        android:hint="@string/join_input_id"
+        android:inputType="number"
+        android:maxLength="9"
+        android:maxLines="1"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:singleLine="true"
+        android:textColor="@color/text_black"
+        android:textColorHint="@color/text_hint_color"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/join_room_name"
+        android:layout_width="match_parent"
+        android:layout_height="49dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="40dp"
+        android:hint="@string/join_input_name"
+        android:maxLength="30"
+        android:maxLines="1"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:singleLine="true"
+        android:textColor="@color/text_black"
+        android:textColorHint="@color/text_hint_color"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/join_class_type"
+        android:layout_width="match_parent"
+        android:layout_height="49dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="40dp"
+        android:text="@string/join_mini_class"
+        android:drawableRight="@drawable/arrow_down"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:gravity="center_vertical"
+        android:textColor="@color/text_black"
+        android:textColorHint="@color/text_hint_color"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/join_role"
+        android:layout_width="match_parent"
+        android:layout_height="49dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="40dp"
+        android:text="@string/join_role_teacher"
+        android:drawableRight="@drawable/arrow_down"
+        android:gravity="center_vertical"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:textColor="@color/text_black"
+        android:textColorHint="@color/text_hint_color"
+        android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/join_entrance_main"
+        style="?borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="49dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="40dp"
+        android:enabled="false"
+        android:text="@string/join_button"
+        android:textColor="@android:color/white" />
+
+    <TextView
+        android:id="@+id/build_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textColor="@color/text_black2"
+        android:textSize="11dp" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="30dp"
+        android:layout_weight="1">
+
+        <View
+            android:id="@+id/env_left"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="#dadde5"
+            app:layout_constraintBottom_toBottomOf="@+id/net_env"
+            app:layout_constraintEnd_toStartOf="@+id/net_env"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/net_env" />
+
+        <TextView
+            android:id="@+id/net_env"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_marginEnd="14dp"
+            android:layout_marginBottom="25dp"
+            android:text="@string/class_env"
+            android:textColor="@color/text_black2"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toTopOf="@+id/radiogroup_net_env"
+            app:layout_constraintEnd_toStartOf="@+id/env_right"
+            app:layout_constraintStart_toEndOf="@id/env_left" />
+
+        <View
+            android:id="@+id/env_right"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="#dadde5"
+            app:layout_constraintBottom_toBottomOf="@+id/net_env"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@id/net_env"
+            app:layout_constraintTop_toTopOf="@+id/net_env" />
+
+        <RadioGroup
+            android:id="@+id/radiogroup_net_env"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="14dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/net_env_tips"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <RadioButton
+                android:id="@+id/radio_mainland"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/mainland"
+                android:onClick="onRadioButtonClicked"
+                android:textColor="@color/text_black"
+                android:textSize="14sp" />
+
+            <RadioButton
+                android:id="@+id/radio_other"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:onClick="onRadioButtonClicked"
+                android:text="@string/other"
+                android:textColor="@color/text_black"
+                android:textSize="14sp" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/net_env_tips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/net_env_tips"
+            android:textColor="@color/text_hint_color"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

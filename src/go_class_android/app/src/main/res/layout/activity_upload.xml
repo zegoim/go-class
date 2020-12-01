@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/upload_dynamic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="上传动态文件"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/upload_static"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/upload_static"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="上传静态文件"
+        android:textAllCaps="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/upload_dynamic"
+        app:layout_constraintTop_toTopOf="@id/upload_dynamic" />
+
+    <Button
+        android:id="@+id/next_page"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="加载ppt"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/reload"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/upload_dynamic" />
+
+    <Button
+        android:id="@+id/reload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="reload"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/prev_page"
+        app:layout_constraintStart_toEndOf="@id/next_page"
+        app:layout_constraintTop_toBottomOf="@id/upload_dynamic" />
+
+    <Button
+        android:id="@+id/prev_page"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="加载pdf"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/reload"
+        app:layout_constraintTop_toBottomOf="@id/upload_dynamic" />
+
+    <TextView
+        android:id="@+id/text1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/upload_dynamic" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

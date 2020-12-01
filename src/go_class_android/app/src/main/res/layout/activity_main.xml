@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="im.zego.goclass.activities.MainActivity">
+
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/layout_main_drawer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            layout="@layout/layout_main_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <RelativeLayout
+            android:id="@+id/layout_drawer_right"
+            android:layout_width="250dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:background="@android:color/white">
+
+            <im.zego.goclass.widget.WhiteboardListView
+                android:id="@+id/drawer_whiteboard_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <im.zego.goclass.widget.FileListView
+                android:id="@+id/drawer_file_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <im.zego.goclass.widget.ClassUserListView
+                android:id="@+id/drawer_user_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <im.zego.goclass.widget.FileExcelView
+                android:id="@+id/drawer_excel_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </RelativeLayout>
+    </androidx.drawerlayout.widget.DrawerLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="#e6ffffff">
+
+        <TextView
+            android:id="@+id/top_bar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/class_title"
+            android:textColor="@color/text_black"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/top_bar_exit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="@string/exit"
+            android:textColor="#f54326"
+            android:textSize="15sp" />
+    </RelativeLayout>
+</FrameLayout>

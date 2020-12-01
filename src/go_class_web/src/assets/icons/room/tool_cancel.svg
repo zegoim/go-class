@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+  
+  <polygon class="hover-fill" fill="#b1b4bb" fill-rule="evenodd" points="8 3 8 11 2 7 8 3"/>
+  <path class="hover-stroke" fill-rule="evenodd" fill="none" stroke="#b1b4bb" stroke-miterlimit="10" stroke-width="2.8px" d="M7.5,7h4.75a4.25,4.25,0,0,1,4.25,4.25h0a4.25,4.25,0,0,1-4.25,4.25H11"/>
+</svg>
