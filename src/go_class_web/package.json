@@ -1,0 +1,55 @@
+{
+  "name": "web-go-class-demo",
+  "version": "2.1.0",
+  "private": true,
+  "description": "go class demo",
+  "author": "zego fontend",
+  "scripts": {
+    "serve": "vue-cli-service serve --mode development",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "electron:build:mac": "vue-cli-service electron:build --macos --mode development",
+    "electron:build:win": "vue-cli-service electron:build --windows --mode development",
+    "electron:serve": "vue-cli-service electron:serve --mode development",
+    "postinstall": "electron-builder install-app-deps",
+    "postuninstall": "electron-builder install-app-deps",
+    "tips:以下依赖，打包的时候添加到dependencies中, 安装依赖时删除": "不然构建时找不到依赖",
+    "zegodocsview": "1.9.5",
+    "zegoliveroom": "^1.0.3"
+  },
+  "main": "background.js",
+  "dependencies": {
+    "axios": "^0.20.0",
+    "copy-to-clipboard": "^3.3.1",
+    "core-js": "^3.6.5",
+    "element-ui": "^2.13.2",
+    "vue": "^2.6.11",
+    "vue-router": "^3.2.0",
+    "zego-express-docsview-electron": "^1.16.0",
+    "zego-express-engine-electron": "^0.18.5-86-whiteboard"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "babel-eslint": "^10.1.0",
+    "electron": "5.0.11",
+    "electron-devtools-installer": "^3.1.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^6.2.2",
+    "native-ext-loader": "^2.3.0",
+    "node-sass": "^4.12.0",
+    "raw-loader": "^4.0.1",
+    "sass-loader": "^8.0.2",
+    "vue-cli-plugin-electron-builder": "~2.0.0-rc.4",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "mac": {
+    "icon": "icons/icons.ico"
+  },
+  "win": {
+    "icon": "icons/icons.ico"
+  },
+  "__npminstall_done": false
+}

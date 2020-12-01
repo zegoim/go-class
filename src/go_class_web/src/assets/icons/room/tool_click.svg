@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+<defs><style>.cls-1{fill:#fff;opacity:0;}</style></defs>
+<rect class="cls-1" width="20" height="20" transform="translate(20) rotate(90)"/>
+<path class="hover-fill" fill="#b0b3ba" d="M10.5,10V6.24A1.23,1.23,0,0,0,9.26,5h0A1.24,1.24,0,0,0,8,6.24v7.49L6.61,12.32a1.24,1.24,0,0,0-1.75,1.75L8.77,18a5.5,5.5,0,0,0,3.73,2H13a4.47,4.47,0,0,0,4.47-4.47v-3a1.81,1.81,0,0,0-1.56-1.79Z"/>
+<rect class="hover-fill" fill="#b0b3ba" x="8.47" y="1" width="1.6" height="3" rx="0.8"/>
+<rect class="hover-fill" fill="#b0b3ba" x="5.28" y="2.32" width="1.6" height="3" rx="0.8" transform="translate(-0.92 5.42) rotate(-45)"/>
+<rect class="hover-fill" fill="#b0b3ba" x="3.97" y="5.5" width="1.6" height="3" rx="0.8" transform="translate(-2.23 11.77) rotate(-90)"/>
+<rect class="hover-fill" fill="#b0b3ba" x="12.97" y="5.5" width="1.6" height="3" rx="0.8" transform="translate(20.77 -6.77) rotate(90)"/>
+<rect class="hover-fill" fill="#b0b3ba" x="11.65" y="2.32" width="1.6" height="3" rx="0.8" transform="translate(6.35 -7.68) rotate(45)"/>
+</svg>
