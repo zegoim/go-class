@@ -1,0 +1,33 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="设置环境">
+        <SwitchPreferenceCompat
+            app:key="go_class_env"
+            app:summaryOff="正式环境"
+            app:summaryOn="测试环境"
+            app:title="@string/go_class_title" />
+        <SwitchPreferenceCompat
+            app:key="live_room_env"
+            app:summaryOff="正式环境"
+            app:summaryOn="测试环境"
+            app:title="@string/live_room_title" />
+        <SwitchPreferenceCompat
+            app:key="docs_view_env"
+            app:summaryOff="正式环境"
+            app:summaryOn="测试环境"
+            app:title="@string/docs_view_title" />
+        <SwitchPreferenceCompat
+            app:key="next_step_flip_page"
+            app:summaryOff="关闭"
+            app:summaryOn="开启"
+            app:title="点击触发翻页" />
+
+<!--        <SwitchPreferenceCompat
+            app:key="mainland_env"
+            app:summaryOff="海外"
+            app:summaryOn="中国内地"
+            app:title="中国内地/海外" />-->
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

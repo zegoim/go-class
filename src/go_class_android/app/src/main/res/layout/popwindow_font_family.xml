@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/font_family_list"
+        android:layout_width="330dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:scrollbarSize="5dp"
+        android:scrollbarThumbVertical="@drawable/scrollbar_vertical_thumb"
+        android:scrollbars="vertical"
+        tools:listitem="@layout/item_font_family_list"/>
+
+</LinearLayout>

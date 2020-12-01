@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="KGk-i7-Jjw" customClass="ZegoWhiteBoardListCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7eE-SK-UPe">
+                        <rect key="frame" x="20" y="11.5" width="254" height="21"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rC5-E4-jIY" customClass="ZegoTouchAreaButton">
+                        <rect key="frame" x="282" y="11" width="22" height="22"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="22" id="DqK-7e-xsT"/>
+                            <constraint firstAttribute="width" constant="22" id="WxT-2t-Fvg"/>
+                        </constraints>
+                        <state key="normal" image="guanbi"/>
+                        <connections>
+                            <action selector="onCloseButtonTapped:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="w6A-Kd-t5O"/>
+                        </connections>
+                    </button>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="7eE-SK-UPe" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" id="0i9-oG-GG7"/>
+                    <constraint firstAttribute="trailing" secondItem="rC5-E4-jIY" secondAttribute="trailing" constant="16" id="64N-Rp-2ld"/>
+                    <constraint firstItem="7eE-SK-UPe" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="B2f-EM-cx1"/>
+                    <constraint firstItem="rC5-E4-jIY" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="DUJ-KT-TNp"/>
+                    <constraint firstItem="rC5-E4-jIY" firstAttribute="leading" secondItem="7eE-SK-UPe" secondAttribute="trailing" constant="8" id="fCG-HV-rpP"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="aW0-zy-SZf"/>
+            <connections>
+                <outlet property="closeButton" destination="rC5-E4-jIY" id="Fp9-Ga-yTH"/>
+                <outlet property="nameLabel" destination="7eE-SK-UPe" id="jXm-g2-Lc4"/>
+            </connections>
+            <point key="canvasLocation" x="139" y="116"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="guanbi" width="44" height="44"/>
+    </resources>
+</document>

@@ -1,0 +1,26 @@
+{
+  "name": "ZegoLiveRoomSDK",
+  "version": "0.1.0",
+  "summary": "A short description of ZegoLiveRoomSDK.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/zego/ZegoLiveRoomSDK",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "zego": "c"
+  },
+  "source": {
+    "git": "https://github.com/zego/ZegoLiveRoomSDK.git",
+    "tag": "0.1.0"
+  },
+  "source_files": "ZegoLiveRoomSDK/Classes/**/*",
+  "vendored_frameworks": "ZegoLiveRoomSDK/Classes/ZegoLiveRoom.framework",
+  "platforms": {
+    "osx": null,
+    "ios": null,
+    "tvos": null,
+    "watchos": null
+  }
+}

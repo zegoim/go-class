@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f3f6ff">
+
+    <ImageView
+        android:id="@+id/mask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/teacher"
+        app:layout_constraintBottom_toTopOf="@id/wait_text"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/wait_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:includeFontPadding="false"
+        android:paddingTop="4dp"
+        android:text="@string/wait_for_teacher"
+        android:textSize="9dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mask" />
+
+    <TextureView
+        android:id="@+id/texture"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/label"
+        android:layout_width="28dp"
+        android:layout_height="16dp"
+        android:background="#4879ff"
+        android:gravity="center"
+        android:text="@string/teacher"
+        android:textColor="@color/white"
+        android:textSize="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="18dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/drawable_seat_video_view_name_bg"
+        android:gravity="center"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:textColor="@color/white"
+        android:textSize="10dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <!--  右上角三个icon以次为准线，最右侧icon距离准线5dp  -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/top_right_icon_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="3dp" />
+
+    <ImageView
+        android:id="@+id/share"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="5dp"
+        android:background="@drawable/drawable_seat_video_view_icon_bg"
+        android:src="@drawable/drawable_seat_video_view_share"
+        android:visibility="gone"
+        app:layout_constraintRight_toRightOf="@id/top_right_icon_guideline"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/mic"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="5dp"
+        android:background="@drawable/drawable_seat_video_view_icon_bg"
+        android:src="@drawable/drawable_seat_video_view_mic"
+        android:visibility="gone"
+        app:layout_constraintRight_toLeftOf="@id/share"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/camera"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="5dp"
+        android:background="@drawable/drawable_seat_video_view_icon_bg"
+        android:src="@drawable/drawable_seat_video_view_camera"
+        android:visibility="gone"
+        app:layout_constraintRight_toLeftOf="@id/mic"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

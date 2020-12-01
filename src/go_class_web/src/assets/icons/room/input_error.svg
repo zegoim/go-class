@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12"><defs>
+<style>.input-error-cls-1{fill:#f64326;}.input-error-cls-2{fill:#f2f2f2;}</style></defs>
+<title>input_error</title><g id="图层_2" data-name="图层 2"><g id="图层_1-2" data-name="图层 1">
+<circle class="input-error-cls-1" cx="6" cy="6" r="6"/>
+<rect class="input-error-cls-2" x="5" y="2" width="2" height="5" rx="1"/>
+<rect class="input-error-cls-2" x="5" y="8" width="2" height="2" rx="1"/></g></g></svg>

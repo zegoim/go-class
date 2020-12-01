@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="im.zego.goclass">
+    <!-- SDK 必须使用的权限 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- App 需要使用的部分权限 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- App 需要使用的部分权限 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <application
+        android:name="im.zego.goclass.DemoApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name="im.zego.goclass.activities.DebugActivity"
+            android:configChanges="locale|keyboardHidden|fontScale|orientation|screenSize|screenLayout|layoutDirection|density|uiMode"
+            android:label="@string/title_activity_debug"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="im.zego.goclass.activities.MainActivity"
+            android:configChanges="locale|keyboardHidden|fontScale|orientation|screenSize|screenLayout|layoutDirection|density|uiMode"
+            android:screenOrientation="landscape" />
+        <activity android:name="im.zego.goclass.activities.SettingActivity" />
+        <activity
+            android:name="im.zego.goclass.activities.JoinActivity"
+            android:configChanges="locale|keyboardHidden|fontScale|orientation|screenSize|screenLayout|layoutDirection|density|uiMode"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="im.zego.goclass.activities.UploadActivity"
+            android:configChanges="orientation|screenSize"/>
+    </application>
+
+</manifest>

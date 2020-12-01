@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/drawable_dialog_bg"
+    android:paddingTop="8dp"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp">
+
+    <TextView
+        android:id="@+id/dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/text_black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/dialog_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:gravity="center"
+        android:textColor="@color/text_black"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dialog_title" />
+
+    <Button
+        android:id="@+id/dialog_cancel"
+        style="?borderlessButtonStyle"
+        android:layout_width="69dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/drawable_dialog_cancel"
+        android:gravity="center"
+        android:text="@string/button_cancel"
+        android:textColor="@android:color/white"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/dialog_confirm"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dialog_message" />
+
+
+    <Button
+        android:id="@+id/dialog_confirm"
+        style="?borderlessButtonStyle"
+        android:layout_width="69dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/drawable_dialog_confirm"
+        android:gravity="center"
+        android:text="@string/button_confirm"
+        android:textColor="@android:color/white"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/dialog_cancel"
+        app:layout_constraintTop_toBottomOf="@id/dialog_message"
+        app:layout_goneMarginStart="30dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

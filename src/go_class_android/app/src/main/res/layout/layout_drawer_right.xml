@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/right_drawer_title"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_marginStart="20dp"
+        android:gravity="center_vertical"
+        android:textColor="@color/text_black"
+        android:textSize="15sp" />
+
+    <View
+        android:id="@+id/right_drawer_divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_below="@id/right_drawer_title"
+        android:background="#99edeff3" />
+
+    <TextView
+        android:id="@+id/right_drawer_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="49dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="20dp"
+        android:gravity="center_vertical"
+        android:text="@string/file_type_tips"
+        android:textColor="@color/text_black"
+        android:textSize="10sp"
+        android:visibility="gone" />
+
+    <View
+        android:id="@+id/right_drawer_divider2"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_above="@id/right_drawer_bottom"
+        android:background="#99edeff3"
+        android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/main_drawer_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/right_drawer_bottom"
+        android:layout_below="@id/right_drawer_divider"
+        android:scrollbarSize="5dp"
+        android:scrollbarThumbVertical="@drawable/scrollbar_vertical_thumb"
+        android:scrollbars="vertical"
+        tools:listitem="@layout/item_user_list"
+        tools:itemCount="5"/>
+
+</merge>
