@@ -1,4 +1,4 @@
-package im.zego.goclass.activities;
+package im.zego.goclass.debug;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Timer;
 import java.util.TimerTask;
-import im.zego.goclass.upload.UploadHelper;
+import im.zego.goclass.upload.UploadFileHelper;
 import im.zego.zegodocs.IZegoDocsViewScrollCompleteListener;
 import im.zego.zegodocs.ZegoDocsView;
 import im.zego.zegodocs.ZegoDocsViewConstants;
@@ -29,7 +29,7 @@ import static im.zego.goclass.KotlinUtilsKt.dp2px;
 /**
  * 上传文件页面
  */
-public class UploadActivity extends AppCompatActivity {
+public class UploadFileActivity extends AppCompatActivity {
 
     private final String TAG = getClass().getSimpleName();
 
@@ -56,24 +56,22 @@ public class UploadActivity extends AppCompatActivity {
         findViewById(R.id.upload_dynamic).setOnClickListener(v -> {
             docsView.unloadFile();
             textView.setText("");
-            UploadHelper.Companion.uploadFile(this, ZegoDocsViewConstants.ZegoDocsViewRenderTypeDynamicPPTH5);
+            UploadFileHelper.Companion.uploadFile(this, ZegoDocsViewConstants.ZegoDocsViewRenderTypeDynamicPPTH5);
         });
         // 上传静态文件
         findViewById(R.id.upload_static).setOnClickListener(v -> {
             docsView.unloadFile();
             textView.setText("");
-            UploadHelper.Companion.uploadFile(this, ZegoDocsViewConstants.ZegoDocsViewRenderTypeVectorAndIMG);
+            UploadFileHelper.Companion.uploadFile(this, ZegoDocsViewConstants.ZegoDocsViewRenderTypeVectorAndIMG);
         });
         // 下一页
         findViewById(R.id.next_page).setOnClickListener(v -> {
             setInitSize();
-            loadDocsFile("SdQ2jTZpqIL563nZ");
         });
         // 上一页
         findViewById(R.id.prev_page).setOnClickListener(v -> {
             matchParentSize();
             unLoadFile();
-            loadDocsFile("MTN7ZKntslZ91gbD");
         });
         // 重新加载
         findViewById(R.id.reload).setOnClickListener(v -> {
@@ -125,7 +123,7 @@ public class UploadActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // 上传文件回调
-        UploadHelper.Companion.onActivityResult(this, requestCode, resultCode, data, (errorCode, state, fileID, percent) -> {
+        UploadFileHelper.Companion.onActivityResult(this, requestCode, resultCode, data, (errorCode, state, fileID, percent) -> {
             Log.d(TAG, "onActivityResult() called with: errorCode = [" + errorCode + "], state = [" + state + "], fileID = [" + fileID + "]" + ",percent:" + percent);
             if (errorCode != 0) {
                 updateStatus("上传文件失败");
@@ -160,7 +158,6 @@ public class UploadActivity extends AppCompatActivity {
     public void loadDocsFile(@NotNull String fileID) {
         docsView.loadFile(fileID, "", errorCode -> {
             Log.d(TAG, "onLoadFile() called with: errorCode = [" + errorCode + "]");
-            Log.d(TAG, "onLoadFile() called with: docsView.isScaleEnable() = [" + docsView.isScaleEnable() + "]");
             if (errorCode != 0) {
                 String text = textView.getText().toString();
                 updateStatus(text + "\n loadFile:" + errorCode);

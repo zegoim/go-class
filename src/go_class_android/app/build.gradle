@@ -3,12 +3,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
         applicationId "im.zego.goclass"
-        minSdkVersion 21
-        targetSdkVersion 28
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode versCode.toInteger()
         versionName versName
 
@@ -20,6 +20,12 @@ android {
         }
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders = [APP_ID        : "2c28a169e0",
+                                APP_VERSION   : versName,
+                                APP_CHANNEL   : appChannel,
+                                BUGLY_IS_DEBUG: buglyIsDebug
+        ]
     }
 
     signingConfigs {
@@ -75,13 +81,14 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     // androidx
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.core:core-ktx:1.3.2'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation "androidx.recyclerview:recyclerview:1.1.0"
+    implementation "androidx.appcompat:appcompat:$appCompatVersion"
+    implementation "androidx.core:core-ktx:$core_ktx_version"
+    implementation "androidx.constraintlayout:constraintlayout:$constraintlayout_version"
+    implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
+    implementation "androidx.fragment:fragment-ktx:$fragment_version"
+
     //glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
-    implementation 'androidx.fragment:fragment-ktx:1.2.5'
     implementation 'androidx.preference:preference-ktx:1.1.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     // retrofit & okHttp
@@ -92,6 +99,10 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     // PickerView
     implementation 'com.github.zyyoona7:wheelview:1.0.7'
+
+    // Bugly
+    implementation 'com.tencent.bugly:crashreport:latest.release'
+    implementation 'com.tencent.bugly:nativecrashreport:latest.release'
 
 
     testImplementation 'junit:junit:4.13.1'

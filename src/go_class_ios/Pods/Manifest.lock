@@ -60,6 +60,10 @@ PODS:
   - YYWebImage (1.0.5):
     - YYCache
     - YYImage
+  - ZegoDocsViewSDK (0.1.0)
+  - ZegoExpressEngine (0.1.0)
+  - ZegoWhiteboardView (0.1.0):
+    - ZegoExpressEngine
 
 DEPENDENCIES:
   - AFNetworking (~> 4.0)
@@ -69,6 +73,9 @@ DEPENDENCIES:
   - YYModel
   - YYText
   - YYWebImage
+  - ZegoDocsViewSDK (from `PodSDK/ZegoDocsViewSDK`)
+  - ZegoExpressEngine (from `PodSDK/ZegoExpressEngineSDK`)
+  - ZegoWhiteboardView (from `PodSDK/WhiteBoardViewSDK`)
 
 SPEC REPOS:
   trunk:
@@ -82,6 +89,14 @@ SPEC REPOS:
     - YYText
     - YYWebImage
 
+EXTERNAL SOURCES:
+  ZegoDocsViewSDK:
+    :path: PodSDK/ZegoDocsViewSDK
+  ZegoExpressEngine:
+    :path: PodSDK/ZegoExpressEngineSDK
+  ZegoWhiteboardView:
+    :path: PodSDK/WhiteBoardViewSDK
+
 SPEC CHECKSUMS:
   AFNetworking: 7864c38297c79aaca1500c33288e429c3451fdce
   libextobjc: aed8b7d2b07f511c1a7ecaacb33ea03e327c69b7
@@ -92,7 +107,10 @@ SPEC CHECKSUMS:
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
   YYWebImage: 5f7f36aee2ae293f016d418c7d6ba05c4863e928
+  ZegoDocsViewSDK: ef5b661ac05114cdf7045eec1215076da4a313e8
+  ZegoExpressEngine: 5e1a03455e3014df8aea44aa2d67656cfaddeb15
+  ZegoWhiteboardView: ead6e7ac31854a40d27e8b5be2c03d0d011fcf2e
 
-PODFILE CHECKSUM: 20ba0a10fcae45937d77a86df4770093144be907
+PODFILE CHECKSUM: 7d7d46d2a51171e215aad1011fed2eb4018da90c
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.0

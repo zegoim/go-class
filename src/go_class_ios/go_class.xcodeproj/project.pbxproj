@@ -132,6 +132,19 @@
 		};
 /* End PBXBuildRule section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		5C52FC5F24E156790044B38D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		0907AAA94E4288528A30BDB1 /* libPods-go_class.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-go_class.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C179C74255A8CFF00FC138E /* ZegoEnvSettingViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZegoEnvSettingViewController.h; sourceTree = "<group>"; };
@@ -334,7 +347,6 @@
 		86FDF93A256B91F9000727D5 /* ZegoDrawToolGeoToolButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZegoDrawToolGeoToolButton.h; sourceTree = "<group>"; };
 		86FDF93B256B91F9000727D5 /* ZegoDrawToolGeoToolButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZegoDrawToolGeoToolButton.m; sourceTree = "<group>"; };
 		AB0E4FDAF5B9F3E9BF4D8E37 /* Pods-go_class.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-go_class.release.xcconfig"; path = "Target Support Files/Pods-go_class/Pods-go_class.release.xcconfig"; sourceTree = "<group>"; };
-		B267781DC40BA523EFBA5A9F /* ZegoWhiteboardView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZegoWhiteboardView.framework; path = ./PodSDK/ZegoWhiteboardView.framework; sourceTree = "<group>"; };
 		D89875FC5034B66F77D966EF /* Pods-go_class.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-go_class.debug.xcconfig"; path = "Target Support Files/Pods-go_class/Pods-go_class.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -811,7 +823,6 @@
 				86D5F9D02480D571002ED31E /* SystemConfiguration.framework */,
 				86D5F9CE2480D568002ED31E /* VideoToolbox.framework */,
 				0907AAA94E4288528A30BDB1 /* libPods-go_class.a */,
-				B267781DC40BA523EFBA5A9F /* ZegoWhiteboardView.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -850,6 +861,8 @@
 				86165DD5247E71B5007EA3FE /* Frameworks */,
 				86165DD6247E71B5007EA3FE /* Resources */,
 				8684FBDC24908D1B00F79C47 /* ShellScript */,
+				C70A80BF0774F5995E0315CF /* [CP] Embed Pods Frameworks */,
+				5C52FC5F24E156790044B38D /* Embed Frameworks */,
 			);
 			buildRules = (
 				2E438BDA255E5B460070341D /* PBXBuildRule */,
@@ -958,7 +971,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "\n";
+			shellScript = "
+";
+		};
+		C70A80BF0774F5995E0315CF /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-go_class/Pods-go_class-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-go_class/Pods-go_class-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-go_class/Pods-go_class-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1200,11 +1231,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/go_class",
-					"$(PROJECT_DIR)/./PodSDK",
 				);
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$SRCROOT/$PROJECT_NAME/Constant/Global.pch";
+				GCC_PREFIX_HEADER = $SRCROOT/$PROJECT_NAME/Constant/Global.pch;
 				INFOPLIST_FILE = go_class/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1215,7 +1245,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/go_class/CommonView",
 				);
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.4.0;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",
@@ -1244,11 +1274,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/go_class",
-					"$(PROJECT_DIR)/./PodSDK",
 				);
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$SRCROOT/$PROJECT_NAME/Constant/Global.pch";
+				GCC_PREFIX_HEADER = $SRCROOT/$PROJECT_NAME/Constant/Global.pch;
 				INFOPLIST_FILE = go_class/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1259,7 +1288,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/go_class/CommonView",
 				);
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.4.0;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",

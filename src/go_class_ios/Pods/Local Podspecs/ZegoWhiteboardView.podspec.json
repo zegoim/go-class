@@ -1,0 +1,28 @@
+{
+  "name": "ZegoWhiteboardView",
+  "version": "0.1.0",
+  "summary": "A short description of WhiteBoardViewSDK.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/joeychen/WhiteBoardViewSDK",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "joeychen": "joeychen@zego.im"
+  },
+  "source": {
+    "git": "https://github.com/joeychen/WhiteBoardViewSDK.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "source_files": "WhiteBoardViewSDK/Classes/**/*",
+  "vendored_frameworks": "WhiteBoardViewSDK/Classes/ZegoWhiteboardView.framework",
+  "dependencies": {
+    "ZegoExpressEngine": [
+
+    ]
+  }
+}

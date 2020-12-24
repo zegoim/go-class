@@ -993,7 +993,6 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     }
     // 如果当前是 动态ppt 且选择了点击工具, 则需要关掉白板的用户交互, 以响应 动态ppt 的点击事件
     if ([ZegoWhiteboardManager sharedInstance].toolType == ZegoWhiteboardViewToolClick) {
-        [self.whiteBoardService.currentContainer setDraggable:NO];
         [self.whiteBoardService.currentContainer.docsView setScaleEnable:NO];
         self.whiteBoardService.currentContainer.whiteboardView.userInteractionEnabled = NO;
     }else {
@@ -1088,7 +1087,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     [self handleDynamicPPTClickLogicIfNeededWithContainer:container];
     container.whiteboardViewUIDelegate = self;
     container.docsViewUIDelegate = self;
-    container.whiteboardView.canDraw = !_drawingToolView.isDragEnable;
+    [container.whiteboardView setWhiteboardOperationMode:(_drawingToolView.isDragEnable?ZegoWhiteboardOperationModeScroll : ZegoWhiteboardOperationModeDraw) |ZegoWhiteboardOperationModeZoom];
     [self.drawingToolViewService refreshBoardContainer:container];
         
     self.defaultNoteView.hidden = container != nil;
@@ -1592,7 +1591,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 - (void)addText:(NSString *)text positionX:(CGFloat)x positionY:(CGFloat)y {
     ZegoWhiteboardTool lastType = [ZegoWhiteboardManager sharedInstance].toolType;
     [ZegoWhiteboardManager sharedInstance].toolType = (ZegoWhiteboardTool)ZegoDrawingToolViewItemTypeText;
-    [self.whiteBoardService.currentContainer setDraggable:NO];
+    [self.whiteBoardService.currentContainer setupWhiteboardOperationMode:(ZegoWhiteboardOperationModeDraw|ZegoWhiteboardOperationModeZoom)];
     [self.whiteBoardService.currentContainer.whiteboardView addText:text positionX:x positionY:y];
     [ZegoWhiteboardManager sharedInstance].toolType = lastType;
 }
@@ -1602,7 +1601,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 }
 
 - (void)setWhiteboardEnabled:(BOOL)enable {
-    [self.whiteBoardService.currentContainer.whiteboardView enableUserOperation:enable];
+    [self.whiteBoardService.currentContainer.whiteboardView setWhiteboardOperationMode:enable?(ZegoWhiteboardOperationModeDraw | ZegoWhiteboardOperationModeZoom):ZegoWhiteboardOperationModeZoom];
 }
 
 - (void)clearPage:(NSInteger)page {

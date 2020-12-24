@@ -16,7 +16,6 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.easypermission.Permission
 import im.zego.goclass.CONFERENCE_ID
-import im.zego.goclass.classroom.ClassRoomManager
 import im.zego.goclass.sdk.ZegoSDKManager
 import im.zego.goclass.tool.PermissionHelper
 import im.zego.goclass.tool.ToastUtils
@@ -27,6 +26,8 @@ import im.zego.zegowhiteboard.ZegoWhiteboardView
 import im.zego.zegowhiteboard.callback.IZegoWhiteboardViewScaleListener
 import im.zego.zegowhiteboard.callback.IZegoWhiteboardViewScrollListener
 import im.zego.goclass.R
+import im.zego.goclass.classroom.ClassRoomManager
+import im.zego.zegowhiteboard.ZegoWhiteboardConstants
 import im.zego.zegowhiteboard.model.ZegoWhiteboardViewModel
 import kotlin.math.round
 
@@ -346,7 +347,34 @@ class ZegoWhiteboardViewHolder : FrameLayout {
     }
 
     fun setCanDraw(canDraw: Boolean) {
-        currentWhiteboardView?.setCanDraw(canDraw)
+        if (canDraw) {
+            if (ClassRoomManager.me().sharable) {
+                currentWhiteboardView?.setWhiteboardOperationMode(
+                    ZegoWhiteboardConstants.ZegoWhiteboardOperationModeDraw
+                            or ZegoWhiteboardConstants.ZegoWhiteboardOperationModeZoom
+                            or ZegoWhiteboardConstants.ZegoWhiteboardOperationModeScroll
+                )
+            } else {
+                currentWhiteboardView?.setWhiteboardOperationMode(
+                    ZegoWhiteboardConstants.ZegoWhiteboardOperationModeZoom
+                )
+            }
+        } else {
+            if (ClassRoomManager.me().sharable) {
+                currentWhiteboardView?.setWhiteboardOperationMode(
+                            ZegoWhiteboardConstants.ZegoWhiteboardOperationModeZoom
+                            or ZegoWhiteboardConstants.ZegoWhiteboardOperationModeScroll
+                )
+            } else {
+                currentWhiteboardView?.setWhiteboardOperationMode(
+                    ZegoWhiteboardConstants.ZegoWhiteboardOperationModeZoom
+                )
+            }
+        }
+    }
+
+    fun setUserOperationMode(mode: Int) {
+        currentWhiteboardView?.setWhiteboardOperationMode(mode)
     }
 
     fun scrollTo(horizontalPercent: Float, verticalPercent: Float, currentStep: Int = 1) {
@@ -846,7 +874,15 @@ class ZegoWhiteboardViewHolder : FrameLayout {
     }
 
     fun enableUserOperation(enable: Boolean) {
-        currentWhiteboardView?.enableUserOperation(enable)
+        if (enable) {
+            currentWhiteboardView?.setWhiteboardOperationMode(
+                ZegoWhiteboardConstants.ZegoWhiteboardOperationModeDraw
+                        or ZegoWhiteboardConstants.ZegoWhiteboardOperationModeZoom
+                        or ZegoWhiteboardConstants.ZegoWhiteboardOperationModeScroll
+            )
+        } else {
+            currentWhiteboardView?.setWhiteboardOperationMode(ZegoWhiteboardConstants.ZegoWhiteboardOperationModeZoom)
+        }
     }
 
     fun deleteSelectedGraphics() {
