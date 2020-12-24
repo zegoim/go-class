@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
@@ -149,6 +150,7 @@ public class FileUtil {
 
     /**
      * 保存图片到本地
+     *
      * @param fileName
      * @param view
      */
@@ -192,6 +194,7 @@ public class FileUtil {
 
     /**
      * 获取待保存图片的路径，如果已有重名，需要重命名。
+     *
      * @param filePath
      * @param fileName
      * @return
@@ -205,7 +208,7 @@ public class FileUtil {
         ArrayList<String> samePrefixFiles = new ArrayList<>();
         String[] fileList = fileDir.list();
         if (fileList == null) {
-            Log.w(TAG, "createFile(): fileList is null" );
+            Log.w(TAG, "createFile(): fileList is null");
             return null;
         }
 
@@ -233,6 +236,7 @@ public class FileUtil {
 
     /**
      * 返回 （index）如(1)、(2)
+     *
      * @param index
      * @return
      */
@@ -242,6 +246,7 @@ public class FileUtil {
 
     /**
      * 通知相册去扫描该文件，保证相册中可以查找到该图片。
+     *
      * @param context
      * @param imageFile
      */
@@ -258,6 +263,7 @@ public class FileUtil {
 
     /**
      * 创建 ContentValues
+     *
      * @param imageFile
      * @return
      */
@@ -269,12 +275,17 @@ public class FileUtil {
         localContentValues.put(MediaStore.MediaColumns.TITLE, imageFileName);
         localContentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, imageFileName);
         localContentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png");
-        localContentValues.put(MediaStore.MediaColumns.DATE_TAKEN, dateStr);
         localContentValues.put(MediaStore.MediaColumns.DATE_MODIFIED, dateStr);
         localContentValues.put(MediaStore.MediaColumns.DATE_ADDED, dateStr);
-        localContentValues.put(MediaStore.MediaColumns.ORIENTATION, 0);
         localContentValues.put(MediaStore.MediaColumns.DATA, imageFile.getAbsolutePath());
         localContentValues.put(MediaStore.MediaColumns.SIZE, imageFile.length());
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+            localContentValues.put(MediaStore.MediaColumns.ORIENTATION, 0);
+            localContentValues.put(MediaStore.MediaColumns.DATE_TAKEN, dateStr);
+        } else {
+            localContentValues.put("orientation", dateStr);
+            localContentValues.put("datetaken", dateStr);
+        }
         return localContentValues;
     }
 

@@ -490,6 +490,9 @@ class ZegoLiveRoomWrapper : IZegoVideoSDKProxy {
                 zegoRoomStateListener?.onConnected(errorCode, roomID)
             }
 
+            override fun onRoomInfoUpdated(p0: ZegoRoomInfo?, p1: String?) {
+            }
+
             override fun onKickOut(reason: Int, roomID: String, customReason: String) {
                 Log.d(TAG, "onKickOut:reason:${reason}")
                 kickOutListener?.onKickOut(reason, roomID, customReason)

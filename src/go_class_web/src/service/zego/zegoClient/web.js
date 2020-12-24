@@ -31,6 +31,8 @@ class WebZegoClient extends ZegoClient {
     logURL && (config.logURL = logURL)
     this.setState({ user })
     zg.setLogConfig(config)
+    // 测试环境中关闭调试模式，否则任何sdk错误均会alert弹出
+    zg.setDebugVerbose(false)
 
     this._docsClient = zgDocsClient
 

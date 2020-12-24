@@ -118,3 +118,5 @@
 #network
 -keep class im.zego.goclass.network.**{*;}
 
+-dontwarn com.tencent.bugly.**
+-keep public class com.tencent.bugly.**{*;}

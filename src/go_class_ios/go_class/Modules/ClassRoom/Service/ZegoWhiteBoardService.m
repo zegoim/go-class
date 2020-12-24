@@ -301,8 +301,8 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 }
 
 - (void)enableCurrentContainer:(BOOL)isEnable {
-    self.whiteBoardContentView.userInteractionEnabled = isEnable;
     self.currentContainerEnable = isEnable;
+    [self.currentContainer setupWhiteboardOperationMode:isEnable?(ZegoWhiteboardOperationModeDraw|ZegoWhiteboardOperationModeZoom):ZegoWhiteboardOperationModeZoom];
 }
 
 - (void)deleteSelectedGraphics {
@@ -423,6 +423,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     [_currentContainer.whiteboardView removeLaser];
     [_currentContainer removeFromSuperview];
     _currentContainer = container;
+    
     [self.whiteBoardContentView addSubview:container];
     if (self.delegate) {
         [self.delegate onWhiteboardContainerChanged:container];
@@ -436,8 +437,8 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     ZegoWhiteBoardViewContainerModel *currentContainerModel = [self currentContainerModel];
     //设置当前ZegoWhiteBoardViewContainerModel选中的ZegoBoardContainer
     currentContainerModel.selectedBoardContainer = _currentContainer;
-    self.whiteBoardContentView.userInteractionEnabled = _currentContainer != nil;
-    self.whiteBoardContentView.userInteractionEnabled = self.currentContainerEnable;
+//    self.whiteBoardContentView.userInteractionEnabled = _currentContainer != nil;
+//    self.whiteBoardContentView.userInteractionEnabled = self.currentContainerEnable;
 }
 
 - (void)syncCurrentWhiteBoardID:(ZegoWhiteboardID)whiteboardID seq:(unsigned int)seq complete:(ZegoCompleteBlock)complete {

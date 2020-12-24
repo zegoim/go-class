@@ -4,11 +4,11 @@
 target 'go_class' do
   # Comment the next line if you don't want to use dynamic frameworks use_frameworks!
 
-#  pod "NSLogger"
-  pod 'ZegoDocsView'
-  pod 'ZegoWhiteboardView/LiveRoom'
+  pod 'ZegoWhiteboardView/LiveRoom','1.14.0'
+  pod 'ZegoDocsView/Basic_zh','1.14.0'
+  pod 'ZegoLiveRoom/WhiteBoard','1.20.12.24'
   
-  pod 'ZegoLiveRoom/WhiteBoard'
+  
   pod 'YYWebImage'
   pod 'AFNetworking', '~> 4.0'
   pod 'YYModel'

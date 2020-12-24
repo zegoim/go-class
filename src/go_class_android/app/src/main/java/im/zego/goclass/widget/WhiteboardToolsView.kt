@@ -15,6 +15,7 @@ import im.zego.zegowhiteboard.ZegoWhiteboardConstants
 import im.zego.zegowhiteboard.ZegoWhiteboardManager
 import im.zego.zegowhiteboard.ZegoWhiteboardView
 import im.zego.goclass.R
+import im.zego.goclass.classroom.ClassRoomManager
 import kotlinx.android.synthetic.main.layout_whiteboard_tools_view.view.*
 
 class WhiteboardToolsView : ScrollView {
@@ -250,11 +251,28 @@ class WhiteboardToolsView : ScrollView {
         it.isSelected = true
 
         if (it == drag) {
-            zegoWhiteboardView?.setCanDraw(false)
-            zegoWhiteboardViewHolder?.setCanDraw(false)
+            if (ClassRoomManager.me().sharable) {
+                zegoWhiteboardViewHolder?.setUserOperationMode(
+                    ZegoWhiteboardConstants.ZegoWhiteboardOperationModeZoom
+                            or ZegoWhiteboardConstants.ZegoWhiteboardOperationModeScroll
+                )
+            } else {
+                zegoWhiteboardViewHolder?.setUserOperationMode(
+                    ZegoWhiteboardConstants.ZegoWhiteboardOperationModeZoom
+                )
+            }
         } else {
-            zegoWhiteboardView?.setCanDraw(true)
-            zegoWhiteboardViewHolder?.setCanDraw(true)
+            if (ClassRoomManager.me().sharable) {
+                zegoWhiteboardViewHolder?.setUserOperationMode(
+                    ZegoWhiteboardConstants.ZegoWhiteboardOperationModeDraw
+                            or ZegoWhiteboardConstants.ZegoWhiteboardOperationModeZoom
+                            or ZegoWhiteboardConstants.ZegoWhiteboardOperationModeScroll
+                )
+            } else {
+                zegoWhiteboardViewHolder?.setUserOperationMode(
+                    ZegoWhiteboardConstants.ZegoWhiteboardOperationModeZoom
+                )
+            }
         }
 
         if (it == click) {
@@ -332,10 +350,10 @@ class WhiteboardToolsView : ScrollView {
                 "attach ,fileName:${whiteboardViewHolder.getCurrentWhiteboardModel().fileInfo.fileName}"
             )
             if (drag.isSelected) {
-                zegoWhiteboardView?.setCanDraw(false)
+//                zegoWhiteboardView?.setCanDraw(false)
                 zegoWhiteboardViewHolder?.setCanDraw(false)
             } else {
-                zegoWhiteboardView?.setCanDraw(true)
+//                zegoWhiteboardView?.setCanDraw(true)
                 zegoWhiteboardViewHolder?.setCanDraw(true)
             }
         }

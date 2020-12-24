@@ -12,6 +12,7 @@ import java.io.File;
 import im.zego.goclass.AppConstants;
 import im.zego.goclass.AuthConstants;
 import im.zego.goclass.DemoApplication;
+import im.zego.goclass.debug.DebugActivity;
 import im.zego.goclass.network.ZegoApiClient;
 import im.zego.goclass.tool.SharedPreferencesUtil;
 import im.zego.zegodocs.IZegoDocsViewUploadListener;
@@ -144,6 +145,7 @@ private IZegoVideoSDKProxy zegoSDKProxy = new ZegoLiveRoomWrapper();
     public void setRoomType(boolean smallClass, InitResult initCallback) {
         Log.d(TAG, "setRoomType() called with: smallClass = [" + smallClass + "], initCallback = [" + initCallback + "]");
         if (isSmallClass != smallClass) {
+            ZegoWhiteboardManager.getInstance().uninit();
             zegoSDKProxy.unInitSDK();
             isSmallClass = smallClass;
             initVideoResult = null;
@@ -199,15 +201,15 @@ private IZegoVideoSDKProxy zegoSDKProxy = new ZegoLiveRoomWrapper();
     }
 
     public boolean isVideoInitSuccess() {
-        return initVideoResult;
+        return initVideoResult != null && initVideoResult;
     }
 
     public boolean isDocsInitSuccess() {
-        return initDocsResult;
+        return initDocsResult != null && initDocsResult;
     }
 
     public boolean isWhiteboardInitSuccess() {
-        return initWhiteboardResult;
+        return initWhiteboardResult != null && initWhiteboardResult;
     }
 
     public void uploadLog() {
@@ -290,7 +292,7 @@ private IZegoVideoSDKProxy zegoSDKProxy = new ZegoLiveRoomWrapper();
             if (errorCode == 0) {
                 // 设置默认字体,内部使用，接口测试中
                 ZegoWhiteboardManager.getInstance()
-                        .setCustomFontFromAsset(AppConstants.FONT_FAMILY_DEFAULT_PATH, AppConstants.FONT_FAMILY_DEFAULT_PATH_BOLD);
+                        .setCustomFontFromAsset(DebugActivity.FONT_FAMILY_DEFAULT_PATH, DebugActivity.FONT_FAMILY_DEFAULT_PATH_BOLD);
             }
             notifyInitResult(initCallback);
         });

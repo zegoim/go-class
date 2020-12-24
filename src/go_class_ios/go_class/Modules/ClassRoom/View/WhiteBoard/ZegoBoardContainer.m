@@ -161,20 +161,25 @@ static int nameIndex = 0;
                     completionBlock:^(ZegoDocsViewError errorCode) {
             @strongify(self);
             if (errorCode == ZegoDocsViewSuccess) {
-                DLog(@"加载文件成功 %ld page:%ld",errorCode, (long)docView.currentPage);
+                DLog(@"加载文件成功 %lu page:%ld",(unsigned long)errorCode, (long)docView.currentPage);
+               
                 [self buildWithWhiteboardView:whiteboardView docView:docView];
+                //由于没有滚动无法触发onScroll代理去同步到最新的页面状态，在此手动触发
+                
+                NSLog(@"!!!loadFileWithFileID vp:%f  hp:%f,step:%d",whiteboardView.whiteboardModel.verticalScrollPercent,whiteboardView.whiteboardModel.horizontalScrollPercent,whiteboardView.whiteboardModel.pptStep);
+                [self onScrollWithHorizontalPercent:whiteboardView.whiteboardModel.horizontalScrollPercent verticalPercent:whiteboardView.whiteboardModel.verticalScrollPercent whiteboardView:whiteboardView];
                 if (complete) {
                     complete((ZegoWhiteboardViewError)errorCode);
                 }
             } else {
-                DLog(@"加载文件失败 %ld",errorCode);
+                DLog(@"加载文件失败(unsigned long) %ld",(unsigned long)errorCode);
             }
         }];
     }
 }
 
-- (void)setDraggable:(BOOL)draggable {
-    self.whiteboardView.canDraw = !draggable;
+- (void)setupWhiteboardOperationMode:(ZegoWhiteboardOperationMode)mode {
+    [self.whiteboardView setWhiteboardOperationMode:mode];
 }
 
 - (void)nextPage {
@@ -431,6 +436,7 @@ static int nameIndex = 0;
     }
 }
 
+
 #pragma mark - ZegoDocsViewDelegate
 
 
@@ -453,7 +459,6 @@ static int nameIndex = 0;
 - (void)buildWithWhiteboardView:(ZegoWhiteboardView *)whiteboardView
                         docView:(ZegoDocsView *)docsView
 {
-    whiteboardView.canDraw = YES;
     whiteboardView.whiteboardViewDelegate = self;
     [docsView setDelegate:self];
     self.whiteboardID = whiteboardView.whiteboardModel.whiteboardID;

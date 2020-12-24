@@ -1,6 +1,7 @@
 package im.zego.goclass
 
 import android.app.Application
+import com.tencent.bugly.crashreport.CrashReport
 import im.zego.goclass.sdk.ZegoSDKManager
 import im.zego.goclass.tool.CrashHandler
 import im.zego.goclass.tool.Logger
@@ -41,6 +42,7 @@ class DemoApplication : Application() {
     }
     override fun onCreate() {
         super.onCreate()
+        CrashReport.initCrashReport(applicationContext)
         SharedPreferencesUtil.setApplicationContext(this)
         SharedPreferencesUtil.setProcessID(android.os.Process.myPid())
         ToastUtils.setAppContext(this)

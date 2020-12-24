@@ -69,7 +69,6 @@
     // 动态ppt 点击时, 需要关掉白板的用户交互, 以响应 sdk H5 的点击事件
     if (itemType == ZegoDrawingToolViewItemTypeClick && self.currentContainer.isDynamicPPT) {
         [ZegoWhiteboardManager sharedInstance].toolType = (ZegoWhiteboardTool)itemType;
-        [self.currentContainer setDraggable:NO];
         [self.currentContainer.docsView setScaleEnable:NO];
         self.currentContainer.whiteboardView.userInteractionEnabled = NO;
     }else {
@@ -87,7 +86,7 @@
         case ZegoDrawingToolViewItemTypeLaser:
             [ZegoWhiteboardManager sharedInstance].toolType = (ZegoWhiteboardTool)itemType;
             //选中以上工具时，不允许拖拽
-            [self.currentContainer setDraggable:NO];
+            [self.currentContainer setupWhiteboardOperationMode:(ZegoWhiteboardOperationModeDraw|ZegoWhiteboardOperationModeZoom)];
             break;
             
         case ZegoDrawingToolViewItemTypeEraser:
@@ -96,11 +95,11 @@
             }
             [ZegoWhiteboardManager sharedInstance].toolType = (ZegoWhiteboardTool)itemType;
             //选中以上工具时，不允许拖拽
-            [self.currentContainer setDraggable:NO];
+            [self.currentContainer setupWhiteboardOperationMode:(ZegoWhiteboardOperationModeDraw|ZegoWhiteboardOperationModeZoom)];
             break;
         case ZegoDrawingToolViewItemTypeDrag:
             //选中拖拽工具时，允许拖拽
-            [self.currentContainer setDraggable:YES];
+            [self.currentContainer setupWhiteboardOperationMode:(ZegoWhiteboardOperationModeZoom|ZegoWhiteboardOperationModeScroll)];
             break;
         case ZegoDrawingToolViewItemTypeUndo:
             [self.currentContainer.whiteboardView undo];

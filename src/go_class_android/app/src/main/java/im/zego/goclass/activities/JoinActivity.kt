@@ -19,6 +19,7 @@ import im.zego.goclass.widget.LoadingDialog
 import im.zego.goclass.widget.SelectRolePopWindow
 import im.zego.goclass.widget.SelectRoomTypePopWindow
 import im.zego.goclass.R
+import im.zego.goclass.debug.DebugActivity
 import kotlinx.android.synthetic.main.activity_join.*
 import java.util.regex.Pattern
 

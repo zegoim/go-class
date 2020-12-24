@@ -57,7 +57,7 @@ typedef void(^ZegoWhiteBoardTapBlock)(void);
 
 - (void)addWhiteboarView:(ZegoWhiteboardView *)whiteboardView complete:(ZegoCreateViewBlock)complete;
 
-- (void)setDraggable:(BOOL)draggable;
+- (void)setupWhiteboardOperationMode:(ZegoWhiteboardOperationMode)mode;
 
 - (void)nextPage;
 

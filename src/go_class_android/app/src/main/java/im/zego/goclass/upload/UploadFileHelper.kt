@@ -11,7 +11,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.text.DecimalFormat
 
-class UploadHelper {
+class UploadFileHelper {
     companion object {
         private const val TAG = "UploadHelper"
         private val REQUEST_CODE_UPLOAD = 10000
@@ -42,7 +42,7 @@ class UploadHelper {
                 val fileUri = data?.data
                 Log.d(TAG, "fileUri  = $fileUri ")
                 if (fileUri != null) {
-                    val contentResolver = context.contentResolver;
+                    val contentResolver = context.contentResolver
                     try {
                         contentResolver.takePersistableUriPermission(
                             fileUri,
@@ -50,15 +50,6 @@ class UploadHelper {
                         )
                     } catch (e: SecurityException) {
                         Log.e(TAG, "FAILED TO TAKE PERMISSION")
-                    }
-                    var input: InputStream? = null
-                    try {
-                        input = contentResolver.openInputStream(fileUri)
-                        Log.d(TAG, "read length=" + readFullyNoClose(input!!)?.size)
-                    } catch (e: Exception) {
-                        Log.d(TAG, "FAILED TO READ", e)
-                    } finally {
-                        closeQuietly(input)
                     }
                     val filePath = FileUtil.getPath(context, fileUri)
                     uploadFileInner(context, filePath, uploadResult)
