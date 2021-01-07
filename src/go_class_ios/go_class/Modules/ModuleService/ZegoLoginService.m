@@ -54,17 +54,10 @@
         @strongify(self);
         [NSObject cancelPreviousPerformRequestsWithTarget:self];
         if (errorCode == 0) {
-            [ZegoLiveCenter requestCurrentWhiteboardWithRoomID:roomID complete:^(ZegoLiveReliableMessage * _Nullable message) {
-                ZegoLiveReliableMessage *liveMessage = message;
-                liveMessage.type = @"1001";
-                if (!liveMessage) {
-                    liveMessage = [[ZegoLiveReliableMessage alloc] init];
-                }
-                if (self.success) {
-                    self.success(user, roomID, liveMessage);
-                    self.success = nil;
-                }
-            }];
+            if (self.success) {
+                self.success(user, roomID);
+                self.success = nil;
+            }
         } else {
             ZegoResponseModel *model = [[ZegoResponseModel alloc] init];
             model.code = errorCode;

@@ -175,14 +175,14 @@ code_sign_if_enabled() {
 }
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
-  install_framework "${PODS_ROOT}/../PodSDK/ZegoDocsViewSDK/ZegoDocsViewSDK/Classes/ZegoDocsView.framework"
-  install_framework "${PODS_ROOT}/../PodSDK/ZegoExpressEngineSDK/ZegoExpressEngineSDK/Classes/ZegoExpressEngine.framework"
-  install_framework "${PODS_ROOT}/../PodSDK/WhiteBoardViewSDK/WhiteBoardViewSDK/Classes/ZegoWhiteboardView.framework"
+  install_framework "${PODS_ROOT}/ZegoDocsView/Basic_zh/iOS/ZegoDocsView.framework"
+  install_framework "${PODS_ROOT}/ZegoExpressEngine/WhiteBoard/iOS/ZegoExpressEngine.framework"
+  install_framework "${PODS_ROOT}/ZegoWhiteboardView/Express/iOS/ZegoWhiteboardView.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
-  install_framework "${PODS_ROOT}/../PodSDK/ZegoDocsViewSDK/ZegoDocsViewSDK/Classes/ZegoDocsView.framework"
-  install_framework "${PODS_ROOT}/../PodSDK/ZegoExpressEngineSDK/ZegoExpressEngineSDK/Classes/ZegoExpressEngine.framework"
-  install_framework "${PODS_ROOT}/../PodSDK/WhiteBoardViewSDK/WhiteBoardViewSDK/Classes/ZegoWhiteboardView.framework"
+  install_framework "${PODS_ROOT}/ZegoDocsView/Basic_zh/iOS/ZegoDocsView.framework"
+  install_framework "${PODS_ROOT}/ZegoExpressEngine/WhiteBoard/iOS/ZegoExpressEngine.framework"
+  install_framework "${PODS_ROOT}/ZegoWhiteboardView/Express/iOS/ZegoWhiteboardView.framework"
 fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then
   wait

@@ -70,4 +70,6 @@ static NSString *kAppSignKey = @"ZegoAppAppSign";
 #define kZegoDocsDataPath [[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/ZegoDocs"] stringByAppendingString:@""]
 #define kZegoLogPath [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/ZegoLogFile"]
 #define kZegoAPPTeminalNotification @"kZegoAPPTeminalNotification"
+
+#define kZegoRoomCurrentWhiteboardKey @"1001"
 #endif /* ZegoAuthConstants_h */

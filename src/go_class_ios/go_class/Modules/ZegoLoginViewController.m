@@ -278,13 +278,12 @@
                                         userName:self.nameTF.text
                                         userRole:self.userRoleType
                                        classType:self.classPatternType
-                                         success:^(ZegoRoomMemberInfoModel *userModel, NSString *roomID, ZegoLiveReliableMessage *reliableMessage) {
+                                         success:^(ZegoRoomMemberInfoModel *userModel, NSString *roomID) {
         @strongify(self);
         [self.activityIndicator stopAnimating];
         ZegoClassViewController *vc = [[ZegoClassViewController alloc] initWithRoomID:roomID
                                                                                  user:userModel
                                                                             classType:self.classPatternType
-                                                                          syncMessage:reliableMessage
                                                                            streamList:[ZegoLiveCenter streamList]
                                                                           isEnvAbroad:self.abroadEnvButton.selected];
         vc.modalPresentationStyle = UIModalPresentationFullScreen;
