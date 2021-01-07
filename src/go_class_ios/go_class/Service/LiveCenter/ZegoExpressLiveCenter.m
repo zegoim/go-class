@@ -234,30 +234,15 @@ static ZegoExpressLiveCenter *sharedInstance = nil;
     return [ZegoExpressLiveCenter sharedInstance].streamList;
 }
 
-+ (void)syncCurrentWhiteboardWithRoomID:(NSString *)roomID whiteBoardID:(NSString *)whiteBoardID seq:(unsigned int)seq compelte:(void (^)(int errorCode, NSString *roomId, NSString *msgType, NSUInteger msgSeq))compelte  {
++ (void)syncCurrentWhiteboardWithRoomID:(NSString *)roomID whiteBoardID:(NSString *)whiteBoardID compelte:(void (^)(int errorCode))compelte {
     
-    [[ZegoExpressLiveCenter sharedInstance].api sendReliableMessage:whiteBoardID type:@"1001" roomID:roomID latestSeq:seq callback:^(int errorCode, NSString * _Nonnull roomID, NSString * _Nonnull msgType, int latestSeq) {
+    [[ZegoExpressLiveCenter sharedInstance].api setRoomExtraInfo:whiteBoardID forKey:kZegoRoomCurrentWhiteboardKey roomID:roomID callback:^(int errorCode) {
         if (compelte) {
-            compelte(errorCode, roomID, msgType, latestSeq);
+            compelte(errorCode);
         }
     }];
 }
 
-+ (void)requestCurrentWhiteboardWithRoomID:(NSString *)roomID complete:(void (^)(ZegoLiveReliableMessage * _Nullable message))compelte {
-    ZegoExpressLiveCenter *instance = [ZegoExpressLiveCenter sharedInstance];
-    [[ZegoExpressEngine sharedEngine] getReliableMessage:@"1001" roomID:roomID callback:^(int errorCode, NSString * _Nonnull roomID, ZegoReliableMessage * _Nonnull message) {
-        if (errorCode == 0 && message) {
-            if (compelte) {
-                compelte([instance liveReliableMessage:message]);
-            }
-        } else {
-            if (compelte) {
-                compelte(nil);
-            }
-        }
-    }];
-    
-}
 
 + (void)sendMessage:(NSString *)message roomID:(NSString *)roomID callback:(nullable ZegoLiveCenterImBlock)callback {
     ZegoExpressLiveCenter *instance = [ZegoExpressLiveCenter sharedInstance];
@@ -349,9 +334,10 @@ static ZegoExpressLiveCenter *sharedInstance = nil;
     }
 }
 
-- (void)onRoomRecvReliableMessage:(ZegoReliableMessage *)message roomID:(NSString *)roomID {
-    if ([self.delegate respondsToSelector:@selector(onRecvReliableMessage:room:)]) {
-        [self.delegate onRecvReliableMessage:[self liveReliableMessage:message] room:roomID];
+- (void)onRoomExtraInfoUpdate:(NSArray<ZegoRoomExtraInfo *> *)roomExtraInfoList roomID:(NSString *)roomID {
+    ZegoRoomExtraInfo *info = roomExtraInfoList.firstObject;
+    if ([self.delegate respondsToSelector:@selector(onRecvWhiteboardChange:)] && [info.key isEqualToString:kZegoRoomCurrentWhiteboardKey]) {
+        [self.delegate onRecvWhiteboardChange:[info.value longLongValue]];
     }
 }
 
@@ -373,10 +359,6 @@ static ZegoExpressLiveCenter *sharedInstance = nil;
            [self.delegate onReceiveRoomMessage:bigRoomMessageList roomID:roomID];
        }
        
-}
-
-- (void)onRoomUpdateReliableMessageInfo:(NSString *)msgType latestSeq:(unsigned int)latestSeq roomID:(NSString *)roomID {
-    
 }
 
 - (void)onRoomStateUpdate:(ZegoRoomState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData roomID:(NSString *)roomID {
@@ -418,10 +400,6 @@ static ZegoExpressLiveCenter *sharedInstance = nil;
     }
 }
 
-- (ZegoLiveReliableMessage *)liveReliableMessage:(ZegoReliableMessage *)reliableMessage {
-    return [ZegoLiveReliableMessage reliableMessage:reliableMessage.type latestSeq:reliableMessage.latestSeq content:reliableMessage.content fromUserId:reliableMessage.fromUser.userID fromUserName:reliableMessage.fromUser.userName sendTime:reliableMessage.sendTime];
-}
-
 - (ZegoLiveStream *)liveStreamWithStream:(ZegoStream *)stream {
     return [ZegoLiveStream streamWithUserID:stream.user.userID userName:stream.user.userName streamID:stream.streamID extraInfo:stream.extraInfo streamNID:0];
 }
@@ -434,12 +412,6 @@ static ZegoExpressLiveCenter *sharedInstance = nil;
     }
     return array;
 }
-//- (void)onTempBroken:(int)errorCode roomID:(NSString *)roomID {
-//    if ([self.delegate respondsToSelector:@selector(onTempBroken:roomID:)]) {
-//        [self.delegate onTempBroken:errorCode roomID:roomID];
-//    }
-//}
-
 @end
 
 #endif

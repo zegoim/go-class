@@ -14,10 +14,9 @@
 
 //此处是国内小班课appID及appSign
 #ifdef IS_USE_LIVEROOM
-static long long kZegoAppID = 0;
-static unsigned char kZegoSign[] = { 
+static long long kZegoAppID = 3606078772;
+static unsigned char kZegoSign[] = { 0x7f,0xa0,0x2d,0xba,0x76,0xae,0xf5,0x8c,0xb3,0xcd,0x6b,0x01,0xfd,0xc6,0x4a,0x7d,0x52,0xb0,0xa4,0x60,0x8d,0xb4,0xf0,0x79,0xad,0x1c,0xe6,0xac,0x6d,0x15,0xac,0x9d
 };
-
 //此处是国外小班课appID及appSign
 static long long kZegoAppIDAbroad = 0;
 static unsigned char kZegoSignAbroad[] = { 
@@ -70,4 +69,6 @@ static NSString *kAppSignKey = @"ZegoAppAppSign";
 #define kZegoDocsDataPath [[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/ZegoDocs"] stringByAppendingString:@""]
 #define kZegoLogPath [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/ZegoLogFile"]
 #define kZegoAPPTeminalNotification @"kZegoAPPTeminalNotification"
+
+#define kZegoRoomCurrentWhiteboardKey @"1001"
 #endif /* ZegoAuthConstants_h */

@@ -29,14 +29,13 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ZegoWhiteBoardService : NSObject
 
 @property (nonatomic, strong) ZegoRoomMemberInfoModel *currentUserModel;//当前登录用户模型
-@property (nonatomic, strong) ZegoLiveReliableMessage *whiteBoardSeqMessage;
 
 @property (nonatomic, strong) UIView *whiteBoardContentView;
 @property (nonatomic, strong, readonly) ZegoBoardContainer *currentContainer;       //当前选中BoardContainer;
 @property (nonatomic, strong, readonly) NSArray<ZegoWhiteBoardViewContainerModel *> *orderedBoardModelContainers;   
 @property (nonatomic, copy) NSString *roomId;
 
-- (instancetype)initWithUser:(ZegoRoomMemberInfoModel *)user roomId:(NSString *)roomId reliableMessage:(ZegoLiveReliableMessage *)reliableMessage delegate:(id<ZegoWhiteBoardServiceDelegate>)delegate;
+- (instancetype)initWithUser:(ZegoRoomMemberInfoModel *)user roomId:(NSString *)roomId delegate:(id<ZegoWhiteBoardServiceDelegate>)delegate;
 - (void)reset;
 
 - (void)createContainersWithWhiteBoardList:(NSArray<ZegoWhiteboardView *> *)whiteBoardList;
@@ -45,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addWhiteBoardWithWhiteBoardView:(ZegoWhiteboardView *)whiteboardView;
 - (void)addDocBoardWithInfo:(ZegoFileInfoModel *)fileInfo whiteBoardName:(NSString *)whiteBoardName sheetIndex:(int)sheetIndex createSheets:(BOOL)ifCreateSheets complete:(ZegoCreateViewBlock)complete;
 
-- (void)changeWhiteBoardWithReliableMessage:(ZegoLiveReliableMessage *)message;
+- (void)changeWhiteBoardWithID:(ZegoWhiteboardID)whiteboardID;
 - (void)changeWhiteBoardWithBoardContainer:(ZegoBoardContainer * _Nullable)boardContainer;
 
 - (void)removeWhiteBoardWithWhiteBoardViewContainerModel:(ZegoWhiteBoardViewContainerModel *)whiteBoardViewContainerModel;

@@ -10,7 +10,7 @@
 
 #import "ZegoLiveRoomLiveCenter.h"
 #import <ZegoLiveRoom/ZegoLiveRoom.h>
-#import <ZegoLiveRoom/ZegoLiveRoomApi-ReliableMessage.h>
+#import <ZegoLiveRoom/ZegoLiveRoomApiDefines-RoomExtraInfo.h>
 #import <ZegoLiveRoom/ZegoLiveRoomApiDefines.h>
 #import <ZegoLiveRoom/zego-api-logger-oc.h>
 #import "ZegoAuthConstants.h"
@@ -20,7 +20,7 @@
 #import "ZegoRoomMemberListRspModel.h"
 #import "ZegoClassEnvManager.h"
 #import "ZegoChatModel.h"
-@interface ZegoLiveRoomLiveCenter ()<ZegoRoomDelegate, ZegoLivePublisherDelegate, ZegoIMDelegate, ZegoLivePlayerDelegate, ZegoReliableMessageDelegate>
+@interface ZegoLiveRoomLiveCenter ()<ZegoRoomDelegate, ZegoLivePublisherDelegate, ZegoIMDelegate, ZegoLivePlayerDelegate,ZegoLiveRoomExtraInfoDelegate>
 
 @property (weak, nonatomic) id<ZegoLiveCenterDelegate> delegate;
 
@@ -86,7 +86,7 @@ static ZegoLiveRoomLiveCenter *sharedInstance = nil;
      [api setPublisherDelegate:center];
      [api setPlayerDelegate:center];
      [api setIMDelegate:center];
-     [api setReliableMessageDelegate:center];
+     [api setRoomExtraInfoUpdateDelegate:center];
  
      //文档初始化
      ZegoDocsViewConfig * docsViewConfig = [ZegoDocsViewConfig new];
@@ -206,29 +206,13 @@ static ZegoLiveRoomLiveCenter *sharedInstance = nil;
     [[ZegoLiveRoomLiveCenter sharedInstance].api stopPlayingStream:streamID];
 }
 
-+ (void)syncCurrentWhiteboardWithRoomID:(NSString *)roomID whiteBoardID:(NSString *)whiteBoardID seq:(unsigned int)seq compelte:(void (^)(int errorCode, NSString *roomId, NSString *msgType, NSUInteger msgSeq))compelte  {
-    [[ZegoLiveRoomLiveCenter sharedInstance].api sendReliableMessage:whiteBoardID type:@"1001" latestSeq:seq completion:^(int errorCode, NSString *roomId, NSString *msgType, NSUInteger msgSeq) {
-        if (compelte) {
-            compelte(errorCode, roomID, msgType, msgSeq);
-        }
-    }];
-}
-
-+ (void)requestCurrentWhiteboardWithRoomID:(NSString *)roomID complete:(void (^)(ZegoLiveReliableMessage * _Nullable message))compelte {
-    ZegoLiveRoomLiveCenter *instance = [ZegoLiveRoomLiveCenter sharedInstance];
-
-    [instance.api getReliableMessages:@[@"1001"] completion:^(int errorCode, NSString *roomId, NSArray<ZegoReliableMessage *> *messageList) {
-        if (errorCode == 0 && messageList.count) {
-            if (compelte) {
-                compelte([instance liveReliableMessage:messageList.firstObject]);
-            }
-        } else {
-            if (compelte) {
-                compelte(nil);
-            }
-        }
-    }];
++ (void)syncCurrentWhiteboardWithRoomID:(NSString *)roomID whiteBoardID:(NSString *)whiteBoardID compelte:(void (^)(int errorCode))compelte  {
     
+    [[ZegoLiveRoomLiveCenter sharedInstance].api setRoomExtraInfo:kZegoRoomCurrentWhiteboardKey value:whiteBoardID completion:^(int errorCode, NSString *roomId, NSString *key) {
+        if (compelte) {
+            compelte(errorCode);
+        }
+    }];
 }
 
 + (void)sendMessage:(NSString *)message roomID:(NSString *)roomID callback:(nullable ZegoLiveCenterImBlock)callback {
@@ -327,9 +311,10 @@ static ZegoLiveRoomLiveCenter *sharedInstance = nil;
     }
 }
 
-- (void)onRecvReliableMessage:(ZegoReliableMessage *)message room:(NSString *)roomId {
-    if ([self.delegate respondsToSelector:@selector(onRecvReliableMessage:room:)]) {
-        [self.delegate onRecvReliableMessage:[self liveReliableMessage:message] room:roomId];
+- (void)onRoomExtraInfoUpdated:(NSString *)roomId roomExtraInfoList:(NSArray<ZegoRoomExtraInfo *> *)roomExtraInfoList {
+    ZegoRoomExtraInfo *info = roomExtraInfoList.firstObject;
+    if ([self.delegate respondsToSelector:@selector(onRecvWhiteboardChange:)] && [info.key isEqualToString:kZegoRoomCurrentWhiteboardKey]) {
+        [self.delegate onRecvWhiteboardChange:info.value];
     }
 }
 
@@ -356,7 +341,6 @@ static ZegoLiveRoomLiveCenter *sharedInstance = nil;
     }
 }
 
-
 - (void)onDisconnect:(int)errorCode roomID:(NSString *)roomID {
     if ([self.delegate respondsToSelector:@selector(onDisconnect:roomID:)]) {
         [self.delegate onDisconnect:errorCode roomID:roomID];
@@ -375,10 +359,6 @@ static ZegoLiveRoomLiveCenter *sharedInstance = nil;
     }
 }
 
-- (ZegoLiveReliableMessage *)liveReliableMessage:(ZegoReliableMessage *)reliableMessage {
-    return [ZegoLiveReliableMessage reliableMessage:reliableMessage.type latestSeq:reliableMessage.latestSeq content:reliableMessage.content fromUserId:reliableMessage.fromUserId fromUserName:reliableMessage.fromUserName sendTime:reliableMessage.sendTime];
-}
-
 - (ZegoLiveStream *)liveStreamWithStream:(ZegoStream *)stream {
     return [ZegoLiveStream streamWithUserID:stream.userID userName:stream.userName streamID:stream.streamID extraInfo:stream.extraInfo streamNID:stream.streamNID];
 }
@@ -391,6 +371,8 @@ static ZegoLiveRoomLiveCenter *sharedInstance = nil;
     }
     return array;
 }
+
+
 
 @end
 

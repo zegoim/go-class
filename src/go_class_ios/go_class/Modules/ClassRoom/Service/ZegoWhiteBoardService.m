@@ -34,13 +34,12 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 
 @implementation ZegoWhiteBoardService
 
-- (instancetype)initWithUser:(ZegoRoomMemberInfoModel *)user roomId:(NSString *)roomId reliableMessage:(ZegoLiveReliableMessage *)reliableMessage delegate:(id<ZegoWhiteBoardServiceDelegate>)delegate {
+- (instancetype)initWithUser:(ZegoRoomMemberInfoModel *)user roomId:(NSString *)roomId delegate:(id<ZegoWhiteBoardServiceDelegate>)delegate {
     if (self = [super init]) {
         self.currentUserModel = user;
         self.currentContainerEnable = YES;
         self.delegate = delegate;
         self.roomId = roomId;
-        self.whiteBoardSeqMessage = reliableMessage;
     }
     return  self;
 }
@@ -98,20 +97,16 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     ZegoBoardContainer *strongContainer = container;
     [self addBoardContainerView:strongContainer];
     @weakify(self);
+    self.currentContainer = strongContainer;
     [container addWhiteboarView:whiteboardView complete:^(ZegoWhiteboardViewError errorCode) {
         @strongify(self);
         if(errorCode == 0) {
-            if (container.whiteboardID == self.whiteBoardSeqMessage.content.integerValue) {
-                self.currentContainer = strongContainer;
-            }
             [self updateOrderedBoardContainers];
         } else {
           [self showNetworkError];
         }
     }];
-    if (container.whiteboardID == self.whiteBoardSeqMessage.content.integerValue) {
-        self.currentContainer = strongContainer;
-    }
+
 }
 
 //点击文件列表创建文件
@@ -160,13 +155,12 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     }
 }
 
-- (void)changeWhiteBoardWithReliableMessage:(ZegoLiveReliableMessage *)message {
+- (void)changeWhiteBoardWithID:(ZegoWhiteboardID )whiteboardID {
     //切换白板后关闭键盘输入
     [[UIApplication sharedApplication].keyWindow endEditing: YES];
-    self.whiteBoardSeqMessage = message;
     ZegoBoardContainer *container;
     for (ZegoBoardContainer *boardContainer in self.boardContainers) {
-        if (boardContainer.whiteboardID == message.content.longLongValue) {
+        if (boardContainer.whiteboardID == whiteboardID) {
             container = boardContainer;
             break;
         }
@@ -183,7 +177,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     //切换白板后移除激光笔
     [self.currentContainer.whiteboardView removeLaser];
     @weakify(self);
-    [self syncCurrentWhiteBoardID:boardContainer.whiteboardID seq:self.whiteBoardSeqMessage.latestSeq complete:^(NSInteger errorCode) {
+    [self syncCurrentWhiteBoardID:boardContainer.whiteboardID complete:^(NSInteger errorCode) {
         @strongify(self);
         if (errorCode == 0) {
             self.currentContainer = boardContainer;
@@ -441,20 +435,12 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 //    self.whiteBoardContentView.userInteractionEnabled = self.currentContainerEnable;
 }
 
-- (void)syncCurrentWhiteBoardID:(ZegoWhiteboardID)whiteboardID seq:(unsigned int)seq complete:(ZegoCompleteBlock)complete {
+- (void)syncCurrentWhiteBoardID:(ZegoWhiteboardID)whiteboardID complete:(ZegoCompleteBlock)complete {
     if (!whiteboardID) {
         return;
     }
-    @weakify(self);
-    [ZegoLiveCenter syncCurrentWhiteboardWithRoomID:self.roomId whiteBoardID:@(whiteboardID).stringValue seq:seq compelte:^(int errorCode, NSString * _Nonnull roomId, NSString * _Nonnull msgType, NSUInteger msgSeq) {
-        @strongify(self);
-        if (errorCode == 0 && self.whiteBoardSeqMessage) {
-            self.whiteBoardSeqMessage.latestSeq = (unsigned int)msgSeq;
-        } else {
-            [ZegoLiveCenter requestCurrentWhiteboardWithRoomID:self.roomId complete:^(ZegoLiveReliableMessage * _Nullable message) {
-                self.whiteBoardSeqMessage = message;
-            }];
-        }
+    [ZegoLiveCenter syncCurrentWhiteboardWithRoomID:self.roomId whiteBoardID:@(whiteboardID).stringValue compelte:^(int errorCode) {
+
         if (complete) {
             complete(errorCode);
         }
@@ -462,7 +448,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 }
 
 - (void)syncCurrentWhiteBoardIDToServer {
-    [self syncCurrentWhiteBoardID:self.currentContainer.whiteboardID seq:self.whiteBoardSeqMessage ? self.whiteBoardSeqMessage.latestSeq : 0 complete:nil];
+    [self syncCurrentWhiteBoardID:self.currentContainer.whiteboardID complete:nil];
 }
 
 - (void)removeLocalWhiteBoardContainer:(ZegoBoardContainer *)container {
@@ -545,13 +531,6 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 }
 
 #pragma mark Getter
-
-- (ZegoLiveReliableMessage *)whiteBoardSeqMessage {
-    if (!_whiteBoardSeqMessage) {
-        _whiteBoardSeqMessage = [ZegoLiveReliableMessage reliableMessage:@"1001" latestSeq:0 content:@(self.currentContainer.whiteboardID).stringValue fromUserId:[NSString stringWithFormat:@"%ld",(long)self.currentUserModel.uid] fromUserName:self.currentUserModel.userName sendTime:0];
-    }
-    return _whiteBoardSeqMessage;
-}
 
 - (UIView *)whiteBoardContentView {
     if (!_whiteBoardContentView) {

@@ -111,14 +111,14 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 
 @implementation ZegoClassViewController
 
-- (instancetype)initWithRoomID:(NSString *)roomID user:(ZegoRoomMemberInfoModel *)user classType:(NSInteger)classType syncMessage:(ZegoLiveReliableMessage *)reliableMessage streamList: (NSArray<ZegoLiveStream *> * _Nonnull) streamList isEnvAbroad:(BOOL)isEnvAbroad {
+- (instancetype)initWithRoomID:(NSString *)roomID user:(ZegoRoomMemberInfoModel *)user classType:(NSInteger)classType streamList: (NSArray<ZegoLiveStream *> * _Nonnull) streamList isEnvAbroad:(BOOL)isEnvAbroad {
     if (self = [super initWithNibName:@"ZegoClassViewController" bundle:[NSBundle mainBundle]]) {
         self.currentUserModel = user;
         self.currentUserModel.isMyself = YES;
         self.roomId = roomID;
         _isEnvAbroad = isEnvAbroad;
         self.classType = (ZegoClassPatternType)classType;
-        self.whiteBoardService = [[ZegoWhiteBoardService alloc] initWithUser:self.currentUserModel roomId:self.roomId reliableMessage:reliableMessage delegate:self];
+        self.whiteBoardService = [[ZegoWhiteBoardService alloc] initWithUser:self.currentUserModel roomId:self.roomId delegate:self];
         [ZegoLiveCenter setDelegate: self];
         [ZegoLiveCenter muteVideo:YES];
         [ZegoLiveCenter muteAudio:YES];
@@ -932,21 +932,6 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     }];
 }
 
-- (void)requestCurrentWhiteboard {
-    @weakify(self);
-    [ZegoLiveCenter requestCurrentWhiteboardWithRoomID:self.roomId complete:^(ZegoLiveReliableMessage * _Nullable message) {
-        @strongify(self);
-        self.whiteBoardService.whiteBoardSeqMessage = message;
-        [self.whiteBoardService.currentContainer.whiteboardView removeLaser];
-        [self loadWhiteboardListWithCompleteBlock:^(ZegoWhiteboardViewError errorCode, NSArray *whiteBoardViewList) {
-            @strongify(self);
-            [self refreshTopBar];
-        }];
-
-//        [self.whiteBoardService changeWhiteBoardWithReliableMessage:message];
-    }];
-}
-
 - (void)refreshTopBar {
     if (self.whiteBoardService.currentContainer) {
         self.topBar.hidden = NO;
@@ -1311,7 +1296,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
                                         userName:self.currentUserModel.userName
                                         userRole:self.currentUserModel.role
                                        classType:self.classType
-                                         success:^(ZegoRoomMemberInfoModel *userModel, NSString *roomID, ZegoLiveReliableMessage *reliableMessage) {
+                                         success:^(ZegoRoomMemberInfoModel *userModel, NSString *roomID) {
         @strongify(self);
         [self reloadRoom];
     } failure:^(ZegoResponseModel *response) {
@@ -1325,7 +1310,6 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 - (void)reloadRoom {
     [ZegoHttpHeartbeat stop];
     [self startHeartbeat];
-    [self requestCurrentWhiteboard];
     [self loadInitRoomMemberInfo];
 }
 
@@ -1428,8 +1412,9 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     
 }
 
-- (void)onRecvReliableMessage:(ZegoLiveReliableMessage *)message room:(NSString *)roomId {
-    [self.whiteBoardService changeWhiteBoardWithReliableMessage:message];
+- (void)onRecvWhiteboardChange:(unsigned long long)whiteboardID {
+    
+    [self.whiteBoardService changeWhiteBoardWithID:whiteboardID];
 }
 
 - (void)onReceiveCustomCommand:(NSString *)fromUserID userName:(NSString *)fromUserName content:(NSString *)content roomID:(NSString *)roomID {

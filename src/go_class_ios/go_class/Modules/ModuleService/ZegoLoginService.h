@@ -11,7 +11,7 @@
 #import "ZegoNetworkManager.h"
 #import "ZegoClassCommand.h"
 #import "ZegoRoomMemberListRspModel.h"
-typedef void(^ZegoLoginSuccessBlock)(ZegoRoomMemberInfoModel * _Nonnull userModel,NSString * _Nonnull roomID, ZegoLiveReliableMessage * _Nonnull reliableMessage);
+typedef void(^ZegoLoginSuccessBlock)(ZegoRoomMemberInfoModel * _Nonnull userModel,NSString * _Nonnull roomID);
 
 typedef void(^ZegoLoginFailBlock)(ZegoResponseModel * _Nonnull response);
 

@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param reliableMessage 消息对象
 /// @param streamList 当前虚拟房间内的所有流对象
 /// @param isEnvAbroad 环境:中国内地 / 海外
-- (instancetype)initWithRoomID:(NSString *)roomID user:(ZegoRoomMemberInfoModel *)user classType:(NSInteger)classType syncMessage:(ZegoLiveReliableMessage *)reliableMessage streamList: (NSArray<ZegoLiveStream *> * _Nonnull) streamList isEnvAbroad:(BOOL)isEnvAbroad ;
+- (instancetype)initWithRoomID:(NSString *)roomID user:(ZegoRoomMemberInfoModel *)user classType:(NSInteger)classType streamList: (NSArray<ZegoLiveStream *> * _Nonnull) streamList isEnvAbroad:(BOOL)isEnvAbroad ;
 
 @end
 

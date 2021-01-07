@@ -130,7 +130,7 @@ typedef void(^ZegoLiveCenterImBlock)(int errorCode,NSString *roomId,NSString *me
 
 - (void)onPlayQualityUpdate:(int)quality stream:(NSString *)streamID videoFPS:(double)fps videoBitrate:(double)kbs;
 
-- (void)onRecvReliableMessage:(ZegoLiveReliableMessage *)message room:(NSString *)roomId;
+- (void)onRecvWhiteboardChange:(unsigned long long)whiteboardID;
 
 - (void)onReceiveRoomMessage:(NSArray <ZegoMessageInfo *>*)messageList roomID:(NSString *)roomId;
 
@@ -191,10 +191,7 @@ typedef void(^ZegoLiveCenterImBlock)(int errorCode,NSString *roomId,NSString *me
 
 + (NSArray<ZegoLiveStream *> *)streamList;
 
-+ (void)syncCurrentWhiteboardWithRoomID:(NSString *)roomID whiteBoardID:(NSString *)whiteBoardID seq:(unsigned int)seq compelte:(void (^)(int errorCode, NSString *roomId, NSString *msgType, NSUInteger msgSeq))compelte;
-
-+ (void)requestCurrentWhiteboardWithRoomID:(NSString *)roomID complete:(void (^)(ZegoLiveReliableMessage * _Nullable message))compelte;
-
++ (void)syncCurrentWhiteboardWithRoomID:(NSString *)roomID whiteBoardID:(NSString *)whiteBoardID compelte:(void (^)(int errorCode))compelte;
 + (void)sendMessage:(NSString *)message roomID:(NSString *)roomID callback:(nullable ZegoLiveCenterImBlock)callback;
 
 @end
