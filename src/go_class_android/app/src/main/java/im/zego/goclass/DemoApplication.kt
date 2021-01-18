@@ -7,7 +7,6 @@ import im.zego.goclass.tool.CrashHandler
 import im.zego.goclass.tool.Logger
 import im.zego.goclass.tool.SharedPreferencesUtil
 import im.zego.goclass.tool.ToastUtils
-import im.zego.goclass.BuildConfig
 
 class DemoApplication : Application() {
     private val TAG = "DemoApplication"
@@ -40,15 +39,17 @@ class DemoApplication : Application() {
             return BuildConfig.appBuildType == "final"
         }
     }
+
     override fun onCreate() {
         super.onCreate()
         CrashReport.initCrashReport(applicationContext)
         SharedPreferencesUtil.setApplicationContext(this)
         SharedPreferencesUtil.setProcessID(android.os.Process.myPid())
-        ToastUtils.setAppContext(this)
         if (!isAlpha()) {
             CrashHandler.setAppContext(this)
         }
+        AppLanguage.initLanguageSetting(this)
+        ToastUtils.setAppContext(this)
         ZegoSDKManager.getInstance().initSDKEnvironment(this) {
             Logger.i(TAG, "initResult() result: $it")
         }

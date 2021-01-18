@@ -1,7 +1,9 @@
+import axios from 'axios'
 import { storage } from '@/utils/tool'
 import { LiveHelper } from '@/service/zego/helper/LiveHelper/index'
 import { WhiteboardHelper } from '@/service/zego/helper/WhiteboardHelper'
 import { DocsHelper } from '@/service/zego/helper/DocsHelper'
+import { YOUR_SDK_TOKEN_URL } from '@/utils/config_data'
 
 export class ZegoClient {
   _client = null
@@ -75,26 +77,15 @@ export class ZegoClient {
     })
   }
 
-  // 正式环境请调用自己的后台接口，token 生成方法请参考 ZEGO 开发者中心
-  getToken = (appID, userID) => {
-    return new Promise((resolve, reject) => {
-      const xmlhttp = new XMLHttpRequest();
-      xmlhttp.onreadystatechange = e => {
-        if (xmlhttp.readyState == 4) {
-          if (xmlhttp.status == 200) {
-            resolve(xmlhttp.response);
-          } else {
-            reject(e);
-          }
-        }
-      };
-      xmlhttp.open(
-        "GET",
-        `https://wsliveroom-alpha.zego.im:8282/token?app_id=${appID}&id_name=${userID}`,
-        true
-      );
-      xmlhttp.send(null);
-    });
+  async getToken(appID, userID) {
+    console.log('getToken', { appID, userID })
+    const { data } = await axios.get(YOUR_SDK_TOKEN_URL, {
+      params: {
+        appID,
+        userID
+      }
+    })
+    return data.data
   }
 
   async createZegoContext(roomEnv) {

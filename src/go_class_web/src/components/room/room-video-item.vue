@@ -3,14 +3,14 @@
 -->
 <template>
   <li class="video-item">
-    <span v-if="isTeacher" class="role-tag">老师</span>
+    <span v-if="isTeacher" class="role-tag">{{$t('room.room_teacher')}}</span>
     <div class="no-stream-mask" v-if="isTeacherQuit">
       <div class="center-content">
         <div
           class="icon-camera-close"
           v-html="require('../../assets/icons/room/seating_teacher.svg').default"
         />
-        <div class="tip">等待老师加入</div>
+        <div class="tip">{{$t('room.room_tip_wait_for_teacher')}}</div>
       </div>
     </div>
     <div class="no-video-mask" v-else-if="isTeacher && !isVideoOpen">

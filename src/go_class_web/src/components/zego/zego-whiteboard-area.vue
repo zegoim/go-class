@@ -156,6 +156,7 @@ export default {
       this.liveClient = await zegoClient.init('live')
       this.docsClient.setConfig('disableH5ImageDrag', 'true')
       this.docsClient.setConfig('pptStepMode', ZEGOENV.pptStepMode)
+      // this.client.setDeferredRenderingTime(+ZEGOENV.deferredRenderingTime)
     },
     /**
      * @desc: 初始化白板区域相关回调
@@ -383,6 +384,7 @@ export default {
         aspectWidth: this.aspectWidth * this.pageCount,
         aspectHeight: this.aspectHeight,
         name: `${this.userName}创建的白板${this.WBNameIndex++}`
+        // name:this.$t('wb.wb_created_by',{name:this.userName,index:this.WBNameIndex++})
       }
       try {
         const activeWBView = await this.client.createView(options)

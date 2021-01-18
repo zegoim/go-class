@@ -3,7 +3,7 @@
 -->
 <template>
   <el-drawer
-    title="预览"
+    :title="$t('wb.wb_priview')"
     :modal="false"
     :visible="visible"
     direction="rtl"

@@ -11,6 +11,7 @@ export class WhiteboardHelper {
   }
 
   getProxyFunc() {
+    // 'setDeferredRenderingTime'
     return ['createView', 'destroyView', 'attachView', 'getViewList']
   }
 
@@ -39,5 +40,8 @@ export class WhiteboardHelper {
 
   getViewList() {
     return this._client.getViewList()
+  }
+  setDeferredRenderingTime(delay){
+    return this._client.setDeferredRenderingTime(delay)
   }
 }

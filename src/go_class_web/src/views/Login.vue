@@ -14,19 +14,19 @@
       >
         <div class="login-form-container">
           <div class="welcome">
-            <span>欢迎加入</span>
-            <span class="forClass">GO课堂</span>
+            <span>{{$t("login.login_welcome")}}</span>
+            <span class="forClass">{{$t("login.login_goclass")}}</span>
           </div>
           <el-form-item prop="roomId" class="el-form-item__content roomid">
             <el-input
-              placeholder="请输入课堂ID"
+              :placeholder="$t('login.login_input_classid')"
               v-model="loginForm.roomId"
               class="el-input el-input-ID"
             ></el-input>
           </el-form-item>
           <el-form-item prop="userName" class="el-form-item__content username">
             <el-input
-              placeholder="请输入名称"
+              :placeholder="$t('login.login_enter_name')"
               v-model="loginForm.userName"
               class="el-input"
             ></el-input>
@@ -34,7 +34,7 @@
           <el-form-item class="el-form-item__content login-select">
             <el-select
               v-model="loginForm.classScene"
-              placeholder="请选择"
+              :placeholder="$t('login.login_select')"
               popper-class="login-select-list"
               @change="setRoomType"
             >
@@ -50,7 +50,7 @@
           <el-form-item class="el-form-item__content login-select">
             <el-select
               v-model="loginForm.role"
-              placeholder="请选择"
+              :placeholder="$t('login.login_select')"
               popper-class="login-select-list"
             >
               <el-option
@@ -72,78 +72,51 @@
             @click="handleJoinClassroom"
             class="join-class"
             :disabled="!joinBtnClickable"
-            >加入课堂</el-button
+            >{{$t('login.login_join_class')}}</el-button
           >
           <!--接入环境-->
           <div class="env">
-            <el-divider>接入环境</el-divider>
+            <el-divider>{{$t('login.login_access_env')}}</el-divider>
             <el-radio-group v-model="loginForm.env">
-              <el-radio label="home" class="left">中国内地</el-radio>
-              <el-radio label="overseas">海外</el-radio>
+              <el-radio label="home" class="left">{{$t('login.login_mainland_china')}}</el-radio>
+              <el-radio label="overseas">{{$t('login.login_overseas')}}</el-radio>
             </el-radio-group>
-            <p class="env-tip">国内和海外不互通，请确保体验者均连接相同环境</p>
+            <p class="env-tip">{{$t('login.login_interconnected')}}</p>
           </div>
         </div>
       </el-form>
     </div>
-    <el-button class="envbtn" type="text" @click="showEnv = true">设置</el-button>
-    <el-dialog title="设置环境" width="360px" :visible.sync="showEnv">
-      <el-form :model="envForm" label-width="100px" label-position="right">
-        <el-form-item label="白板环境">
-          <el-select v-model="envForm.wb" placeholder="请选择 白板 环境">
-            <el-option label="alpha" value="alpha"></el-option>
-            <el-option label="test" value="test"></el-option>
-            <el-option label="正式" value=""></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="文件环境">
-          <el-select v-model="envForm.docs" placeholder="请选择 文件 环境">
-            <el-option label="测试" value="test"></el-option>
-            <el-option label="正式" value=""></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Go课堂环境">
-          <el-select v-model="envForm.goclass" placeholder="请选择 Go课堂 环境">
-            <el-option label="测试" value="test"></el-option>
-            <el-option label="正式" value=""></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="PPT切页">
-          <el-select v-model="envForm.pptStepMode" placeholder="请选择 切页模式">
-            <el-option label="正常" value="1"></el-option>
-            <el-option label="不切页" value="2"></el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <el-button type="primary" @click="setAllEnv">确定</el-button>
-    </el-dialog>
+    <el-select
+        v-model="zego_locale"
+        :placeholder="$t('login.login_select')"
+        popper-class="zego-locale-list"
+        :popper-append-to-body="false"
+        @change="changeLocale"
+        class="zego-locale"
+      >
+        <template slot="prefix">
+          <div
+              class="prefix-icon"
+              v-html="require('../assets/icons/login/language_switch.svg').default"
+            ></div>
+        </template>
+        <el-option label="简体中文" value="zh">
+          <span>简体中文</span>
+          <span class="option-icon" v-html="require('../assets/icons/login/language_check.svg').default"></span>
+        </el-option>
+        <el-option label="English" value="en">
+          <span>English</span>
+          <span class="option-icon" v-html="require('../assets/icons/login/language_check.svg').default"></span>
+        </el-option>
+      </el-select>
   </div>
 </template>
 
 <script>
 import zegoClient from '@/service/zego/zegoClient'
-import { ZEGOENV,APPID } from '@/utils/constants'
+import { ZEGOENV } from '@/utils/constants'
 import { storage, setLoginInfo } from '@/utils/tool'
 import { postRoomHttp, setGoclassEnv } from '@/service/biz/room'
-
-const rules = {
-  roomId: [
-    {
-      required: true,
-      pattern: /^[\d]{1,9}$/,
-      message: '仅支持纯数字，最大9位',
-      trigger: 'change',
-    },
-  ],
-  userName: [
-    {
-      required: true,
-      message: '仅支持汉字，数字，大小写字母，最长30位',
-      pattern: /^[\d\w\u4e00-\u9fa5]{1,30}$/,
-      trigger: 'change',
-    },
-  ],
-}
 
 export default {
   name: 'Login',
@@ -158,27 +131,45 @@ export default {
         classScene: 1,
         role: 1,
       },
-      rules,
+      rules: {
+        roomId: [
+          {
+            required: true,
+            pattern: /^[\d]{1,9}$/,
+            message: this.$t('login.login_supports_pure_digits'),
+            trigger: 'change',
+          },
+        ],
+        userName: [
+          {
+            required: true,
+            message: this.$t('login.login_supports_characters_number_uppercase_letter'),
+            pattern: /^[\d\w\u4e00-\u9fa5]{1,30}$/,
+            trigger: 'change',
+          },
+        ],
+      },
       classOptions: [
         {
           value: 1,
-          label: '小班课',
+          label: this.$t('login.login_small_class')
         },
         {
           value: 2,
-          label: '大班课',
-        },
+          label: this.$t('login.login_large_class')
+        }
       ],
       roleOptions: [
         {
           value: 1,
-          label: '老师',
+          label: this.$t('login.login_teacher')
         },
         {
           value: 2,
-          label: '学生',
+          label: this.$t('login.login_student')
         },
       ],
+      zego_locale: 'zh'
     }
   },
   computed: {
@@ -200,22 +191,14 @@ export default {
       handler(newValue) {
         setLoginInfo(newValue)
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   mounted() {
     zegoClient.setState({ isInit: false })
     this.initParams()
   },
   methods: {
-    showTip(){
-      if (this.loginForm.classScene == 2 && APPID.home == 0) {
-        this.$alert('演示项目仅提供小班课场景，即构官网可在线体验大班课场景。本地运行体验大班课需申请appID，如需帮助可联系技术支持。', '提示', {
-            confirmButtonText: '确定'
-          });
-        return true
-        }
-    },
     initParams() {
       const loginInfo = storage.get('loginInfo')
       this.loginForm.roomId = this.$route.query.roomId || loginInfo?.roomId || ''
@@ -223,10 +206,11 @@ export default {
       this.loginForm.userName = loginInfo?.userName || ''
       this.loginForm.role = loginInfo?.role || 1
       this.loginForm.classScene = storage.get('zego_room_type') || 1
+      const zego_locale = sessionStorage.getItem('zego_locale') || 'zh'
+      console.warn(zego_locale)
+      this.zego_locale = zego_locale
     },
     handleJoinClassroom(e) {
-      if(this.showTip()) return
-      
       e.preventDefault()
       this.$refs.loginForm.validate(async (valid) => {
         if (!valid) return
@@ -238,7 +222,7 @@ export default {
           room_id: roomId,
           nick_name: userName,
           role: role,
-          room_type: classScene,
+          room_type: classScene
         }
         // 设置后台环境
         setGoclassEnv(env)
@@ -253,16 +237,15 @@ export default {
         }
       })
     },
-    setAllEnv() {
-      sessionStorage.setItem('zegoenv', JSON.stringify(this.envForm))
-      this.showEnv = false
-      window.location.reload()
-    },
     setRoomType() {
       sessionStorage.setItem('zego_room_type', JSON.stringify(this.loginForm.classScene))
       window.location.reload()
     },
-  },
+    changeLocale(){
+      sessionStorage.setItem('zego_locale',this.zego_locale)
+      window.location.reload()
+    }
+  }
 }
 </script>
 
@@ -461,8 +444,68 @@ export default {
   }
 
   .envbtn {
-    float: right;
+    float: left;
     color: transparent;
+  }
+  .zego-locale{
+    float: right;
+    margin: 24px 42px;
+    .el-input{
+      @include wh(108px,30px);
+      input{
+        @include wh(100%,100%);
+        background-color: #f4f5f8;
+        @include sc(14px, #585c62);
+        border:none
+      }
+      :hover{
+        background-color: #ededed;
+      }
+    }
+    .el-input__prefix{
+      top: 6px;
+      @include wh(18px,18px);
+    }
+    .el-input--prefix .el-input__inner {
+        padding-right: 32px;
+    }
+    .el-input__suffix{
+      @include wh(10px,10px);
+      right: 6px;
+      top: 10px;
+      i.el-select__caret { 
+        @include wh(100%,100%);
+        appearance:none;
+        -moz-appearance:none;
+        -webkit-appearance:none;
+        background: url("../assets/icons/login/language_drop-down.png") no-repeat scroll right center transparent; 
+        background-size: 10px 10px;
+      } 
+    .el-icon-arrow-up:before {
+        content: '';
+      }
+    }
+    .el-input--suffix .el-input__inner {
+      padding-right: 16px;
+    }
+  }
+  .zego-locale-list {
+    .el-select-dropdown__item{
+      display: flex;
+      justify-content: space-between;
+      padding: 0 12px;
+      text-align: left;
+    }
+    .el-select-dropdown__item.selected{
+      color: #0f0f0f;
+      font-weight: normal;
+    }
+  }
+  .zego-locale-list .el-select-dropdown__item.selected {
+    .option-icon{
+      display: inline-block;
+      @include wh(10px, 10px);
+    }
   }
 }
 </style>

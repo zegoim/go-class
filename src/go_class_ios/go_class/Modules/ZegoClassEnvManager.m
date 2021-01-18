@@ -10,7 +10,7 @@
 #define Zego_Env_DocsSeviceEnv @"Zego_Env_DocsSeviceEnv"
 
 #define Zego_Test_pptStepDefaultMode @"Zego_Test_pptStepDefaultMode"
-
+#define Zego_Env_Language_Chinese @"Zego_Env_Language_Chinese"
 #import "ZegoClassEnvManager.h"
 
 @implementation ZegoClassEnvManager
@@ -29,8 +29,17 @@
         _roomSeviceTestEnv = [[NSUserDefaults standardUserDefaults] boolForKey:Zego_Env_RoomSeviceEnv];
         _docsSeviceTestEnv = [[NSUserDefaults standardUserDefaults] boolForKey:Zego_Env_DocsSeviceEnv];
         _pptStepDefaultMode = [[NSUserDefaults standardUserDefaults] boolForKey:Zego_Test_pptStepDefaultMode];
+        NSString *isChinese = [[NSUserDefaults standardUserDefaults] objectForKey:Zego_Env_Language_Chinese];
+        _isChinese = isChinese?[isChinese isEqual:@"YES"]:YES;
     }
     return self;
+}
+
+- (void)setNomalEnv {
+    [self setBusinessTestEnv:NO];
+    [self setRoomSeviceTestEnv:NO];
+    [self setDocsSeviceTestEnv:YES];
+    [self setPptStepDefaultMode:YES];
 }
 
 - (void)setBusinessTestEnv:(BOOL)businessEnv {
@@ -51,5 +60,10 @@
 - (void)setPptStepDefaultMode:(BOOL)pptStepDefaultMode {
     _pptStepDefaultMode = pptStepDefaultMode;
     [[NSUserDefaults standardUserDefaults] setBool:pptStepDefaultMode forKey:Zego_Test_pptStepDefaultMode];
+}
+
+- (void)setIsChinese:(BOOL)isChinese {
+    _isChinese = isChinese;
+    [[NSUserDefaults standardUserDefaults] setObject:isChinese?@"YES":@"NO" forKey:Zego_Env_Language_Chinese];
 }
 @end

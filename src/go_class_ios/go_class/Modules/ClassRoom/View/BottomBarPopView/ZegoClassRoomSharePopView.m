@@ -7,9 +7,11 @@
 //
 
 #import "ZegoClassRoomSharePopView.h"
-
+#import "NSString+ZegoExtension.h"
 @interface ZegoClassRoomSharePopView ()
 @property (strong, nonatomic) IBOutlet ZegoClassRoomSharePopView *view;
+@property (weak, nonatomic) IBOutlet UILabel *whiteboardLabel;
+@property (weak, nonatomic) IBOutlet UILabel *fileLabel;
 
 @end
 
@@ -19,6 +21,8 @@
     if (self = [super initWithFrame:frame]) {
         [[NSBundle mainBundle] loadNibNamed:@"ZegoClassRoomSharePopView" owner:self options:nil];
         [self addSubview:self.view];
+        self.whiteboardLabel.text = [NSString zego_localizedString:@"room_controller_whiteboard"];
+        self.fileLabel.text = [NSString zego_localizedString:@"room_controller_docs"];
     }
     
     return self;

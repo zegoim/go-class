@@ -11,7 +11,7 @@
 #import "ZegoChatModel.h"
 #import "UIColor+ZegoExtension.h"
 #import <Masonry/Masonry.h>
-
+#import "NSString+ZegoExtension.h"
 @interface ZegoChatTable ()<UITableViewDelegate,UITableViewDataSource>
 
 @property (nonatomic,strong)UITableView *tableView;
@@ -102,7 +102,7 @@
     UIView *headView = [[UIView alloc]init];
     headView.backgroundColor = [UIColor whiteColor];
     UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, self.frame.size.width, 25)];
-    titleLabel.text = @"讨论";
+    titleLabel.text = [NSString zego_localizedString:@"room_im_discuss"];
     [titleLabel setTextAlignment:NSTextAlignmentCenter];
     [titleLabel setFont:[UIFont systemFontOfSize:10]];
     [headView addSubview:titleLabel];
@@ -143,7 +143,7 @@
     if (!_bottomView) {
         _bottomView = [[UIView alloc]initWithFrame:CGRectZero];
         _textView = [[UITextView alloc]initWithFrame:CGRectZero];
-        _textView.text = @"说点什么吧~";
+        _textView.text = [NSString zego_localizedString:@"room_im_say_something"];
         _textView.textContainerInset = UIEdgeInsetsMake(9.5, 5, 0, 0);
         _textView.textColor = UIColorHex(#585c62);
         _textView.font = [UIFont systemFontOfSize:10];

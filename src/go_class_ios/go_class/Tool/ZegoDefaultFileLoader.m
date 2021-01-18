@@ -13,9 +13,13 @@
 #import <ZegoWhiteboardView/ZegoWhiteboardView.h>
 #endif
 #import "ZegoDocsViewDependency.h"
+#import "ZegoAuthConstants.h"
 
 #import <AFNetworking/AFNetworking.h>
 #import <YYModel/YYModel.h>
+
+//文件列表获取地址
+static NSString *kZegoFileListServerHost = @"https://storage.zego.im/goclass/config_demo.json";
 
 @interface ZegoDefaultFileLoader ()
 @property (nonatomic, strong) AFHTTPSessionManager *httpManager;
@@ -37,9 +41,9 @@
 
 - (void)loadFileListWithEnv:(BOOL)isTestEnv complete:(void (^)(NSArray<ZegoFileInfoModel *> * __nullable, NSError * _Nullable))complete {
     
-    [self.httpManager GET:@"http://zego-public.oss-cn-shanghai.aliyuncs.com/goclass/config.json" parameters:nil headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        NSDictionary *responseDict = (NSDictionary *)responseObject;
+    [self.httpManager GET:kZegoFileListServerHost parameters:nil headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         NSArray *files = nil;
+        NSDictionary *responseDict = (NSDictionary *)responseObject;
         if (isTestEnv) {
             files = responseDict[@"docs_test"];
         }else {

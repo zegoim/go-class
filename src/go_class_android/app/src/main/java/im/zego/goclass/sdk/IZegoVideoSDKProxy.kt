@@ -2,6 +2,7 @@ package im.zego.goclass.sdk
 
 import android.app.Application
 import android.view.TextureView
+import com.zego.zegoliveroom.entity.ZegoRoomExtraInfo
 import im.zego.goclass.entity.ZegoClassUser
 import im.zego.goclass.entity.ChatMsg
 import im.zego.goclass.entity.ZegoStream
@@ -73,21 +74,12 @@ interface IZegoVideoSDKProxy {
 
     fun requireHardwareEncoder(require: Boolean)
 
-    fun sendReliableMessage(
+    fun setRoomExtraInfo(
         roomID: String,
         type: String,
         content: String,
-        seq: Long,
-        callback: IZegoSendReliableMsgCallback?
+        callback: IZegoSetExtraInfoCallback?
     )
-
-    fun getReliableMessage(
-        roomID: String,
-        messageType: String,
-        callback: IZegoGetReliableMsgCallback?
-    )
-
-    fun setReliableMessageCallback(listener: IZegoReliableMsgListener?)
 
     fun setClassUserListener(userListener: IClassUserListener?)
 
@@ -102,6 +94,8 @@ interface IZegoVideoSDKProxy {
     fun setLocalDeviceEventCallback(deviceEventCallback: ILocalDeviceErrorListener?)
 
     fun setCustomCommandListener(listener: ICustomCommandListener?)
+
+    fun setRoomExtraInfoUpdateListener(listener: IRoomExtraInfoUpdateListener?)
 
     fun version(): String
 
@@ -152,6 +146,10 @@ interface ICustomCommandListener {
     fun onRecvCustomCommand(userID: String, userName: String, content: String, roomID: String)
 }
 
+interface IRoomExtraInfoUpdateListener {
+    fun onRoomExtraInfoUpdate(roomID: String, roomExtraInfo: ZegoRoomExtraInfo)
+}
+
 interface IStreamPlayCallback {
     fun onPlayStateUpdate(errorCode: Int, streamID: String)
 }
@@ -170,27 +168,8 @@ interface IZegoRoomStateListener {
     fun connecting(errorCode: Int, roomID: String)
 }
 
-interface IZegoReliableMsgListener {
-    fun onRecvReliableMessage(roomID: String, msgType: String, content: String, latestSeq: Long)
-    fun onRoomUpdateReliableMessageInfo(roomID: String, msgType: String, latestSeq: Long)
-}
-
-interface IZegoSendReliableMsgCallback {
-    fun onSendReliableMessage(
-        errorCode: Int,
-        roomID: String,
-        type: String,
-        latestSeq: Long
-    )
-}
-
-interface IZegoGetReliableMsgCallback {
-    fun onGetReliableMessage(
-        errorCode: Int,
-        roomID: String,
-        latestSeq: Long,
-        content: String?
-    )
+interface IZegoSetExtraInfoCallback {
+    fun onSetRoomExtraInfo(errorCode: Int)
 }
 
 interface IZegoSendMsgCallback {

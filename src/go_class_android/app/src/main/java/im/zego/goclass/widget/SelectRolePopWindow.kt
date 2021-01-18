@@ -19,7 +19,7 @@ class SelectRolePopWindow(context: Context, selectRole: String) : BasePopWindow(
     private val mContext = context;
 
     // 当前所选角色
-    private var mSelectRole = context.getString(R.string.join_role_teacher)
+    private var mSelectRole = context.getString(R.string.login_teacher)
 
     init {
         width = ViewGroup.LayoutParams.MATCH_PARENT
@@ -30,8 +30,8 @@ class SelectRolePopWindow(context: Context, selectRole: String) : BasePopWindow(
 
         contentView.role_list.let {
             val list = listOf(
-                context.getString(R.string.join_role_teacher),
-                context.getString(R.string.join_role_student)
+                context.getString(R.string.login_teacher),
+                context.getString(R.string.login_student)
             )
             it.data = list
             it.isResetSelectedPosition = false
@@ -53,7 +53,7 @@ class SelectRolePopWindow(context: Context, selectRole: String) : BasePopWindow(
     fun show(anchor: View) {
         val location = IntArray(2)
         anchor.getLocationOnScreen(location)
-        mSelectRole = mContext.getString(R.string.join_role_teacher)
+        mSelectRole = mContext.getString(R.string.login_teacher)
         super.showAtLocation(anchor, Gravity.BOTTOM, 0, 0)
     }
 

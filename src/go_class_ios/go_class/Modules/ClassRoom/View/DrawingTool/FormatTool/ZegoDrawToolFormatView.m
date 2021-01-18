@@ -10,7 +10,7 @@
 #import "ZegoUIConstant.h"
 #import "UIColor+ZegoExtension.h"
 #import "RadioButton.h"
-
+#import "NSString+ZegoExtension.h"
 @interface ZegoDrawToolFormatView ()<UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
 
 @property (copy, nonatomic) NSArray<ZegoDrawToolBrush *> *brushes;
@@ -289,13 +289,13 @@
     header.font = [UIFont systemFontOfSize:12];
     header.textColor = kTextColor1;
      if (indexPath.section == 0) {
-        header.text = @"字体";
+        header.text = [NSString zego_localizedString:@"wb_tool_font"];
      } else if (indexPath.section == 1){
-         header.text = @"字号大小";
+         header.text = [NSString zego_localizedString:@"wb_tool_font_size"];
      } else if (indexPath.section == 2) {
-        header.text = @"笔触&边框粗细";
+        header.text = [NSString zego_localizedString:@"wb_tool_pen_border_thickness"];
      } else {
-         header.text = @"颜色";
+         header.text = [NSString zego_localizedString:@"wb_tool_color"];
      }
      if (indexPath.section == 0) {
 //        header.frame = CGRectMake(0, 0, collectionView.bounds.size.width, 12);

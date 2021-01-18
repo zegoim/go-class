@@ -1,6 +1,3 @@
-<!--
- * @Description: 底部工具栏（创建白板、文件、成员列表和设备管理等）
--->
 <template>
   <div class="room-controller-feature">
     <div ref="analogTrigger" />
@@ -26,14 +23,14 @@
                 class="si-icon"
                 v-html="require('../../assets/icons/room/share-drawing.svg').default"
               ></div>
-              <div class="si-name">白板</div>
+              <div class="si-name">{{$t("room.room_controller_​whiteboard")}}</div>
             </div>
             <div class="share-item" @click="handleFileListDialog">
               <div
                 class="si-icon"
                 v-html="require('../../assets/icons/room/share-file.svg').default"
               ></div>
-              <div class="si-name">文件</div>
+              <div class="si-name">{{$t('room.room_controller_​docs')}}</div>
             </div>
           </div>
           <el-button slot="reference">
@@ -102,7 +99,7 @@
           class="button-icon"
           v-html="require('../../assets/icons/room/sign_out.svg').default"
         ></span>
-        <span>退出</span>
+        <span>{{$t('room.room_end_sign_out')}}</span>
       </button>
     </div>
     <room-dialog-members
@@ -130,93 +127,6 @@ import { debounce, storage } from '@/utils/tool'
 import { roomStore } from '@/service/biz/room'
 import { ROLE_STUDENT, ROLE_TEACHER, STATE_CLOSE, STATE_OPEN } from '@/utils/constants'
 
-const smallClassControlBtnList = [
-  {
-    name: 'camera',
-    cnName: '摄像头',
-    imgSrc: {
-      default: require('../../assets/icons/room/camera_open.svg').default,
-      open: require('../../assets/icons/room/camera_open.svg').default,
-      close: require('../../assets/icons/room/camera_close.svg').default,
-      warn: require('../../assets/icons/room/camera_warning.svg').default
-    },
-    canSpread: true,
-    noAuth: true
-  },
-  {
-    name: 'mic',
-    cnName: '麦克风',
-    imgSrc: {
-      default: require('../../assets/icons/room/microphone_open.svg').default,
-      open: require('../../assets/icons/room/microphone_open.svg').default,
-      close: require('../../assets/icons/room/microphone_close.svg').default,
-      warn: require('../../assets/icons/room/microphone_warning.svg').default
-    },
-    canSpread: true,
-    noAuth: true
-  },
-  {
-    name: 'speaker',
-    cnName: '扬声器',
-    imgSrc: {
-      default: require('../../assets/icons/room/sound_open.svg').default,
-      open: require('../../assets/icons/room/sound_open.svg').default,
-      close: require('../../assets/icons/room/sound_close.svg').default
-    },
-    canSpread: false,
-    isOpen: true
-  },
-  {
-    name: 'share',
-    cnName: '共享',
-    imgSrc: {
-      default: require('../../assets/icons/room/share.svg').default
-    }
-  },
-  {
-    name: 'invite',
-    cnName: '邀请',
-    imgSrc: {
-      default: require('../../assets/icons/room/invite.svg').default
-    }
-  },
-  {
-    name: 'member',
-    cnName: '成员',
-    imgSrc: {
-      default: require('../../assets/icons/room/member.svg').default
-    }
-  }
-]
-
-const largeClassControlBtnList = [
-  {
-    name: 'speaker',
-    cnName: '扬声器',
-    imgSrc: {
-      default: require('../../assets/icons/room/sound_open.svg').default,
-      open: require('../../assets/icons/room/sound_open.svg').default,
-      close: require('../../assets/icons/room/sound_close.svg').default
-    },
-    canSpread: false,
-    isOpen: true
-  },
-  {
-    name: 'invite',
-    cnName: '邀请',
-    imgSrc: {
-      default: require('../../assets/icons/room/invite.svg').default
-    }
-  },
-  {
-    name: 'member',
-    cnName: '成员',
-    imgSrc: {
-      default: require('../../assets/icons/room/member.svg').default
-    }
-  }
-]
-
 export default {
   name: 'RoomControllerFeature',
   components: {
@@ -228,6 +138,90 @@ export default {
   data() {
     return {
       controlBtnList:[],
+      smallClassControlBtnList:[
+        {
+          name: 'camera',
+          cnName: this.$t("room.room_controller_camera"),
+          imgSrc: {
+            default: require('../../assets/icons/room/camera_open.svg').default,
+            open: require('../../assets/icons/room/camera_open.svg').default,
+            close: require('../../assets/icons/room/camera_close.svg').default,
+            warn: require('../../assets/icons/room/camera_warning.svg').default
+          },
+          canSpread: true,
+          noAuth: true
+        },
+        {
+          name: 'mic',
+          cnName: this.$t("room.room_controller_mic"),
+          imgSrc: {
+            default: require('../../assets/icons/room/microphone_open.svg').default,
+            open: require('../../assets/icons/room/microphone_open.svg').default,
+            close: require('../../assets/icons/room/microphone_close.svg').default,
+            warn: require('../../assets/icons/room/microphone_warning.svg').default
+          },
+          canSpread: true,
+          noAuth: true
+        },
+        {
+          name: 'speaker',
+          cnName: this.$t("room.room_controller_speaker"),
+          imgSrc: {
+            default: require('../../assets/icons/room/sound_open.svg').default,
+            open: require('../../assets/icons/room/sound_open.svg').default,
+            close: require('../../assets/icons/room/sound_close.svg').default
+          },
+          canSpread: false,
+          isOpen: true
+        },
+        {
+          name: 'share',
+          cnName: this.$t("room.room_controller_share"),
+          imgSrc: {
+            default: require('../../assets/icons/room/share.svg').default
+          }
+        },
+        {
+          name: 'invite',
+          cnName: this.$t("room.room_controller_​invitation"),
+          imgSrc: {
+            default: require('../../assets/icons/room/invite.svg').default
+          }
+        },
+        {
+          name: 'member',
+          cnName: this.$t("room.room_controller_​member"),
+          imgSrc: {
+            default: require('../../assets/icons/room/member.svg').default
+          }
+        }
+      ],
+      largeClassControlBtnList:[
+      {
+        name: 'speaker',
+        cnName: this.$t("room.room_controller_speaker"),
+        imgSrc: {
+          default: require('../../assets/icons/room/sound_open.svg').default,
+          open: require('../../assets/icons/room/sound_open.svg').default,
+          close: require('../../assets/icons/room/sound_close.svg').default
+        },
+        canSpread: false,
+        isOpen: true
+      },
+      {
+        name: 'invite',
+        cnName: this.$t("room.room_controller_​invitation"),
+        imgSrc: {
+          default: require('../../assets/icons/room/invite.svg').default
+        }
+      },
+      {
+        name: 'member',
+        cnName: this.$t("room.room_controller_​member"),
+        imgSrc: {
+          default: require('../../assets/icons/room/member.svg').default
+        }
+      }],
       deviceInfo: {
         camera: [],
         mic: [],
@@ -262,9 +256,9 @@ export default {
   mounted() {
     // 业务逻辑：如果是学生进入大班课场景，底部工具栏控制显示并且不启用设备推流
     if(this.role === 2 && this.classScene === 2){
-      this.controlBtnList = largeClassControlBtnList
+      this.controlBtnList = this.largeClassControlBtnList
     } else {
-      this.controlBtnList = smallClassControlBtnList
+      this.controlBtnList = this.smallClassControlBtnList
       this.initDevices()
       this.tryJionLive()
       this.$bus.$on('userStateChange', this.tryJionLive)
@@ -362,7 +356,7 @@ export default {
     getUserMediaAuth(num, showErrorToast = true, cb) {
       if (num > 1) {
         if (num == 3 && !this.roomAuth.share) {
-          this.showToast('老师还未允许你使用共享功能')
+          this.showToast(this.$t("wb.wb_tip_not_allowed_share"))
         }
         return
       }
@@ -387,7 +381,7 @@ export default {
           } else if (num === 1) {
             stream.getAudioTracks().forEach(track => track.stop())
           }
-          console.warn(`${this.controlBtnList[num].cnName}权限获取成功`)
+          console.warn(this.controlBtnList[num].cnName + this.$t('room.room_permissions_obtained'))
           // this.initDevices()
           cb && cb()
         },
@@ -398,7 +392,7 @@ export default {
             this.roomAuth.mic = STATE_CLOSE
           }
           console.warn('摄像头麦克风权限获取错误', error)
-          if (showErrorToast) this.showToast(`请在设置中开启${this.controlBtnList[num].cnName}权限`)
+          if (showErrorToast) this.showToast(this.$t("room.room_enable_setting") + this.controlBtnList[num].cnName + this.$t("room.room_permissions") )
         }
       )
     },
@@ -453,7 +447,7 @@ export default {
             camera: STATE_CLOSE,
             mic: STATE_CLOSE
           })
-          return this.showToast('演示课堂最多开启3路学生音视频')
+          return this.showToast(this.$t('room.room_tip_channels'))
         }
       }
 

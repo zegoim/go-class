@@ -8,6 +8,8 @@
 
 #import "ZegoStreamTableViewCell.h"
 #import "UIColor+ZegoExtension.h"
+#import "NSString+ZegoExtension.h"
+
 @interface ZegoStreamTableViewCell ()
 @property (nonatomic, strong) UILabel *roleTypeLabel;
 @property (nonatomic, strong) UILabel *nameLabel;
@@ -112,7 +114,7 @@
         self.fileShareIV.hidden = YES;
         self.micIV.hidden = YES;
         self.cameraIV.hidden = YES;
-        self.tipLabel.text = @"等待老师加入";
+        self.tipLabel.text = [NSString zego_localizedString:@"room_tip_wait_for_teacher"];
         
     } else {
         self.fileShareIV.hidden = NO;
@@ -124,7 +126,7 @@
     if (model.userStatusModel.role == ZegoUserRoleTypeTeacher) {
         self.placeHolderIV.image = [UIImage imageNamed:@"teacher"];
         self.roleTypeLabel.hidden = NO;
-        self.roleTypeLabel.text = @"老师";
+        self.roleTypeLabel.text = [NSString zego_localizedString:@"login_teacher"];
         self.fileShareIV.hidden = YES;
     } else {
         self.placeHolderIV.image = [UIImage imageNamed:@"student"];

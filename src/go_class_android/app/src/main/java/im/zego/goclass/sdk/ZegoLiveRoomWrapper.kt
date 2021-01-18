@@ -1,11 +1,12 @@
 package im.zego.goclass.sdk
 
+
 import android.app.Application
 import android.util.Log
 import android.view.TextureView
 import com.zego.zegoliveroom.ZegoLiveRoom
 import com.zego.zegoliveroom.ZegoLiveRoom.SDKContextEx
-import com.zego.zegoliveroom.ZegoLiveRoomReliableMessage
+import com.zego.zegoliveroom.ZegoLiveRoomExtraInfo
 import com.zego.zegoliveroom.callback.*
 import com.zego.zegoliveroom.callback.im.IZegoIMCallback
 import com.zego.zegoliveroom.constants.ZegoAvConfig
@@ -33,10 +34,10 @@ class ZegoLiveRoomWrapper : IZegoVideoSDKProxy {
     private var streamCountListener: IStreamCountListener? = null
     private var remoteDeviceStateListener: IRemoteDeviceStateListener? = null
     private var localDeviceErrorListener: ILocalDeviceErrorListener? = null
-    private var reliableMsgListener: IZegoReliableMsgListener? = null
+    private var roomExtraInfoUpdateListener: IRoomExtraInfoUpdateListener? = null
     private var customCommandListener: ICustomCommandListener? = null
-    private var zegoBigRoomMsgListener :IZegoMsgListener? = null
-    private var zegoMsgListener :IZegoMsgListener? = null
+    private var zegoBigRoomMsgListener: IZegoMsgListener? = null
+    private var zegoMsgListener: IZegoMsgListener? = null
 
     override fun initSDK(
         application: Application,
@@ -230,52 +231,21 @@ class ZegoLiveRoomWrapper : IZegoVideoSDKProxy {
         ZegoLiveRoom.requireHardwareEncoder(require)
     }
 
-    override fun sendReliableMessage(
+    override fun setRoomExtraInfo(
         roomID: String,
         type: String,
         content: String,
-        seq: Long,
-        callback: IZegoSendReliableMsgCallback?,
+        callback: IZegoSetExtraInfoCallback?,
     ) {
-        val result = ZegoLiveRoomReliableMessage.getInstance().sendReliableMessage(
-            content, type, seq
-        ) { errorCode, _, _, latestSeq ->
-            Log.d(
-                TAG, "sendReliableMessage,seq:${seq},key:${type},content:${content}," +
-                        "returned errorCode:${errorCode},latestSeq:${latestSeq}"
-            )
-            callback?.onSendReliableMessage(errorCode, roomID, type, latestSeq)
-        }
-        if (!result) {
-            callback?.onSendReliableMessage(-1, roomID, type, 0)
-        }
-    }
-
-    override fun getReliableMessage(
-        roomID: String,
-        messageType: String,
-        callback: IZegoGetReliableMsgCallback?,
-    ) {
-        val result = ZegoLiveRoomReliableMessage.getInstance().getReliableMessage(
-            arrayOf(messageType)
-        ) { errorCode, _, messages: Array<ZegoReliableMessage>? ->
-            val firstOrNull = messages?.firstOrNull { it.type == messageType }
-            Log.d(TAG, "getReliableMessage,errorCode:${errorCode}，message:${firstOrNull}")
-            if (firstOrNull != null) {
-                callback?.onGetReliableMessage(
-                    errorCode,
-                    roomID,
-                    firstOrNull.latestSeq,
-                    firstOrNull.content
+        ZegoLiveRoomExtraInfo.getInstance()
+            .setRoomExtraInfo(type, content
+            ) { errorCode, roomId, key ->
+                Log.d(
+                    TAG,
+                    "onSetRoomExtraInfo,errorCode:${errorCode},roomId:${roomId},key:${key},"
                 )
-            } else {
-                callback?.onGetReliableMessage(errorCode, roomID, 0, "")
+                callback?.onSetRoomExtraInfo(errorCode)
             }
-
-        }
-        if (!result) {
-            callback?.onGetReliableMessage(-1, roomID, 0, "")
-        }
     }
 
     override fun setClassUserListener(userListener: IClassUserListener?) {
@@ -304,8 +274,8 @@ class ZegoLiveRoomWrapper : IZegoVideoSDKProxy {
         this.customCommandListener = listener
     }
 
-    override fun setReliableMessageCallback(listener: IZegoReliableMsgListener?) {
-        reliableMsgListener = listener
+    override fun setRoomExtraInfoUpdateListener(listener: IRoomExtraInfoUpdateListener?) {
+        this.roomExtraInfoUpdateListener = listener
     }
 
     private fun initSDKCallbacks() {
@@ -491,6 +461,7 @@ class ZegoLiveRoomWrapper : IZegoVideoSDKProxy {
             }
 
             override fun onRoomInfoUpdated(p0: ZegoRoomInfo?, p1: String?) {
+                Log.d(TAG, "onRoomInfoUpdated:")
             }
 
             override fun onKickOut(reason: Int, roomID: String, customReason: String) {
@@ -547,37 +518,16 @@ class ZegoLiveRoomWrapper : IZegoVideoSDKProxy {
             )
         }
 
-        ZegoLiveRoomReliableMessage.getInstance().setReliableMessageCallback(object :
-            IZegoReliableMessageCallback {
-            override fun onRecvReliableMessage(roomID: String, message: ZegoReliableMessage) {
-                Log.d(
-                    TAG,
-                    "onRecvReliableMessage,key:${message.type},latestSeq:${message.latestSeq}"
-                )
-                reliableMsgListener?.onRecvReliableMessage(
-                    roomID,
-                    message.type,
-                    message.content,
-                    message.latestSeq
-                )
+        // 设置房间额外信息的回调 登录房间前调用
+        ZegoLiveRoomExtraInfo.getInstance().setRoomExtraInfoCallback { roomId, extraInfoArray ->
+            Log.d(
+                TAG,
+                "onRoomExtraInfoUpdated,roomId:${roomId}，extraInfoArray:${extraInfoArray}"
+            )
+            if (extraInfoArray.isNotEmpty()) {
+                roomExtraInfoUpdateListener?.onRoomExtraInfoUpdate(roomId, extraInfoArray[0])
             }
-
-            override fun onUpdateReliableMessageInfo(
-                roomID: String,
-                messageInfoList: Array<out ZegoReliableMessageInfo>,
-            ) {
-                messageInfoList.forEach {
-                    Log.d(
-                        TAG,
-                        "onUpdateReliableMessageInfo,key:${it.type},latestSeq:${it.latestSeq}"
-                    )
-                    reliableMsgListener?.onRoomUpdateReliableMessageInfo(
-                        roomID, it.type, it.latestSeq
-                    )
-                }
-            }
-
-        })
+        }
 
         zegoLiveRoomSDK.setZegoLogInfoCallback(object : IZegoLogInfoCallback {
             override fun onLogWillOverwrite() {
@@ -632,3 +582,4 @@ class ZegoLiveRoomWrapper : IZegoVideoSDKProxy {
         zegoMsgListener = listener
     }
 }
+

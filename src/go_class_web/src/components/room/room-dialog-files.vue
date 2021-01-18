@@ -4,7 +4,7 @@
 <template>
   <div class="file-list-dialog">
     <el-dialog
-      title="选择文件"
+      :title="$t('room.room_file_select_file')"
       :visible.sync="filesListDialogShow"
       width="460px"
       height="314px"
@@ -19,15 +19,18 @@
             @click="createDocView(item.id)"
           >
             <div :class="['state', item.isDynamic && 'dynamic']">
-              {{ item.isDynamic ? '动态' : '静态' }}
+              {{ item.isDynamic ? $t("room.room_file_dynamic") : $t("room.room_file_static_file") }}
             </div>
+            <!-- <span :class="['state', item.isDynamic && 'dynamic']">
+              {{ item.isDynamic ? $t("room.room_file_dynamic") : $t("room.room_file_static_file") }}
+            </span> -->
             {{ item.name }}
           </li>
         </ul>
         <div class="tips">
           <div style="width:400px;border-top:1px solid #f4f5f8">
-            <span class="static">静态：无法展示PPT动画</span>
-            <span class="dynamic">动态：可展示PPT动画</span>
+            <span class="static">{{$t('room.room_file_static_animation_displayed')}}</span>
+            <span class="dynamic">{{$t('room.room_file_dynamic_animation_show')}}</span>
           </div>
         </div>
       </div>
@@ -144,6 +147,7 @@ export default {
     }
     .file-item .state {
       display: inline-block;
+      // padding: 0 5px;
       width: 28px;
       height: 16px;
       border-radius: 4px;

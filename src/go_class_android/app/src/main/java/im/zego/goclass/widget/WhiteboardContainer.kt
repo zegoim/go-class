@@ -299,7 +299,7 @@ class WhiteboardContainer : FrameLayout {
             val whiteboardViewHolder = ZegoWhiteboardViewHolder(context)
             val userName = ClassRoomManager.me().userName
 
-            val whiteboardName = "${userName}创建的白板${ZegoSDKManager.whiteboardNameIndex}"
+            val whiteboardName = context.getString(R.string.create_board, userName, ZegoSDKManager.whiteboardNameIndex.toString())
             ZegoSDKManager.whiteboardNameIndex += 1
             whiteboardViewHolder.createPureWhiteboardView(
                 wbAspectWidth * 5, wbAspectHeight, 5, whiteboardName
@@ -310,7 +310,7 @@ class WhiteboardContainer : FrameLayout {
                 requestResult.invoke(errorCode, whiteboardViewHolder)
             }
         } else {
-            Toast.makeText(context, context.getString(R.string.max_wb_tips), Toast.LENGTH_SHORT)
+            Toast.makeText(context, context.getString(R.string.wb_tip_exceed_max_number_wb), Toast.LENGTH_SHORT)
                 .show()
         }
 
@@ -346,7 +346,7 @@ class WhiteboardContainer : FrameLayout {
                             } else {
                                 Toast.makeText(
                                     context,
-                                    "同步当前白板失败，errorCode = $currentResult",
+                                    context.getString(R.string.wb_tip_failed_sync_whiteboard, currentResult),
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
@@ -356,11 +356,11 @@ class WhiteboardContainer : FrameLayout {
                         removeView(holder)
                         if (!viewHolder.isDocsViewLoadSuccessed()) {
                             // 加载文件失败
-                            Toast.makeText(context, "加载文件白板失败，错误代码 $errorCode", Toast.LENGTH_LONG)
+                            Toast.makeText(context, context.getString(R.string.wb_tip_failed_load_file_whiteboard, errorCode), Toast.LENGTH_LONG)
                                 .show()
                         } else {
                             // 创建白板失败
-                            Toast.makeText(context, "创建文件白板失败，错误代码 $errorCode", Toast.LENGTH_LONG)
+                            Toast.makeText(context, context.getString(R.string.wb_tip_failed_create_file_whiteboard, errorCode), Toast.LENGTH_LONG)
                                 .show()
                         }
                     }
@@ -368,7 +368,7 @@ class WhiteboardContainer : FrameLayout {
             } else {
                 Toast.makeText(
                     context,
-                    context.getString(R.string.max_file_tips),
+                    context.getString(R.string.wb_tip_exceed_max_number_file),
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -469,7 +469,7 @@ class WhiteboardContainer : FrameLayout {
                 } else {
                     Toast.makeText(
                         context,
-                        "同步当前白板失败，errorCode = $errorCode",
+                        context.getString(R.string.wb_tip_failed_sync_whiteboard, errorCode),
                         Toast.LENGTH_SHORT
                     ).show()
                 }

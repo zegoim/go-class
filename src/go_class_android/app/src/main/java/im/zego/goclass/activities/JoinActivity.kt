@@ -7,10 +7,7 @@ import android.text.InputFilter
 import android.text.Spanned
 import android.util.Log
 import android.view.View
-import im.zego.goclass.CONFERENCE_ID
-import im.zego.goclass.DemoApplication
-import im.zego.goclass.dp2px
-import im.zego.goclass.getRoundRectDrawable
+import im.zego.goclass.*
 import im.zego.goclass.classroom.ClassRoomManager
 import im.zego.goclass.network.ZegoApiConstants
 import im.zego.goclass.sdk.ZegoSDKManager
@@ -18,8 +15,6 @@ import im.zego.goclass.tool.*
 import im.zego.goclass.widget.LoadingDialog
 import im.zego.goclass.widget.SelectRolePopWindow
 import im.zego.goclass.widget.SelectRoomTypePopWindow
-import im.zego.goclass.R
-import im.zego.goclass.debug.DebugActivity
 import kotlinx.android.synthetic.main.activity_join.*
 import java.util.regex.Pattern
 
@@ -53,17 +48,8 @@ class JoinActivity : BaseActivity() {
 
         loadingDialog = LoadingDialog(this, 0.1f)
         initView()
-        initDebugView()
     }
 
-    private fun initDebugView() {
-        if (!DemoApplication.isFinal()) {
-            root_layout.setOnLongClickListener {
-                startActivity(Intent(this, DebugActivity::class.java))
-                true
-            }
-        }
-    }
 
     private fun initView() {
         val radius = dp2px(this, 27.5f)
@@ -100,11 +86,11 @@ class JoinActivity : BaseActivity() {
             val docsInitSuccess = ZegoSDKManager.getInstance().isDocsInitSuccess
             val whiteboardInitSuccess = ZegoSDKManager.getInstance().isWhiteboardInitSuccess
             if (!videoInitSuccess) {
-                ToastUtils.showCenterToast(R.string.join_init_video_failed)
+                ToastUtils.showCenterToast(getString(R.string.join_init_video_failed))
             } else if (!docsInitSuccess) {
-                ToastUtils.showCenterToast(R.string.join_init_docs_failed)
+                ToastUtils.showCenterToast(getString(R.string.join_init_docs_failed))
             } else if (!whiteboardInitSuccess) {
-                ToastUtils.showCenterToast(R.string.join_init_wb_failed)
+                ToastUtils.showCenterToast(getString(R.string.join_init_wb_failed))
             } else {
                 login()
             }
@@ -127,7 +113,7 @@ class JoinActivity : BaseActivity() {
                                 { success ->
                                     Log.i(TAG, "init:$success")
                                     if (!success) {
-                                        ToastUtils.showCenterToast("切换失败")
+                                        ToastUtils.showCenterToast(getString(R.string.wb_tip_switch_failed))
                                     } else {
                                         join_class_type.text = str
                                     }
@@ -155,8 +141,8 @@ class JoinActivity : BaseActivity() {
      */
     private fun getRoleId(): Int {
         return when (join_role.text.toString()) {
-            getString(R.string.join_role_teacher) -> ZegoApiConstants.Role.TEACHER
-            getString(R.string.join_role_student) -> ZegoApiConstants.Role.STUDENT
+            getString(R.string.login_teacher) -> ZegoApiConstants.Role.TEACHER
+            getString(R.string.login_student) -> ZegoApiConstants.Role.STUDENT
             else -> ZegoApiConstants.Role.TEACHER
         }
     }
@@ -166,8 +152,8 @@ class JoinActivity : BaseActivity() {
      */
     private fun getRoomTypeId(roomTypeStr: String): Int {
         return when (roomTypeStr) {
-            getString(R.string.join_large_class) -> ZegoApiConstants.RoomType.LARGE_CLASS
-            getString(R.string.join_mini_class) -> ZegoApiConstants.RoomType.SMALL_CLASS
+            getString(R.string.login_large_class) -> ZegoApiConstants.RoomType.LARGE_CLASS
+            getString(R.string.login_small_class) -> ZegoApiConstants.RoomType.SMALL_CLASS
             else -> ZegoApiConstants.RoomType.SMALL_CLASS
         }
     }
@@ -191,6 +177,8 @@ class JoinActivity : BaseActivity() {
                 SharedPreferencesUtil.setLastJoinID(join_room_id.text.toString())
                 SharedPreferencesUtil.setLastJoinName(join_room_name.text.toString())
                 startActivity(Intent(this, MainActivity::class.java))
+            } else {
+                ToastUtils.showLoginErrorToast(this, stateCode)
             }
             dismissLoadingDialog()
         }
@@ -206,7 +194,7 @@ class JoinActivity : BaseActivity() {
         ) {
             Log.i(TAG, "init:$it")
             if (!it) {
-                ToastUtils.showCenterToast("切换失败")
+                ToastUtils.showCenterToast(getString(R.string.wb_tip_switch_failed))
             }
         }
     }
@@ -227,6 +215,6 @@ class JoinActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy() called")
-        ZegoSDKManager.getInstance().unInitSDKEnvironment()
+//        ZegoSDKManager.getInstance().unInitSDKEnvironment()
     }
 }

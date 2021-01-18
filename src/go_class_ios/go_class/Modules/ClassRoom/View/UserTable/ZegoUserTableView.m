@@ -10,7 +10,7 @@
 #import "ZegoUserTableViewCell.h"
 #import "ZegoUIConstant.h"
 #import "UIColor+ZegoExtension.h"
-
+#import "NSString+ZegoExtension.h"
 @interface ZegoUserTableView ()<UITableViewDelegate, UITableViewDataSource>
 
 @end
@@ -62,7 +62,7 @@
     myLabel.textColor = kTextColor1;
     myLabel.font = kFontTitle15;
     [myLabel setBackgroundColor:[UIColor whiteColor]];
-    [myLabel setText:[NSString stringWithFormat:@"已加入成员(%lu)",(unsigned long)self.roomMemberArray.count]];
+    [myLabel setText:[NSString stringWithFormat:@"%@(%lu)",[NSString zego_localizedString:@"room_member_joined"],(unsigned long)self.roomMemberArray.count]];
     [myHeader addSubview:myLabel];
 
     UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, 59, self.bounds.size.width, kLineWidth)];

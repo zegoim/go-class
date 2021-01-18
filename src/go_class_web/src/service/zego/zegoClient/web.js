@@ -12,7 +12,6 @@ class WebZegoClient extends ZegoClient {
     const { userID } = user
     const { env = 'home' } = this.state
     const { appID, logURL, server, isTestEnv, docsviewAppID } = await this.Config.getParams(env)
-    console.warn('-----env Config-----',{ appID, logURL, server, isTestEnv, docsviewAppID } )
     const zg = new window.ZegoExpressEngine(appID, server)
     const zgDocsClient = new window.ZegoExpressDocs({
       appID: docsviewAppID,
@@ -31,8 +30,6 @@ class WebZegoClient extends ZegoClient {
     logURL && (config.logURL = logURL)
     this.setState({ user })
     zg.setLogConfig(config)
-    // 测试环境中关闭调试模式，否则任何sdk错误均会alert弹出
-    zg.setDebugVerbose(false)
 
     this._docsClient = zgDocsClient
 

@@ -87,7 +87,7 @@ export default {
         let data = {
           userID: userId,
           messageCategory: 2,
-          messageContent: ['加入课堂'],
+          messageContent: [this.$t('room.room_im_join_class')],
           messageState: 1,
           nick_name: userName
         }
@@ -297,7 +297,7 @@ export default {
      */
     async createPushStream(publishOption = {}) {
       console.warn('createPushStream, 开始推流！')
-      const { isVideoOpen, isAudioOpen } = publishOption
+      // const { isVideoOpen, isAudioOpen } = publishOption
       const { camera, microphone } = this.activeDevice
       const option = {
         camera: {
@@ -306,8 +306,8 @@ export default {
           height: 360,
           bitRate: 600,
           frameRate: 15,
-          video: isVideoOpen,
-          audio: isAudioOpen
+          video: true,
+          audio: true
         }
       }
       if (camera) option.camera.videoInput = camera
@@ -352,6 +352,9 @@ export default {
         if (!this.client.localStream) {
           if (this.client.isCreatingStream) return
           this.publishingFlag = flag
+          /**
+           * 单独开启某个设备（摄像头或者麦克风）在创建流的时候摄像头和麦克风状态都必须设置为true，然后再根据设备状态更新流状态
+           */
           await this.createPushStream({ isVideoOpen, isAudioOpen })
           await this.client.express('mutePublishStreamVideo', isSendVideoStream)
           await this.client.express('mutePublishStreamAudio', isSendAudioStream)

@@ -17,6 +17,8 @@ import im.zego.goclass.classroom.ClassRoomManager
 import im.zego.goclass.classroom.ClassUser
 import im.zego.goclass.widget.UserListAdapter.InnerItemOnclickListener
 import im.zego.goclass.R
+import im.zego.goclass.network.ZegoApiErrorCode
+import im.zego.goclass.tool.ToastUtils
 import kotlinx.android.synthetic.main.layout_drawer_right.view.*
 
 class ClassUserListView : RelativeLayout {
@@ -31,7 +33,7 @@ class ClassUserListView : RelativeLayout {
         LayoutInflater.from(context).inflate(R.layout.layout_drawer_right, this, true)
         setBackgroundColor(Color.WHITE)
         right_drawer_title.let {
-            it.text = context.getString(R.string.user_list_title, ClassRoomManager.mRoomUserMap.size)
+            it.text = context.getString(R.string.room_member_joined, ClassRoomManager.mRoomUserMap.size)
             val params = (it.layoutParams as? MarginLayoutParams)
                 ?: MarginLayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
@@ -46,15 +48,36 @@ class ClassUserListView : RelativeLayout {
             it.adapter = userListAdapter
             userListAdapter.setOnInnerItemOnClickListener(object : InnerItemOnclickListener {
                 override fun onMicClick(user: ClassUser) {
-                    ClassRoomManager.setUserMic(user.userId, !user.micOn)
+                    ClassRoomManager.setUserMic(user.userId, !user.micOn) {errorCode ->
+                        ToastUtils.showCenterToast(
+                            ZegoApiErrorCode.getPublicMsgFromCode(
+                                errorCode,
+                                context
+                            )
+                        )
+                    }
                 }
 
                 override fun onCameraClick(user: ClassUser) {
-                    ClassRoomManager.setUserCamera(user.userId, !user.cameraOn)
+                    ClassRoomManager.setUserCamera(user.userId, !user.cameraOn) {errorCode ->
+                        ToastUtils.showCenterToast(
+                            ZegoApiErrorCode.getPublicMsgFromCode(
+                                errorCode,
+                                context
+                            )
+                        )
+                    }
                 }
 
                 override fun onShareClick(user: ClassUser) {
-                    ClassRoomManager.setUserShare(user.userId, !user.sharable)
+                    ClassRoomManager.setUserShare(user.userId, !user.sharable) {errorCode ->
+                        ToastUtils.showCenterToast(
+                            ZegoApiErrorCode.getPublicMsgFromCode(
+                                errorCode,
+                                context
+                            )
+                        )
+                    }
                 }
             })
             it.isVerticalScrollBarEnabled = true
@@ -78,14 +101,14 @@ class ClassUserListView : RelativeLayout {
     fun addUser(classUser: ClassUser) {
         userListAdapter.addData(classUser)
         right_drawer_title.text = context.getString(
-            R.string.user_list_title, userListAdapter.itemCount
+            R.string.room_member_joined, userListAdapter.itemCount
         )
     }
 
     fun removeUser(classUser: ClassUser) {
         userListAdapter.removeData(classUser)
         right_drawer_title.text = context.getString(
-            R.string.user_list_title, userListAdapter.itemCount
+            R.string.room_member_joined, userListAdapter.itemCount
         )
     }
 
@@ -93,7 +116,7 @@ class ClassUserListView : RelativeLayout {
         val userList = ClassRoomManager.mRoomUserMap.values.toMutableList()
         userListAdapter.updateAll(userList)
         right_drawer_title.text =
-            context.getString(R.string.user_list_title, userListAdapter.itemCount)
+            context.getString(R.string.room_member_joined, userListAdapter.itemCount)
     }
 
     private fun onStateChange(
@@ -141,7 +164,7 @@ class UserListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         if (classUser.isTeacher()) {
             text += nameTextView.context.getString(R.string.teacher_suffix)
         } else if (classUser.userId == me.userId) {
-            text += nameTextView.context.getString(R.string.me_suffix)
+            text += nameTextView.context.getString(R.string.room_member_me)
         }
         nameTextView.text = text
 

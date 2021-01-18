@@ -16,6 +16,7 @@ import im.zego.goclass.sdk.IZegoMsgListener
 import im.zego.goclass.sdk.IZegoSendMsgCallback
 import im.zego.goclass.sdk.ZegoSDKManager
 import im.zego.goclass.R
+import im.zego.goclass.classroom.ClassRoomManager.me
 import kotlinx.android.synthetic.main.layout_chat_window.view.*
 
 /**
@@ -49,7 +50,7 @@ class ChatWindow : ConstraintLayout {
         chat_recycler_view.let {
             it.layoutManager = LinearLayoutManager(context)
             val chatAdapter = ChatAdapter()
-            val joinMsg = createSystemMsg(context.getString(R.string.me), true)
+            val joinMsg = createSystemMsg(context.getString(R.string.room_im_me), true)
             chatAdapter.addMessage(joinMsg)
             /*chatAdapter.resendListener = object : (ChatMsg) -> Unit {
                 override fun invoke(chatMsg: ChatMsg) {
@@ -178,8 +179,8 @@ class ChatWindow : ConstraintLayout {
      */
     private fun createSystemMsg(name: String, isJoinIn: Boolean): SystemMsg {
         val action =
-            if (isJoinIn) context.getString(R.string.join) else context.getString(R.string.exit)
-        return SystemMsg("$name ${action}${context.getString(R.string.go_class)}")
+            if (isJoinIn) context.getString(R.string.room_im_join_class) else context.getString(R.string.room_end_sign_out)
+        return SystemMsg("$name ${action}${context.getString(R.string.room_im_go_class)}")
     }
 
 }

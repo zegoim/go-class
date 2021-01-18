@@ -7,9 +7,11 @@
 //
 
 #import "ZegoClassRoomCameraPopView.h"
-
+#import "NSString+ZegoExtension.h"
 @interface ZegoClassRoomCameraPopView ()
 @property (strong, nonatomic) IBOutlet ZegoClassRoomCameraPopView *view;
+@property (weak, nonatomic) IBOutlet UILabel *closeCameraLabel;
+@property (weak, nonatomic) IBOutlet UILabel *switchCameraLabel;
 
 @end
 
@@ -31,6 +33,8 @@
     if (self = [super initWithFrame:frame]) {
         [[NSBundle mainBundle] loadNibNamed:@"ZegoClassRoomCameraPopView" owner:self options:nil];
         [self addSubview:self.view];
+        self.switchCameraLabel.text = [NSString zego_localizedString:@"room_controller_switch_camera"];
+        self.closeCameraLabel.text = [NSString zego_localizedString:@"room_turn_off_camera"];
     }
     
     return self;

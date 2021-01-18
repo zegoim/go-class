@@ -15,7 +15,7 @@
             android:id="@+id/room_center_bottom_tips"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/select_share_tips"
+            android:text="@string/wb_select_share"
             android:textColor="@color/text_black2"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -33,7 +33,7 @@
             android:layout_marginTop="40dp"
             android:layout_marginEnd="20dp"
             android:gravity="center"
-            android:text="@string/whiteboard1"
+            android:text="@string/wb_shared_wb"
             android:textColor="@color/text_blue"
             android:textSize="15sp"
             android:background="@drawable/drawable_center_btn"
@@ -51,7 +51,7 @@
             android:layout_marginTop="40dp"
             android:layout_marginEnd="20dp"
             android:gravity="center"
-            android:text="@string/share_file"
+            android:text="@string/wb_shared_file"
             android:textColor="@color/text_blue"
             android:textSize="15sp"
             android:background="@drawable/drawable_center_btn"
@@ -76,7 +76,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/waiting_share_tips"
+            android:text="@string/wb_tip_wait_teacher_share"
             android:textColor="@color/text_black2"
             android:textSize="15sp"/>
 

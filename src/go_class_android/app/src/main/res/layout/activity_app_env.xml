@@ -12,7 +12,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="32dp"
-        android:text="保存"
+        android:text="@string/wb_tool_save"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <androidx.fragment.app.FragmentContainerView

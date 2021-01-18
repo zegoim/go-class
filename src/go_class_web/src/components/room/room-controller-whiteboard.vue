@@ -7,17 +7,17 @@
       v-if="noList"
       :class="['no-canvas-bar', classScene === 2 && role === 2 ? 'large-class' : '']"
     >
-      课堂ID: {{ roomID }}
+      {{$t("room.room_class_id")}}: {{ roomID }}
     </div>
     <div v-else class="room-controller-whiteboard">
       <div class="whiteboard-bar-classid">
-        <span>课堂ID：{{ roomID }}</span>
+        <span>{{$t("room.room_class_id")}}：{{ roomID }}</span>
       </div>
       <div class="controller" v-if="role === 1 || classScene !== 2">
         <el-select
           v-if="roomAuth.share"
           :value="activeSelfWBID"
-          placeholder="请选择"
+          :placeholder="$t('room.room_select')"
           popper-class="whiteboard-name-select-list"
           @change="handleWBSelect"
         >
@@ -39,7 +39,7 @@
         <div v-if="roomAuth.share && activeViewIsExcel" class="excel-sheets">
           <el-select
             :value="activeWBId"
-            placeholder="请选择"
+            :placeholder="$t('room.room_select')"
             popper-class="whiteboard-name-select-list"
             @change="handleExcelSheetSelect"
           >
@@ -84,7 +84,7 @@
           <div class="zoombar-center">
             <el-select
               v-model="zoom"
-              placeholder="请选择"
+              :placeholder="$t('room.room_select')"
               popper-class="whiteboard-zoom-select-list"
               :disabled="activeViewIsPPTH5 && activeToolType === 256"
               @change="handleWBZoom"
@@ -118,7 +118,7 @@
             class="button-icon"
             v-html="require('../../assets/icons/room/preview.svg').default"
           ></span>
-          <span>预览</span>
+          <span>{{$t('wb.wb_priview')}}</span>
         </div>
       </div>
       <div class="controller" v-else-if="role === 2 && classScene === 2">
@@ -137,7 +137,7 @@
           <div class="zoombar-center">
             <el-select
               v-model="zoom"
-              placeholder="请选择"
+              :placeholder="$t('room.room_select')"
               popper-class="whiteboard-zoom-select-list"
               :disabled="activeViewIsPPTH5 && activeToolType === 256"
               @change="handleWBZoom"
@@ -261,7 +261,7 @@ export default {
         const res = Object.assign(item, {
           name: fileInfo.fileType
             ? this.hideTitle(item.name)
-            : (item.name || '').replace(/^(.{3}).*?(创建的白板\d+)$/, '$1...$2'),
+            : this.hideWBTitle(item.name),
           selfWBID: fileInfo.fileID || item.whiteboardID,
         })
         return res
@@ -335,9 +335,9 @@ export default {
      * @param {item} 目标文件
      */
      handleWBDelete(item) {
-      this.$confirm(`确定关闭【${item.getName()}】吗？`, '', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm(this.$t('wb.wb_tip_are_u_sure_close',{ wbname : item.getName() }), '', {
+        confirmButtonText: this.$t('wb.wb_determine'),
+        cancelButtonText: this.$t('wb.wb_cancel'),
         showClose: false,
         customClass: 'delete-wb-view-dialog',
         type: 'warning',
@@ -366,6 +366,20 @@ export default {
       }
     },
 
+    hideWBTitle(name){
+      let zego_locale  = sessionStorage.getItem('zego_locale')
+      let wbnameArr = name.split('创建的白板')
+      let wbName;
+
+      if(!zego_locale) zego_locale = 'zh'
+
+      if (zego_locale === 'zh') {
+        wbName = name.replace(/^(.{3}).*?(创建的白板\d+)$/, '$1...$2')
+      } else {
+        wbName = this.$t('wb.wb_created_by',{name: wbnameArr[0],index: wbnameArr[1]}).substring(0, 17) + '...'
+      }
+      return wbName
+    },
     /**
      * @desc: 上/下一页
      * @param {num} 操作类型

@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.StringRes;
 
 import im.zego.goclass.KotlinUtilsKt;
+import im.zego.goclass.network.ZegoApiErrorCode;
 import im.zego.goclass.sdk.ZegoSDKManager;
 import im.zego.goclass.R;
 
@@ -66,7 +67,6 @@ public final class ToastUtils {
         appContext = context;
     }
 
-
     public static void showCenterToast(String string) {
         showCenterToastInner(appContext, string);
     }
@@ -79,15 +79,24 @@ public final class ToastUtils {
         showCenterToastInner(appContext, appContext.getString(stringID, formatArgs));
     }
 
-    public static void showLoginErrorToast(int errorCode) {
-        boolean liveroomMax = ZegoSDKManager.getInstance().isLiveRoom() &&
-                (errorCode == 52001104 || errorCode == 52001105);
-        boolean expressMax = !ZegoSDKManager.getInstance().isLiveRoom() &&
-                errorCode == 1002034;
-        if (liveroomMax || expressMax) {
-            showCenterToast(R.string.join_max_user_limit, ZegoSDKManager.MAX_USER_COUNT);
+    public static void showLoginErrorToast(Context context, int errorCode) {
+        if (errorCode == ZegoApiErrorCode.NETWORK_TIMEOUT) {
+            ToastUtils.showCenterToast(context.getString(R.string.network_connection_timeout));
         } else {
-            showCenterToast(R.string.join_other, errorCode);
+            boolean liveroomMax = ZegoSDKManager.getInstance().isLiveRoom() &&
+                    (errorCode == 52001104 || errorCode == 52001105);
+            boolean expressMax = !ZegoSDKManager.getInstance().isLiveRoom() &&
+                    errorCode == 1002034;
+            if (liveroomMax || expressMax) {
+                ToastUtils.showCenterToast(context.getString(R.string.join_max_user_limit, ZegoSDKManager.MAX_USER_COUNT));
+            } else {
+                String publicMsgFromCode = ZegoApiErrorCode.Companion.getPublicMsgFromCode(errorCode, context);
+                if (publicMsgFromCode.equals("unknown error")) {
+                    ToastUtils.showCenterToast(context.getString(R.string.join_other, errorCode));
+                } else {
+                    ToastUtils.showCenterToast(publicMsgFromCode);
+                }
+            }
         }
     }
 }

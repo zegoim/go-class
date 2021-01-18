@@ -28,7 +28,7 @@ class FileExcelView : RelativeLayout {
     init {
         LayoutInflater.from(context).inflate(R.layout.layout_drawer_right, this, true)
         setBackgroundColor(Color.WHITE)
-        right_drawer_title.text = context.getString(R.string.sheet_list)
+        right_drawer_title.text = context.getString(R.string.wb_file_sheet_list)
         right_drawer_divider.visibility = View.GONE
 
         main_drawer_list.let {

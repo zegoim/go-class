@@ -9,7 +9,7 @@
 #import "ZegoClassRoomTopBar.h"
 #import "UIColor+ZegoExtension.h"
 #import "ZegoUIConstant.h"
-#import "NSString+Size.h"
+#import "NSString+ZegoExtension.h"
 
 @interface ZegoClassRoomTopBar ()
 @property (weak, nonatomic) IBOutlet UILabel *boardNameLabel;
@@ -27,6 +27,10 @@
 
 @implementation ZegoClassRoomTopBar
 
+- (void)awakeFromNib {
+    [super awakeFromNib];
+    [self.previewBtn setTitle:[NSString zego_localizedString:@"wb_preview"] forState:UIControlStateNormal];
+}
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
     if (self = [super initWithCoder:coder]) {

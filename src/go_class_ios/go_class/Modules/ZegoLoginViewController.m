@@ -7,7 +7,6 @@
 //
 
 #import "ZegoLoginViewController.h"
-#import "ZegoEnvSettingViewController.h"
 #import "Reachability.h"
 #import "ZegoLiveCenter.h"
 #import "ZegoAuthConstants.h"
@@ -27,6 +26,10 @@
 #import "ZegoRoomMemberListRspModel.h"
 #import "ZegoRotationManager.h"
 #import "ZegoClassEnvManager.h"
+#import "NSString+ZegoExtension.h"
+
+#define IS_OPENSOURCE
+
 @interface ZegoLoginViewController ()<UITextFieldDelegate,ZegoLiveCenterDelegate>
 @property (weak, nonatomic) IBOutlet UITextField *classRoomTF;
 @property (weak, nonatomic) IBOutlet UITextField *nameTF;
@@ -50,6 +53,11 @@
 
 @property (nonatomic, strong) NSArray<ZegoLiveStream *> *streamList;
 //@property (nonatomic, assign) BOOL isWhiteboardInit;
+@property (weak, nonatomic) IBOutlet UILabel *welcomLabel;
+@property (weak, nonatomic) IBOutlet UILabel *joinEnvLabel;
+@property (weak, nonatomic) IBOutlet UIButton *cnEnvButton;
+@property (weak, nonatomic) IBOutlet UIButton *otherEnvButton;
+@property (weak, nonatomic) IBOutlet UILabel *envTipLabel;
 
 @end
 
@@ -67,6 +75,21 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
+}
+
+- (void)updateLocalLanguage {
+    self.welcomLabel.text = [NSString zego_localizedString:@"login_welcome_join_goclass"];
+    [self.joinClassButton setTitle:[NSString zego_localizedString:@"login_join_class"] forState:UIControlStateNormal];
+    self.joinEnvLabel.text = [NSString zego_localizedString:@"login_access_env"];
+    [self.cnEnvButton setTitle:[NSString zego_localizedString:@"login_mainland_china"] forState:UIControlStateNormal];
+    [self.otherEnvButton setTitle:[NSString zego_localizedString:@"login_overseas"] forState:UIControlStateNormal];
+    self.envTipLabel.text = [NSString zego_localizedString:@"login_interconnected"];
+    self.classTypeTF.text = [NSString zego_localizedString:@"login_small_class"];
+    self.userRoleTF.text = [NSString zego_localizedString:@"login_teacher"];
+    self.classPatternType = ZegoClassPatternTypeSmall;
+    self.userRoleType = ZegoUserRoleTypeTeacher;
+    self.classRoomTF.placeholder = [NSString zego_localizedString:@"login_input_classid"];
+    self.nameTF.placeholder = [NSString zego_localizedString:@"login_enter_name"];
 }
 
 - (void)setupReachabilityObserver {
@@ -93,23 +116,25 @@
 - (void)setupSubviews {
     [self.view addSubview:self.activityIndicator];
     
-    self.classRoomTF.placeholder = @"请输入课堂ID";
+    self.classRoomTF.placeholder = [NSString zego_localizedString:@"login_input_classid"];
     self.classRoomTF.keyboardType = UIKeyboardTypeNumberPad;
     [self.classRoomTF addTarget:self action:@selector(textFieldTextChanged:) forControlEvents:UIControlEventEditingChanged];
     self.classRoomTF.delegate = self;
     
-    self.classTypeTF.text = @"小班课";
+    self.classTypeTF.text = [NSString zego_localizedString:@"login_small_class"];
     self.classTypeTF.userInteractionEnabled = NO;
 
-    self.nameTF.placeholder = @"请输入姓名";
+    self.nameTF.placeholder = [NSString zego_localizedString:@"login_enter_name"];
     [self.nameTF addTarget:self action:@selector(textFieldTextChanged:) forControlEvents:UIControlEventEditingChanged];
     self.nameTF.delegate = self;
 
-    self.userRoleTF.text = @"老师";
+    self.userRoleTF.text = [NSString zego_localizedString:@"login_teacher"];
     self.userRoleTF.userInteractionEnabled = NO;
     self.userRoleType = ZegoUserRoleTypeTeacher;
     
     [self enableJoinClassButton:NO];
+    
+    [self updateLocalLanguage];
     
 #ifdef DEBUG
     NSInteger classroomIndex = arc4random_uniform(100000);
@@ -223,50 +248,50 @@
 }
 
 - (IBAction)onTestButtonTapped {
-#ifdef DEBUG
-    ZegoEnvSettingViewController *setting = [[ZegoEnvSettingViewController alloc] init];
-    [self presentViewController:setting animated:YES completion:nil];
-#endif
+
 }
 
 - (IBAction)onRoleTypeButtonTapped:(id)sender {
     [self.view endEditing:YES];
-    [ZegoStringPickerView showStringPickerWithTitle:@"选择角色" dataSource:@[@"老师", @"学生"] defaultSelValue:@"老师" isAutoSelect:YES manager:nil resultBlock:^(id selectValue, id selectRow) {
+    [ZegoStringPickerView showStringPickerWithTitle:[NSString zego_localizedString:@"wb_tool_choice"] dataSource:@[[NSString zego_localizedString:@"login_teacher"], [NSString zego_localizedString:@"login_student"]] defaultSelValue:[NSString zego_localizedString:@"login_teacher"] isAutoSelect:YES manager:nil resultBlock:^(id selectValue, id selectRow) {
         NSLog(@"%@",selectValue);
         if ([selectRow intValue] == 0) {
             self.userRoleType = ZegoUserRoleTypeTeacher;
-            self.userRoleTF.text = @"老师";
+            self.userRoleTF.text = [NSString zego_localizedString:@"login_teacher"];
         } else if ([selectRow intValue] == 1) {
             self.userRoleType = ZegoUserRoleTypeStudent;
-            self.userRoleTF.text = @"学生";
+            self.userRoleTF.text = [NSString zego_localizedString:@"login_student"];
         }
     }];
 }
 
 - (IBAction)onClassPatternTypeTaped:(UIButton *)sender {
     [self.view endEditing:YES];
-    [ZegoStringPickerView showStringPickerWithTitle:@"课堂类型" dataSource:@[@"小班课", @"大班课"] defaultSelValue:@"小班课" isAutoSelect:YES manager:nil resultBlock:^(id selectValue, id selectRow) {
+    [ZegoStringPickerView showStringPickerWithTitle:[NSString zego_localizedString:@"wb_tool_choice"] dataSource:@[[NSString zego_localizedString:@"login_small_class"], [NSString zego_localizedString:@"login_large_class"]] defaultSelValue:[NSString zego_localizedString:@"login_small_class"] isAutoSelect:YES manager:nil resultBlock:^(id selectValue, id selectRow) {
         NSLog(@"%@",selectValue);
         if ([selectRow intValue] == 0) {
             self.classPatternType = ZegoClassPatternTypeSmall;
-            self.classTypeTF.text = @"小班课";
+            self.classTypeTF.text = [NSString zego_localizedString:@"login_small_class"];
         } else if ([selectRow intValue] == 1) {
             self.classPatternType = ZegoClassPatternTypeBig;
-            self.classTypeTF.text = @"大班课";
+            self.classTypeTF.text = [NSString zego_localizedString:@"login_large_class"];
         }
     }];
 }
 // 点击进入课堂
 - (IBAction)onJoinClassButtonTapped:(id)sender {
     if (![self isNameLegal:self.nameTF.text]){
-        [ZegoToast showText:@"姓名仅支持汉字，数字，大写字母，小写字母"];
+        [ZegoToast showText:[NSString zego_localizedString:@"login_supports_characters_number_uppercase_letter"]];
         return;
     }
     
     if (![self isClassRoomIDLegal:self.classRoomTF.text]){
-        [ZegoToast showText:@"课堂ID，禁止输入大于9位的数字"];
+        [ZegoToast showText:[NSString zego_localizedString:@"login_supports_pure_digits"]];
         return;
     }
+    #ifdef IS_OPENSOURCE
+    [[ZegoClassEnvManager shareManager]setNomalEnv];
+    #endif
     [self setupSDK];
 //    [self updateInterfaceWithReachability:self.internetReachability];
     [self.activityIndicator startAnimating];
@@ -296,7 +321,13 @@
 }
 
 - (void)onSettingButtonTapped {
-    [self.navigationController pushViewController:[[ZegoSettingViewController alloc] init] animated:YES];
+    ZegoSettingViewController *settingVC = [[ZegoSettingViewController alloc] init];
+    @weakify(self);
+    settingVC.languageChangeBlock = ^{
+        @strongify(self);
+        [self updateLocalLanguage];
+    };
+    [self.navigationController pushViewController:settingVC animated:YES];
 }
 
 - (IBAction)onChinaEnvButtonTapped:(id)sender {
@@ -369,7 +400,7 @@
 }
 
 - (void)showNetworkError {
-    [ZegoToast showText:@"网络异常，请检查网络后重试"];
+    [ZegoToast showText:[NSString zego_localizedString:@"login_network_exception"]];
 }
 
 - (void)reachabilityChanged:(NSNotification *)note {

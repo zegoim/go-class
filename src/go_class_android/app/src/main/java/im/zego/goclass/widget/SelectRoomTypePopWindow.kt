@@ -21,7 +21,7 @@ class SelectRoomTypePopWindow(context: Context, selectRoomType: String) : BasePo
     private val mContext = context;
 
     // 当前所选课堂类型，默认为小班课
-    private var mSelectRoomType = context.getString(R.string.join_mini_class)
+    private var mSelectRoomType = context.getString(R.string.login_small_class)
 
     init {
         width = ViewGroup.LayoutParams.MATCH_PARENT
@@ -32,8 +32,8 @@ class SelectRoomTypePopWindow(context: Context, selectRoomType: String) : BasePo
 
         contentView.type_list.let {
             val list = listOf(
-                context.getString(R.string.join_mini_class),
-                context.getString(R.string.join_large_class)
+                context.getString(R.string.login_small_class),
+                context.getString(R.string.login_large_class)
             )
             it.data = list
             it.isResetSelectedPosition = false
@@ -55,7 +55,7 @@ class SelectRoomTypePopWindow(context: Context, selectRoomType: String) : BasePo
     fun show(anchor: View) {
         val location = IntArray(2)
         anchor.getLocationOnScreen(location)
-        mSelectRoomType = mContext.getString(R.string.join_mini_class)
+        mSelectRoomType = mContext.getString(R.string.login_small_class)
         super.showAtLocation(anchor, Gravity.BOTTOM, 0, 0)
     }
 

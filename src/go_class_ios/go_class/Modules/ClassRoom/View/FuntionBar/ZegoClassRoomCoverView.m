@@ -9,7 +9,7 @@
 #import "ZegoClassRoomCoverView.h"
 #import "UIColor+ZegoExtension.h"
 #import "ZegoUIConstant.h"
-
+#import "NSString+ZegoExtension.h"
 @interface ZegoClassRoomCoverView ()
 
 @property (nonatomic, copy) void (^exitAction)(void);
@@ -28,14 +28,14 @@
         [self addSubview:self.exitButton];
         [self.exitButton addTarget:self action:@selector(exitButtonTapped) forControlEvents:UIControlEventTouchUpInside];
         [self.exitButton setTitleColor:[UIColor colorWithRGB:@"#f54326"] forState:UIControlStateNormal];
-        [self.exitButton setTitle:@"退出" forState:UIControlStateNormal];
+        [self.exitButton setTitle:[NSString zego_localizedString:@"room_end_sign_out"] forState:UIControlStateNormal];
         self.exitButton.titleLabel.font = [UIFont systemFontOfSize:15 weight:UIFontWeightRegular];
-        self.exitButton.frame = CGRectMake(kScreenWidth - 34 - 20, 0, 34, 44);
+        self.exitButton.frame = CGRectMake(kScreenWidth - 34 - 20, 0, 50, 44);
         
 
         self.titleLabel = [[UILabel alloc] init];
         [self addSubview:self.titleLabel];
-        self.titleLabel.text = [NSString stringWithFormat:@"课堂ID:%@", title];
+        self.titleLabel.text = [NSString stringWithFormat:@"%@:%@", [NSString zego_localizedString:@"room_class_id"],title];
         self.titleLabel.textColor = kTextColor1;
         self.titleLabel.font = [UIFont systemFontOfSize:15 weight:UIFontWeightRegular];
         [self.titleLabel sizeToFit];

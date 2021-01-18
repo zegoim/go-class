@@ -4,7 +4,7 @@
 <template>
   <div class="pencil-text-setting">
     <div class="common-box pencil-box" v-if="activePopperType === 'graph' ">
-      <div class="setting-title pencilThickness">形状选择</div>
+      <div class="setting-title pencilThickness">{{$t('wb.wb_tool_shape_selection')}}</div>
       <ul class="pencil-style">
         <li
           :class="['graph-style-item', item.type === activeToolType && 'active']"
@@ -21,7 +21,7 @@
     </div>
 
     <div class="common-box pencil-box" v-if="activePopperType === 'pencil' || activePopperType === 'graph'">
-      <div class="setting-title pencilThickness">笔触粗细</div>
+      <div class="setting-title pencilThickness">{{$t('wb.wb_tool_brush_tickness')}}</div>
       <ul class="bs-list">
         <li
           v-for="item in brushSizeList"
@@ -38,7 +38,7 @@
     </div>
 
     <div class="common-box text-box" v-if="activePopperType === 'text'">
-      <div class="setting-title">字体</div>
+      <div class="setting-title">{{$t('wb.wb_tool_font')}}</div>
       <ul class="pencil-style">
         <li
           :class="['pencil-style-item', item.isClicked && 'active']"
@@ -52,7 +52,7 @@
           ></div>
         </li>
       </ul>
-      <div class="setting-title">字号大小</div>
+      <div class="setting-title">{{$t('wb.wb_tool_font_size')}}</div>
       <ul class="pencil-size">
         <li
           :class="['pencil-size-item', item === activeTextSize && 'active']"
@@ -66,7 +66,7 @@
     </div>
     <div class="common-box">
       <div class="setting-title">
-        {{ { text: '文本颜色', pencil: '笔触颜色', graph: '笔触颜色' }[activePopperType] }}
+        {{ { text: $t('wb.wb_tool_text_color'), pencil: $t('wb.wb_tool_pen_stroke_color'), graph: $t('wb.wb_tool_brush_stroke_color') }[activePopperType] }}
       </div>
       <ul class="color-list">
         <li

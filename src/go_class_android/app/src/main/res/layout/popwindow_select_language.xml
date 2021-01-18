@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="49dp">
+
+        <TextView
+            android:id="@+id/cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:text="@string/wb_cancel"
+            android:textColor="@color/text_black2"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/login_choose_roles"
+            android:textColor="@color/text_black3"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:text="@string/wb_determine"
+            android:textColor="@color/text_blue"
+            android:textSize="15sp" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/list_item_divider"/>
+
+    <com.zyyoona7.wheel.WheelView
+        android:id="@+id/language_list"
+        android:layout_width="match_parent"
+        android:layout_height="96dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="16dp"
+        app:wv_cyclic="false"
+        app:wv_dividerColor="@color/list_item_divider"
+        app:wv_dividerHeight="0.5dp"
+        app:wv_showDivider="true"
+        app:wv_dividerType="fill"
+        app:wv_lineSpacing="22dp"
+        app:wv_visibleItems="2"
+        app:wv_textSize="15dp"
+        app:wv_normalItemTextColor="@color/text_black"
+        app:wv_selectedItemTextColor="#4d2d2e32"/>
+
+</LinearLayout>

@@ -11,7 +11,7 @@
 #import <Masonry/Masonry.h>
 #import "UIColor+ZegoExtension.h"
 #import "ZegoDrawToolGeoToolButton.h"
-
+#import "NSString+ZegoExtension.h"
 #define TOOL_GEO_BTN_COUNT      3
 #define TOOL_GEO_BTN_WIDTH      20
 #define TOOL_GEO_BTN_HEIGHT     20
@@ -72,7 +72,7 @@
     UILabel *geoTitle = [[UILabel alloc] init];
     self.geoTitle = geoTitle;
     [self addSubview:geoTitle];
-    geoTitle.attributedText = [[NSAttributedString alloc] initWithString:@"形状选择" attributes:@{
+    geoTitle.attributedText = [[NSAttributedString alloc] initWithString:[NSString zego_localizedString:@"wb_tool_shape_selection"] attributes:@{
         NSFontAttributeName: [UIFont systemFontOfSize:12],
         NSForegroundColorAttributeName: UIColorHex(0x18191a),
     }];

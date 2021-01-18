@@ -28,7 +28,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="20dp"
         android:gravity="center_vertical"
-        android:text="@string/file_type_tips"
+        android:text="@string/room_file_animation_displayed"
         android:textColor="@color/text_black"
         android:textSize="10sp"
         android:visibility="gone" />

@@ -2,7 +2,10 @@ package im.zego.goclass.network
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import com.google.gson.Gson
+import im.zego.goclass.BackendApiConstants
+import im.zego.goclass.R
 import im.zego.goclass.tool.ToastUtils
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -23,17 +26,6 @@ object ZegoApiClient {
     private val gson = Gson()
     private val MEDIA_TYPE_JSON = "application/json; charset=utf-8".toMediaType()
 
-    // 测试环境下的国内环境
-    private const val ZEGO_API_BASE_URL_MAINLAND_TEST = "https://backend-alpha.talkline.cn"
-
-    // 测试环境下的海外环境
-    private const val ZEGO_API_BASE_URL_OVERSEA_TEST = "https://goclass-server-alpha.zego.im"
-
-    // 正式环境下的国内环境
-    private const val ZEGO_API_BASE_URL_MAINLAND = "https://goclass-server-sh.zego.im"
-
-    // 正式环境下的海外环境
-    private const val ZEGO_API_BASE_URL_OVERSEA = "https://goclass-server-hk.zegocloud.com"
     private lateinit var client: OkHttpClient
     private lateinit var retrofit: Retrofit
     private lateinit var classApi: ZegoClassApiService
@@ -55,15 +47,15 @@ object ZegoApiClient {
 
         val baseUrl = if (isTestEnv) {
             if (isMainLandEnv) {
-                ZEGO_API_BASE_URL_MAINLAND_TEST
+                BackendApiConstants.BACKEND_API_URL_TEST
             } else {
-                ZEGO_API_BASE_URL_OVERSEA_TEST
+                BackendApiConstants.BACKEND_API_URL_TEST_OVERSEAS
             }
         } else {
             if (isMainLandEnv) {
-                ZEGO_API_BASE_URL_MAINLAND
+                BackendApiConstants.BACKEND_API_URL
             } else {
-                ZEGO_API_BASE_URL_OVERSEA
+                BackendApiConstants.BACKEND_API_URL_OVERSEAS
             }
         }
         retrofit = Retrofit.Builder()
@@ -84,12 +76,6 @@ object ZegoApiClient {
             override fun onResult(result: Result, t: LoginRspData?) {
                 requestCallback?.onResult(result, t)
                 Log.d(TAG, "loginRoom onResult() called with: result = $result, t = $t")
-                if (result.code != 0) {
-                    if (result.code == ZegoApiErrorCode.NETWORK_TIMEOUT) {
-                        result.message = "加入课堂失败，请重试"
-                    }
-                    ToastUtils.showCenterToast(result.message)
-                }
             }
         })
     }
@@ -106,9 +92,6 @@ object ZegoApiClient {
         sendAsyncCall(request, object : RequestCallback<GetAttendeeListRspData> {
             override fun onResult(result: Result, t: GetAttendeeListRspData?) {
                 requestCallback?.onResult(result, t)
-                if (result.code != 0) {
-                    ToastUtils.showCenterToast(result.message)
-                }
             }
         })
     }
@@ -125,9 +108,6 @@ object ZegoApiClient {
         sendAsyncCall(request, object : RequestCallback<GetJoinLiveListRspData> {
             override fun onResult(result: Result, t: GetJoinLiveListRspData?) {
                 requestCallback?.onResult(result, t)
-                if (result.code != 0) {
-                    ToastUtils.showCenterToast(result.message)
-                }
             }
         })
     }
@@ -158,9 +138,6 @@ object ZegoApiClient {
         sendAsyncCall(request, object : RequestCallback<Any> {
             override fun onResult(result: Result, t: Any?) {
                 requestCallback?.onResult(result, t)
-                if (result.code != 0) {
-                    ToastUtils.showCenterToast(result.message)
-                }
             }
         })
     }
@@ -214,9 +191,6 @@ object ZegoApiClient {
         sendAsyncCall(request, object : RequestCallback<Any> {
             override fun onResult(result: Result, t: Any?) {
                 requestCallback?.onResult(result, t)
-                if (result.code != 0 && result.code != ZegoApiErrorCode.NEED_LOGIN) {
-                    ToastUtils.showCenterToast(result.message)
-                }
             }
         })
     }
@@ -233,9 +207,6 @@ object ZegoApiClient {
         sendAsyncCall(request, object : RequestCallback<Any> {
             override fun onResult(result: Result, t: Any?) {
                 requestCallback?.onResult(result, t)
-                if (result.code != 0 && result.code != ZegoApiErrorCode.NEED_LOGIN) {
-                    ToastUtils.showCenterToast(result.message)
-                }
             }
         })
     }
@@ -270,12 +241,12 @@ object ZegoApiClient {
             ) {
                 val body = response.body()
                 if (body != null) {
-                    body.ret.message = ZegoApiErrorCode.getPublicMsgFromCode(body.ret.code)
+                    body.ret.message = ZegoApiErrorCode.getPublicMsgFromCode(body.ret.code, context)
                     requestCallback?.onResult(body.ret, body.data)
                 } else {
                     val result = Result(
                         ZegoApiErrorCode.NETWORK_ERROR,
-                        ZegoApiErrorCode.getPublicMsgFromCode(ZegoApiErrorCode.NETWORK_ERROR)
+                        ZegoApiErrorCode.getPublicMsgFromCode(ZegoApiErrorCode.NETWORK_ERROR, context)
                     )
                     requestCallback?.onResult(result, null)
                 }
@@ -287,17 +258,17 @@ object ZegoApiClient {
                     if (error is UnknownHostException || error is SocketTimeoutException) {
                         Result(
                             ZegoApiErrorCode.NETWORK_UNCONNECTED,
-                            ZegoApiErrorCode.getPublicMsgFromCode(ZegoApiErrorCode.NETWORK_UNCONNECTED)
+                            ZegoApiErrorCode.getPublicMsgFromCode(ZegoApiErrorCode.NETWORK_UNCONNECTED, context)
                         )
                     } else if (error is InterruptedIOException && error.message == "timeout") {
                         Result(
                             ZegoApiErrorCode.NETWORK_TIMEOUT,
-                            ZegoApiErrorCode.getPublicMsgFromCode(ZegoApiErrorCode.NETWORK_ERROR)
+                            ZegoApiErrorCode.getPublicMsgFromCode(ZegoApiErrorCode.NETWORK_ERROR, context)
                         )
                     } else {
                         Result(
                             ZegoApiErrorCode.NETWORK_ERROR,
-                            ZegoApiErrorCode.getPublicMsgFromCode(ZegoApiErrorCode.NETWORK_ERROR)
+                            ZegoApiErrorCode.getPublicMsgFromCode(ZegoApiErrorCode.NETWORK_ERROR, context)
                         )
                     }
                 requestCallback?.onResult(result, null)

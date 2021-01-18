@@ -37,70 +37,7 @@ const canvasToolConf = {
   size: 6,
   textSize: 24
 }
-const canvasToolList = [
-  {
-    imgName: 'tool_click',
-    cnName: '点击',
-    type: 256,
-  },
-  {
-    imgName: 'tool_choose',
-    cnName: '选择',
-    type: 32
-  },
-  {
-    imgName: 'tool_hand',
-    cnName: '拖拽',
-    type: 0
-  },
-  {
-    imgName: 'tool_laser',
-    cnName: '激光笔',
-    type: 128
-  },
-  {
-    imgName: 'tool_pen',
-    cnName: '画笔',
-    type: 1,
-    popperType: 'pencil',
-    ...canvasToolConf
-  },
-  {
-    imgName: 'tool_text',
-    cnName: '文本',
-    type: 2,
-    popperType: 'text',
-    ...canvasToolConf
-  },
-  {
-    imgName: 'tool_figure',
-    cnName: '图形',
-    popperType: 'graph',
-    clicked: false,
-    type: 'graph',
-    ...canvasToolConf
-  },
-  {
-    imgName: 'tool_eraser',
-    cnName: '橡皮擦',
-    type: 64
-  },
-  {
-    name: 'clear',
-    imgName: 'tool_Del',
-    cnName: '清空'
-  },
-  {
-    name: 'undo',
-    imgName: 'tool_cancel',
-    cnName: '撤销'
-  },
-  {
-    name: 'redo',
-    imgName: 'tool_redo',
-    cnName: '重做'
-  }
-]
+// const canvasToolList = 
 
 export default {
   name: 'RoomWhiteboardTools',
@@ -111,7 +48,70 @@ export default {
   },
   data() {
     return {
-      canvasToolList,
+      canvasToolList:[
+        {
+          imgName: 'tool_click',
+          cnName: this.$t('wb.wb_tool_click'),
+          type: 256,
+        },
+        {
+          imgName: 'tool_choose',
+          cnName: this.$t('wb.wb_tool_choice'),
+          type: 32
+        },
+        {
+          imgName: 'tool_hand',
+          cnName: this.$t('wb.wb_tool_drag'),
+          type: 0
+        },
+        {
+          imgName: 'tool_laser',
+          cnName: this.$t('wb.wb_tool_laser'),
+          type: 128
+        },
+        {
+          imgName: 'tool_pen',
+          cnName: this.$t('wb.wb_tool_brush'),
+          type: 1,
+          popperType: 'pencil',
+          ...canvasToolConf
+        },
+        {
+          imgName: 'tool_text',
+          cnName: this.$t('wb.wb_tool_text'),
+          type: 2,
+          popperType: 'text',
+          ...canvasToolConf
+        },
+        {
+          imgName: 'tool_figure',
+          cnName: this.$t('wb.wb_tool_graphical'),
+          popperType: 'graph',
+          clicked: false,
+          type: 'graph',
+          ...canvasToolConf
+        },
+        {
+          imgName: 'tool_eraser',
+          cnName: this.$t('wb.wb_tool_erase'),
+          type: 64
+        },
+        {
+          name: 'clear',
+          imgName: 'tool_Del',
+          cnName: this.$t('wb.wb_tool_clear'),
+        },
+        {
+          name: 'undo',
+          imgName: 'tool_cancel',
+          cnName: this.$t('wb.wb_tool_revoke'),
+        },
+        {
+          name: 'redo',
+          imgName: 'tool_redo',
+          cnName: this.$t('wb.wb_tool_redo'),
+        }
+      ],
       hoverState: true
     }
   },
@@ -212,7 +212,7 @@ export default {
      * @param {type} 类型
      */    
     resetCanvasToolList(type) {
-      const tool = canvasToolList.find(item => item.type && item.type == type)
+      const tool = this.canvasToolList.find(item => item.type && item.type == type)
       if (tool) {
         this.zegoWhiteboardArea.setActiveColor(tool.color)
         this.zegoWhiteboardArea.setActiveBrushSize(tool.size)
@@ -231,7 +231,7 @@ export default {
     updateCanvasToolList(key, value) {
       const type = this.zegoWhiteboardArea.activeTextPencil == 'graph' ? 'graph' : +this.zegoWhiteboardArea.activeTextPencil
       console.warn('updateCanvasToolList',type)
-      const tool = canvasToolList.find(item => item.type && item.type == type)
+      const tool = this.canvasToolList.find(item => item.type && item.type == type)
       if (tool) {
         tool[key] = value
       }

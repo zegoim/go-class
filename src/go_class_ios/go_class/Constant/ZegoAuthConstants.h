@@ -14,50 +14,53 @@
 
 //此处是国内小班课appID及appSign
 #ifdef IS_USE_LIVEROOM
-static long long kZegoAppID = 3606078772;
-static unsigned char kZegoSign[] = { 0x7f,0xa0,0x2d,0xba,0x76,0xae,0xf5,0x8c,0xb3,0xcd,0x6b,0x01,0xfd,0xc6,0x4a,0x7d,0x52,0xb0,0xa4,0x60,0x8d,0xb4,0xf0,0x79,0xad,0x1c,0xe6,0xac,0x6d,0x15,0xac,0x9d
+static long long kZegoAppID = <#YOUR_APP_ID#>;
+static unsigned char kZegoSign[] = { <#YOUR_APP_SIGN#>
 };
+
 //此处是国外小班课appID及appSign
-static long long kZegoAppIDAbroad = 0;
-static unsigned char kZegoSignAbroad[] = { 
+static long long kZegoAppIDAbroad = <#YOUR_APP_ID#>;
+static unsigned char kZegoSignAbroad[] = { <#YOUR_APP_SIGN#>
 };
 
 //此处是国内大班课appID及appSign
-static long long kZegoAppIDBigClass = 0;
-static unsigned char kZegoSignBigClass[] = { 
+static long long kZegoAppIDBigClass = <#YOUR_APP_ID#>;
+static unsigned char kZegoSignBigClass[] = { <#YOUR_APP_SIGN#>
 };
 
 //此处是国外大班课appID及appSign
-static long long kZegoAppIDAbroadBigClass = 0;
-static unsigned char kZegoSignAbroadBigClass[] = {
+static long long kZegoAppIDAbroadBigClass = <#YOUR_APP_ID#>;
+static unsigned char kZegoSignAbroadBigClass[] = {<#YOUR_APP_SIGN#>
 };
 
 #else
-static long long kZegoAppID = 0;
-static NSString * kZegoSign = @"";
+static long long kZegoAppID = <#YOUR_APP_ID#>;
+static NSString * kZegoSign = @"<#YOUR_APP_SIGN#>";
 
 //此处是国外小班课appID及appSign
-static long long kZegoAppIDAbroad = 0;
-static NSString * kZegoSignAbroad = @"";
+static long long kZegoAppIDAbroad = <#YOUR_APP_ID#>;
+static NSString * kZegoSignAbroad = @"<#YOUR_APP_SIGN#>";
 
 //此处是国内大班课appID及appSign
-static long long kZegoAppIDBigClass = 0;
-static NSString * kZegoSignBigClass = @"";
+static long long kZegoAppIDBigClass = <#YOUR_APP_ID#>;
+static NSString * kZegoSignBigClass = @"<#YOUR_APP_SIGN#>";
 
 //此处是国外大班课appID及appSign
-static long long kZegoAppIDAbroadBigClass = 0;
-static NSString * kZegoSignAbroadBigClass = @"";
+static long long kZegoAppIDAbroadBigClass = <#YOUR_APP_ID#>;
+static NSString * kZegoSignAbroadBigClass = @"<#YOUR_APP_SIGN#>";
 #endif
 
+/**
+ 独立部署业务后台之后，替换相应环境的地址，业务后台源码及部署方案请参考：https://github.com/zegoim/go-class/blob/release/express/docs/GettingStartedServer.md
+ */
 //国内正式环境业务后台地址
-static NSString *kZegoGoClassHomeServerHost = @"https://goclass-server-sh.zego.im";
+static NSString *kZegoGoClassHomeServerHost = @"<#YOUR_BACKEND_URL#>";
 //国内测试环境业务后台地址
-static NSString *kZegoGoClassHomeServerHostTest = @"https://backend-alpha.talkline.cn";
+static NSString *kZegoGoClassHomeServerHostTest = @"<#YOUR_BACKEND_URL#>";
 //国外正式环境业务后台地址
-static NSString *kZegoGoClassAbroadServerHost = @"https://goclass-server-hk.zegocloud.com";
+static NSString *kZegoGoClassAbroadServerHost = @"<#YOUR_BACKEND_URL#>";
 //国外测试环境业务后台地址
-static NSString *kZegoGoClassAbroadServerHostTest = @"https://goclass-server-alpha.zego.im";
-
+static NSString *kZegoGoClassAbroadServerHostTest = @"<#YOUR_BACKEND_URL#>";
 
 
 static NSString *kIsTestEnvKey = @"ZegoIsTestEnvKey";

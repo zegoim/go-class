@@ -15,7 +15,7 @@
 
 #import "ZegoWhiteBoardViewContainerModel.h"
 #import "ZegoBoardContainer.h"
-
+#import "NSString+ZegoExtension.h"
 typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 
 @interface ZegoWhiteBoardService ()
@@ -29,6 +29,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 @property (nonatomic, strong) NSMutableArray<ZegoBoardContainer *> *boardContainers;        //BoardContainer数组
 //排序，整理好的ZegoWhiteBoardViewContainerModel数组，供显示白板列表使用
 @property (nonatomic, strong, readwrite) NSArray<ZegoWhiteBoardViewContainerModel *> *orderedBoardModelContainers;        //BoardContainerModel数组
+@property (nonatomic, assign) ZegoWhiteboardID changeWhiteBoardID; //标记获取白板列表之前的当前白板id，使用后清除
 
 @end
 
@@ -63,6 +64,8 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     for (ZegoWhiteboardView *whiteBoardView in orderedWhiteBoardList) {
         [self addWhiteBoardWithWhiteBoardView:whiteBoardView ];
     }
+    [self changeWhiteBoardWithID:self.changeWhiteBoardID];
+    self.changeWhiteBoardID = 0;
 }
 
 - (void)addWhiteboard {
@@ -87,7 +90,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
             }
         }];
     } else {
-        [ZegoToast showText:@"已超过最大数量，请关闭部分白板"];
+        [ZegoToast showText:[NSString zego_localizedString:@"wb_tip_exceed_max_number_wb"]];
         [self.activityIndicator stopAnimating];
     }
 }
@@ -151,7 +154,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
             }
         }];
     } else {
-        [ZegoToast showText:@"已超过最大数量，请关闭部分文件"];
+        [ZegoToast showText:[NSString zego_localizedString:@"wb_tip_exceed_max_number_file"]];
     }
 }
 
@@ -170,6 +173,8 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
             return;
         }
         self.currentContainer = container;
+    } else {
+        self.changeWhiteBoardID = whiteboardID;
     }
 }
 

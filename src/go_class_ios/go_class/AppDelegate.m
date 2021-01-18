@@ -14,6 +14,8 @@
 #import "ZegoRotationManager.h"
 #import "ZegoDocsViewDependency.h"
 #import "ZGAppSignHelper.h"
+#import "NSBundle+ZegoExtension.h"
+#import "ZegoClassEnvManager.h"
 @interface AppDelegate ()
 
 @end
@@ -32,6 +34,9 @@
         kAppSignKey: [ZGAppSignHelper convertAppSignStringFromString:kZegoSign],
 #endif
     };
+    
+    BOOL enLanguage = !([ZegoClassEnvManager shareManager].isChinese);
+    [NSBundle zego_setLanguage:enLanguage?ZEGOLanguageEnglish:ZEGOLanguageChinese];
     [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
 //    [self redirectNSlogToDocumentFolder];
     return YES;
