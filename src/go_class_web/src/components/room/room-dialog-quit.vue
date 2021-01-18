@@ -4,7 +4,7 @@
 <template>
   <div class="room-dialog-quit">
     <el-dialog
-      title="退出课堂"
+      :title="$t('room.room_im_exit_class')"
       :visible.sync="dialogVisible"
       :width="role == 1 ? '380px' : '250px'"
       :showClose="false"
@@ -13,21 +13,20 @@
       <div class="dialog-content">
         <div v-if="role == 1">
           <div>
-            你可以暂时离开课堂，课堂不会立即结束。<br />
-            结束教学后，学生将被移出课堂。
+            {{$t('room.room_end_tip_end_class')}}
           </div>
-          <el-button class="cancle" round @click="$emit('handleClose')">取消</el-button>
-          <el-button class="quit" round @click="quitClass">离开课堂</el-button>
-          <el-button class="end" round @click="endClass">结束教学</el-button>
+          <el-button class="cancle" round @click="$emit('handleClose')">{{$t('room.room_end_cancle')}}</el-button>
+          <el-button class="quit" round @click="quitClass">{{$t('room.room_end_leave_class')}}</el-button>
+          <el-button class="end" round @click="endClass">{{$t('room.room_end_ending_class')}}</el-button>
         </div>
         <div v-else>
-          确定要退出当前课堂？
+          {{$t('room.room_end_tip_are_u_sure_quit')}}
         </div>
         <div v-if="role == 2">
           <el-button class="cancle" style="width:70px" round @click="$emit('handleClose')"
-            >取消</el-button
+            >{{$t('room.room_end_cancle')}}</el-button
           >
-          <el-button class="end" style="width:70px" round @click="quitClass">确定</el-button>
+          <el-button class="end" style="width:70px" round @click="quitClass">{{$t('room.room_ok')}}</el-button>
         </div>
       </div>
     </el-dialog>

@@ -10,7 +10,7 @@
 #import "ZegoUIConstant.h"
 #import "UIColor+ZegoExtension.h"
 #import "ZegoViewAnimator.h"
-
+#import "NSString+ZegoExtension.h"
 @interface ZegoAlertView ()
 @property (nonatomic, copy) void (^firstAction)(void);
 @property (nonatomic, copy) void (^secondAction)(void);
@@ -158,15 +158,15 @@ static ZegoAlertView *sharedInstance = nil;
     [noButton addTarget:self action:@selector(onTapNo) forControlEvents:UIControlEventTouchUpInside];
 
     if (self.themeStyle == ZegoAlertViewThemeStyleStudent) {
-        [noButton setTitle:@"取消" forState:UIControlStateNormal];
+        [noButton setTitle:[NSString zego_localizedString:@"setting_cancel"] forState:UIControlStateNormal];
     }else if (self.themeStyle == ZegoAlertViewThemeStyleGalleryAuth) {
-        [noButton setTitle:@"知道了" forState:UIControlStateNormal];
+        [noButton setTitle:[NSString zego_localizedString:@"wb_tip_got_it"] forState:UIControlStateNormal];
         noButton.backgroundColor = [UIColor clearColor];
         [noButton setTitleColor:kThemeColorBlue forState:UIControlStateNormal];
         noButton.layer.borderWidth = 0.5;
         noButton.layer.borderColor = kThemeColorBlue.CGColor;
     }else {
-        [noButton setTitle:@"离开课堂" forState:UIControlStateNormal];
+        [noButton setTitle:[NSString zego_localizedString:@"room_leave_class"] forState:UIControlStateNormal];
         noButton.backgroundColor = [UIColor clearColor];
         [noButton setTitleColor:kThemeColorBlue forState:UIControlStateNormal];
         noButton.layer.borderWidth = 0.5;
@@ -179,11 +179,11 @@ static ZegoAlertView *sharedInstance = nil;
     [self addSubview:yesButton];
     [yesButton addTarget:self action:@selector(onTapYes) forControlEvents:UIControlEventTouchUpInside];
     if (self.themeStyle == ZegoAlertViewThemeStyleStudent) {
-        [yesButton setTitle:@"确定" forState:UIControlStateNormal];
+        [yesButton setTitle:[NSString zego_localizedString:@"wb_determine"] forState:UIControlStateNormal];
     }else if (self.themeStyle == ZegoAlertViewThemeStyleGalleryAuth) {
-        [yesButton setTitle:@"去设置" forState:UIControlStateNormal];
+        [yesButton setTitle:[NSString zego_localizedString:@"wb_tip_go_to_set"] forState:UIControlStateNormal];
     }else {
-        [yesButton setTitle:@"结束教学" forState:UIControlStateNormal];
+        [yesButton setTitle:[NSString zego_localizedString:@"room_end_teaching"] forState:UIControlStateNormal];
     }
     
     
@@ -225,9 +225,9 @@ static ZegoAlertView *sharedInstance = nil;
         [self addSubview:noButton];
         [noButton addTarget:self action:@selector(onTapNo) forControlEvents:UIControlEventTouchUpInside];
         if (self.themeStyle == ZegoAlertViewThemeStyleNormal) {
-            [noButton setTitle:@"取消" forState:UIControlStateNormal];
+            [noButton setTitle:[NSString zego_localizedString:@"wb_cancel"] forState:UIControlStateNormal];
         } else {
-            [noButton setTitle:@"重试" forState:UIControlStateNormal];
+            [noButton setTitle:[NSString zego_localizedString:@"login_retry"] forState:UIControlStateNormal];
         }
         
         UIButton *yesButton = [self buttonIsYes:YES];
@@ -252,7 +252,7 @@ static ZegoAlertView *sharedInstance = nil;
     button.backgroundColor = isYes ? kThemeColorBlue : [UIColor colorWithRGB:@"#b1b4bd"];
     button.layer.masksToBounds = YES;
     button.layer.cornerRadius = 12;
-    [button setTitle:isYes ? @"确定" : @"取消" forState:UIControlStateNormal];
+    [button setTitle:isYes ? [NSString zego_localizedString:@"wb_determine"] : [NSString zego_localizedString:@"wb_cancel"] forState:UIControlStateNormal];
     return button;
 }
 

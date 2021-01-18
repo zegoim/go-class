@@ -4,7 +4,7 @@
 <template>
   <div class="room-dialog-members">
     <el-dialog
-      :title="`已加入的成员(${userList.length})`"
+      :title="$t('room.room_member_join',{ number: userList.length })"
       :visible.sync="dialogVisible"
       width="460px"
       height="314px"
@@ -14,7 +14,7 @@
       <div class="dialog-content">
         <ul class="member-list">
           <li class="member-item" v-for="item in userList" :key="item.uid">
-            <span>{{ item.nick_name + (item.role == 1 ? '（老师）' : '') }}</span>
+            <span>{{ item.nick_name + (item.role == 1 ? '('+ $t("room.room_member_teacher") +')' : '') }}</span>
             <div v-if="classScene === 1"> 
               <room-controller-device v-if="role == 1 && item.role == 2" :user="item" />
             </div>

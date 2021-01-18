@@ -29,7 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="@string/join_welcome"
+        android:text="@string/login_welcome_join_goclass"
         android:textColor="@color/text_black2"
         android:textSize="24sp" />
 
@@ -40,7 +40,7 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="40dp"
-        android:hint="@string/join_input_id"
+        android:hint="@string/login_input_classid"
         android:inputType="number"
         android:maxLength="9"
         android:maxLines="1"
@@ -58,7 +58,7 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="40dp"
-        android:hint="@string/join_input_name"
+        android:hint="@string/login_enter_name"
         android:maxLength="30"
         android:maxLines="1"
         android:paddingStart="24dp"
@@ -75,7 +75,7 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="40dp"
-        android:text="@string/join_mini_class"
+        android:text="@string/login_small_class"
         android:drawableRight="@drawable/arrow_down"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
@@ -91,7 +91,7 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="40dp"
-        android:text="@string/join_role_teacher"
+        android:text="@string/login_teacher"
         android:drawableRight="@drawable/arrow_down"
         android:gravity="center_vertical"
         android:paddingStart="24dp"
@@ -109,7 +109,7 @@
         android:layout_marginTop="28dp"
         android:layout_marginEnd="40dp"
         android:enabled="false"
-        android:text="@string/join_button"
+        android:text="@string/login_join_class"
         android:textColor="@android:color/white" />
 
     <TextView
@@ -148,7 +148,7 @@
             android:layout_marginStart="14dp"
             android:layout_marginEnd="14dp"
             android:layout_marginBottom="25dp"
-            android:text="@string/class_env"
+            android:text="@string/login_access_env"
             android:textColor="@color/text_black2"
             android:textSize="15sp"
             app:layout_constraintBottom_toTopOf="@+id/radiogroup_net_env"
@@ -182,7 +182,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="@string/mainland"
+                android:text="@string/login_mainland_china"
                 android:onClick="onRadioButtonClicked"
                 android:textColor="@color/text_black"
                 android:textSize="14sp" />
@@ -193,7 +193,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="50dp"
                 android:onClick="onRadioButtonClicked"
-                android:text="@string/other"
+                android:text="@string/login_overseas"
                 android:textColor="@color/text_black"
                 android:textSize="14sp" />
         </RadioGroup>
@@ -202,7 +202,7 @@
             android:id="@+id/net_env_tips"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/net_env_tips"
+            android:text="@string/login_interconnected"
             android:textColor="@color/text_hint_color"
             android:textSize="11sp"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -8,6 +8,7 @@ import android.os.Looper
 import android.os.Process
 import android.util.Log
 import android.widget.Toast
+import im.zego.goclass.R
 import java.io.*
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -81,7 +82,7 @@ object CrashHandler : Thread.UncaughtExceptionHandler {
         object : Thread() {
             override fun run() {
                 Looper.prepare()
-                Toast.makeText(mContext, "很抱歉,程序出现异常,即将退出.", Toast.LENGTH_LONG).show()
+                Toast.makeText(mContext, mContext?.getString(R.string.exception_exit_app), Toast.LENGTH_LONG).show()
                 Looper.loop()
             }
         }.start()

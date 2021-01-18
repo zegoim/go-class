@@ -3,7 +3,7 @@
 -->
 <template>
   <div class="message-box">
-    <div class="title">讨论</div>
+    <div class="title">{{$t("room.room_im_discuss")}}</div>
     <div class="message-list" ref="messageList">
       <div
         v-for="item of messages"
@@ -19,7 +19,7 @@
         </div>
         <!--用户进入房间系统消息 messageCategory == 2 -->
         <div class="text" v-if="item.messageCategory !== 1">
-          {{ item.userID == user.uid ? '我' : item.nick_name }} {{ item.messageContent[0] }}
+          {{ item.userID == user.uid ? $t('room.room_im_I') : item.nick_name }} {{ item.messageContent[0] }}
         </div>
         <div class="text-box" v-if="item.messageCategory === 1">
           <div v-for="(item, i) of item.messageContent" :key="i" class="text-item">
@@ -40,7 +40,7 @@
             </div>
             <!--消息状态 messageState = 2 发送失败 -->
             <!--消息状态 messageState = 3 发送成功 -->
-            <el-tooltip class="item" effect="dark" content="消息发送失败" placement="top">
+            <el-tooltip class="item" effect="dark" :content="$t('room.room_im_message_send_fail')" placement="top">
               <div
                 class="icon icon-fail"
                 v-show="item.messageState === 2"
@@ -56,7 +56,7 @@
       <textarea
         class="send-textarea"
         maxlength="100"
-        placeholder="说点什么吧～"
+        :placeholder="$t('room.room_im_say_something')"
         v-model="textareaValue"
         @keyup.enter="enterToSend"
       ></textarea>
@@ -67,11 +67,11 @@
               class="icon"
               v-html="require('../../assets/icons/room/input_error.svg').default"
             ></div>
-            最多输入100个字符
+            {{$t('room.room_im_max_characters')}}
           </div>
         </div>
 
-        <button class="btn" @click="send" :disabled="isDisabled">发送</button>
+        <button class="btn" @click="send" :disabled="isDisabled">{{$t('room.room_im_send')}}</button>
       </div>
     </div>
   </div>
@@ -119,7 +119,7 @@ export default {
       let data = {
         userID: res.uid,
         messageCategory: 2,
-        messageContent: res.delta === 1 ? ['加入课堂'] : ['退出课堂'],
+        messageContent: res.delta === 1 ? [this.$t('room.room_im_join_class')] : [this.$t('room.room_im_exit_class')],
         messageState: 1,
         nick_name: res.nick_name,
       }
@@ -130,7 +130,7 @@ export default {
      */
     async enterToSend() {
       if (this.sendTime && new Date().getTime() - this.sendTime < 300) {
-        this.showToast('消息发送过于频繁')
+        this.showToast(this.$t('room.room_im_messasge_sent_frequently'))
         return
       }
       // 除掉回车换行符
@@ -140,7 +140,7 @@ export default {
         this.sendMessage(textareaValue)
       } else {
         this.textareaValue = ''
-        this.showToast('消息不能为空')
+        this.showToast(this.$t('room.room_im_message_cannot_empty'))
       }
     },
     /**
@@ -148,7 +148,7 @@ export default {
      */
     send() {
       if (this.sendTime && new Date().getTime() - this.sendTime < 300) {
-        this.showToast('消息发送过于频繁')
+        this.showToast(this.$t('room.room_im_messasge_sent_frequently'))
         return
       }
       let message = this.textareaValue
@@ -162,7 +162,7 @@ export default {
       try {
         await this.zegoLiveRoom.sendBarrageMessage(message)
       } catch (e) {
-        this.showToast('消息发送失败')
+        this.showToast(this.$t('room.room_im_message_send_fail'))
       }
       this.sendTime = new Date().getTime()
       this.$nextTick(() => {

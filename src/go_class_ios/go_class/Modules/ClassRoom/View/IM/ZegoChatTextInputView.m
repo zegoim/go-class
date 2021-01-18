@@ -10,7 +10,7 @@
 #import "UIColor+ZegoExtension.h"
 #import "ZegoUIConstant.h"
 #import <ZegoWhiteboardView/ZegoWhiteboardManager.h>
-
+#import "NSString+ZegoExtension.h"
 #define kZegoChatRoomMaxTextLength 100 //限制最大输入字符数
 
 @interface ZegoChatTextInputView ()<UITextViewDelegate>
@@ -66,7 +66,7 @@
     self.sendButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self addSubview:self.sendButton];
     self.sendButton.frame = CGRectMake(kScreenWidth - 50, 0, 40, self.frame.size.height);
-    [self.sendButton setTitle:@"发送" forState:UIControlStateNormal];
+    [self.sendButton setTitle:[NSString zego_localizedString:@"room_im_send"] forState:UIControlStateNormal];
     self.sendButton.backgroundColor = [UIColor clearColor];
     self.sendButton.titleLabel.font = [UIFont systemFontOfSize:15];
     [self.sendButton setTitleColor:UIColorHex(#007aff) forState:UIControlStateNormal];

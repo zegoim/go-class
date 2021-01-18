@@ -11,6 +11,7 @@
 #import "ZegoUIConstant.h"
 #import "UIColor+ZegoExtension.h"
 #import <YYWebImage/UIImageView+YYWebImage.h>
+#import "NSString+ZegoExtension.h"
 @interface ZegoFilePreviewView ()<UICollectionViewDelegate,UICollectionViewDataSource>
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, assign) NSInteger totoalPageCount;
@@ -37,7 +38,7 @@
     self.layer.shadowOpacity = 0.2;
     self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 14, self.frame.size.width - 40, 15)];
     [self addSubview:self.titleLabel];
-    self.titleLabel.text = @"预览";
+    self.titleLabel.text = [NSString zego_localizedString:@"wb_preview"];
     self.titleLabel.font = [UIFont systemFontOfSize:15];
     self.titleLabel.textColor = kTextColor1;
     UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(self.titleLabel.frame) + 14, self.frame.size.width, kLineWidth)];

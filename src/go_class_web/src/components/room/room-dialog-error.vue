@@ -11,11 +11,11 @@
     >
       <div class="dialog-content">
         <div class="des">
-          重新加入失败，请检查网络后重试
+          {{$t('room.room_rejoin_fail')}}
         </div>
         <div>
-          <el-button class="cancle" round @click="retry">重试</el-button>
-          <el-button class="end" round @click="gotoLogin">确定</el-button>
+          <el-button class="cancle" round @click="retry">{{$t('room.room_retry')}}</el-button>
+          <el-button class="end" round @click="gotoLogin">{{$t('room.room_ok')}}</el-button>
         </div>
       </div>
     </el-dialog>

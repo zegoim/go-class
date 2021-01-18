@@ -53,8 +53,14 @@ go_class 是一个集成即构 Express-Video SDK，互动白板和文件共享�
 5.下载的示例代码中所需的SDK初始化所需的`AppID`和`AppSign`，需要修改go_class/Constant目录下的`ZegoAuthConstants.h`文件，请使用此“条件条件”已获取的AppID和AppSign正确填写，否则示例代码无法正常运行。
 
    ![填写AppID&AppSign](http://doc.oa.zego.im/Pics/iOS/GoClass/appID-AppSign.png)
-    
-
+   
+   同时需要将 本地部署的GO 课堂服务端 的host地址配置在 对应字段中。 
+   
+   ![配置业务服务host](http://doc.oa.zego.im/Pics/iOS/GoClass/host-setting.png)
+   
+   然后可以通过调用demo 中的ZegoClassEnvManager 单例的 setNormalEnv 方法设置默认环境，也可以在此方法中修改为你的目标环境。 
+   ![设置默认环境](http://doc.oa.zego.im/Pics/iOS/GoClass/app-env.png)
+   
 6.将iOS设备连接到开发电脑，依次Xcode左上角的Generic iOS Device选择该iOS设备。
 
 

@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory
 import android.provider.MediaStore
 import android.util.Log
 import android.webkit.MimeTypeMap
+import im.zego.goclass.R
 import im.zego.goclass.tool.PermissionHelper
 import im.zego.goclass.tool.ToastUtils
 
@@ -51,7 +52,7 @@ class UploadPicHelper {
             }
             // 取消上传
             if (resultCode != Activity.RESULT_OK) {
-                ToastUtils.showCenterToast("取消了上传")
+                ToastUtils.showCenterToast(context.getString(R.string.cancel_upload))
                 return
             }
             val fileUri = data?.data

@@ -9,37 +9,37 @@
         android:id="@+id/click"
         style="@style/tools_text_style"
         android:drawableTop="@drawable/drawable_tools_click"
-        android:text="@string/click" />
+        android:text="@string/wb_tool_click" />
 
     <TextView
         android:id="@+id/select"
         style="@style/tools_text_style"
         android:drawableTop="@drawable/drawable_tools_select"
-        android:text="@string/select" />
+        android:text="@string/wb_tool_choice" />
 
     <TextView
         android:id="@+id/drag"
         style="@style/tools_text_style"
         android:drawableTop="@drawable/drawable_tools_drag"
-        android:text="@string/drag" />
+        android:text="@string/wb_tool_drag" />
 
     <TextView
         android:id="@+id/brush"
         style="@style/tools_text_style"
         android:drawableTop="@drawable/drawable_tools_brush"
-        android:text="@string/brush" />
+        android:text="@string/wb_tool_brush" />
 
     <TextView
         android:id="@+id/laser"
         style="@style/tools_text_style"
         android:drawableTop="@drawable/drawable_tools_laser"
-        android:text="@string/pointer" />
+        android:text="@string/wb_tool_laser" />
 
     <TextView
         android:id="@+id/text"
         style="@style/tools_text_style"
         android:drawableTop="@drawable/drawable_tools_text"
-        android:text="@string/text" />
+        android:text="@string/wb_tool_text" />
 
 <!--    <TextView
         android:id="@+id/rectangle"
@@ -63,43 +63,43 @@
         android:id="@+id/shape"
         style="@style/tools_text_style"
         android:drawableTop="@drawable/drawable_tools_shape"
-        android:text="@string/shape" />
+        android:text="@string/wb_tool_graphical" />
 
     <TextView
         android:id="@+id/style"
         style="@style/tools_text_style"
         android:drawableTop="@drawable/drawable_tools_style"
-        android:text="@string/style" />
+        android:text="@string/wb_tool_format" />
 
     <TextView
         android:id="@+id/eraser"
         style="@style/tools_text_style"
         android:drawableTop="@drawable/drawable_tools_eraser"
-        android:text="@string/eraser" />
+        android:text="@string/wb_tool_erase" />
 
     <TextView
         android:id="@+id/clear"
         style="@style/tools_text_style"
         android:drawableTop="@drawable/drawable_tools_clear"
-        android:text="@string/clear" />
+        android:text="@string/wb_tool_clear" />
 
     <TextView
         android:id="@+id/undo"
         style="@style/tools_text_style"
         android:drawableTop="@drawable/drawable_tools_undo"
-        android:text="@string/undo" />
+        android:text="@string/wb_tool_revoke" />
 
     <TextView
         android:id="@+id/redo"
         style="@style/tools_text_style"
         android:drawableTop="@drawable/drawable_tools_redo"
-        android:text="@string/redo" />
+        android:text="@string/wb_tool_redo" />
 
     <TextView
         android:id="@+id/save_image"
         style="@style/tools_text_style"
         android:drawableTop="@drawable/drawable_tools_save"
-        android:text="@string/save_image" />
+        android:text="@string/wb_tool_save" />
 
     <TextView
         android:id="@+id/clear_cur_page"

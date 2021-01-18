@@ -8,7 +8,8 @@ import axios from 'axios'
 import { Message } from 'element-ui'
 import zegoClient from '@/service/zego/zegoClient/index'
 import { ROLE_STUDENT, ROLE_TEACHER, STATE_CLOSE, STATE_OPEN, ZEGOENV } from '@/utils/constants'
-
+import { YOUR_HOME_BACKEND_URL, YOUR_OVERSEAS_BACKEND_URL } from '@/utils/config_data'
+import i18n from "../../i18n"
 export const bus = new Vue()
 
 Vue.prototype.$bus = bus
@@ -16,21 +17,21 @@ Vue.prototype.$bus = bus
 const timeout = 10000
 const loginCodes = [10005, 10006]
 const errorTips = {
-  'Network Error': '网络异常，请检查网络后重试',
-  [`timeout of ${timeout}ms exceeded`]: '请求超时，服务器未响应',
-  'Internal Server Error': '请求服务器错误',
-  'Request failed with status code 502': '请求服务器错误',
-  10001: '课堂已有其他老师，不能加入',
-  10002: '课堂人数已满，不能加入',
-  10003: '用户没有权限修改',
-  10004: '目标用户不在教室',
-  10005: '需要先登录房间',
-  10006: '房间不存在',
-  10007: '演示课堂最多开启3路学生音视频'
+  'Network Error': i18n.t('login.login_network_exception'),
+  [`timeout of ${timeout}ms exceeded`]: i18n.t('system.timeout_exceeded'),
+  'Internal Server Error': i18n.t('system.internal_serve_error'),
+  'Request failed with status code 502': i18n.t('system.request_failed_code_502'),
+  10001: i18n.t('login.login_other_teacher_in_the_class'),
+  10002: i18n.t('login.login_class_is_full'),
+  10003: i18n.t('system.user_no_permission'),
+  10004: i18n.t('system.target_user_not_in_room'),
+  10005: i18n.t('system.need_login'),
+  10006: i18n.t('login.login_room_not_exist'),
+  10007: i18n.t('room.room_tip_channels')
 }
 
 const translateError = res => {
-  res.ret.message = errorTips[res.ret.code] || res.ret.message || '网络异常，请检查网络后重试'
+  res.ret.message = errorTips[res.ret.code] || res.ret.message || i18n.t('login.login_network_exception')
 }
 
 const handleError = res => {
@@ -46,10 +47,8 @@ const handleError = res => {
 }
 
 const hostMap = {
-  testhome: 'https://backend-alpha.talkline.cn/edu_room/', // 测试环境-国内环境
-  testoverseas:'https://goclass-server-alpha.zego.im/edu_room/',// 测试环境-海外环境
-  home: 'https://goclass-server-sh.zego.im/edu_room/', // 正式环境下的国内环境
-  overseas: 'https://goclass-server-hk.zegocloud.com/edu_room/' // 正式环境下的海外环境
+  home: YOUR_HOME_BACKEND_URL,
+  overseas: YOUR_OVERSEAS_BACKEND_URL
 }
 const http = axios.create({
   baseURL: hostMap.home,
@@ -176,11 +175,12 @@ class RoomStore {
     if (this.role == ROLE_STUDENT && user) {
       let str = ''
       if (data.type == 4) {
-        str = user.can_share == STATE_CLOSE ? '老师已收回你的共享权限' : '老师已允许你使用共享功能'
+        
+        str = user.can_share == STATE_CLOSE ? i18n.t('room.room_student_tip_revoke_share') : i18n.t('room.room_student_tip_permission')
       } else if (data.type == 2) {
-        str = user.camera == STATE_CLOSE ? '老师已关闭你的摄像头' : '老师已开启你的摄像头'
+        str = user.camera == STATE_CLOSE ? i18n.t('room.room_student_tip_turned_off_camera') : i18n.t('room.room_student_tip_turned_on_camera')
       } else if (data.type == 3) {
-        str = user.mic == STATE_CLOSE ? '老师已关闭你的麦克风' : '老师已开启你的麦克风'
+        str = user.mic == STATE_CLOSE ? i18n.t('room.room_student_tip_turned_off_mic') : i18n.t('room.room_student_tip_turned_on_mic')
       }
       this.auth.camera = user.camera
       this.auth.mic = user.mic

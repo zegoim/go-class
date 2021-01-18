@@ -47,13 +47,6 @@
             android:name="BUGLY_ENABLE_DEBUG"
             android:value="${BUGLY_IS_DEBUG}" />
 
-        <activity android:name=".debug.UploadPicActivity"></activity>
-        <activity android:name=".debug.AppEnvActivity" />
-        <activity
-            android:name=".debug.DebugActivity"
-            android:configChanges="locale|keyboardHidden|fontScale|orientation|screenSize|screenLayout|layoutDirection|density|uiMode"
-            android:label="@string/title_activity_debug"
-            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.MainActivity"
             android:configChanges="locale|keyboardHidden|fontScale|orientation|screenSize|screenLayout|layoutDirection|density|uiMode"
@@ -69,9 +62,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".debug.UploadFileActivity"
-            android:configChanges="orientation|screenSize" />
     </application>
 
 </manifest>

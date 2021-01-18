@@ -61,7 +61,7 @@
 #import <ZegoExpressEngine/ZegoExpressEngine.h>
 #endif
 
-
+#import "NSString+ZegoExtension.h"
 typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 
 @interface ZegoClassViewController ()<ZegoWhiteboardListViewDelegate, ZegoFileListViewDelegate, ZegoExcelSheetListViewDelegate, ZegoWhiteboardManagerDelegate, ZegoLiveCenterDelegate, ZegoClassRoomBottomBarDelegate, ZegoClassRoomTopBarDelegate,ZegoPageControlViewDelegate, ZegoWhiteboardViewDelegate, ZegoHttpHeartbeatDelegate,ZegoWhiteBoardServiceDelegate, ZegoDocsViewDelegate, ZegoDrawingToolViewDelegate, ZegoClassJustTestViewControllerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate>
@@ -504,7 +504,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 
 //处理连麦成员逻辑
 - (void)handleClassOverWithData:(NSDictionary *)data {
-    [ZegoAlertView alertWithTitle:@"老师已结束教学" hasCancelButton:NO onTapYes:^{
+    [ZegoAlertView alertWithTitle:[NSString zego_localizedString:@"room_tip_teacher_finished_teaching"] hasCancelButton:NO onTapYes:^{
         [self leaveRoom];
     }];
 }
@@ -513,7 +513,13 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 - (void)updateLocalDisplayAndDeviceStatus:(ZegoRoomMemberInfoModel *)updateModel operationType:(NSInteger)operationType {
     
     if (operationType == 4 ) {
-        [ZegoToast showText:[NSString stringWithFormat:@"老师已%@你的共享权限",(updateModel.canShare == 2)?@"允许":@"收回"]];
+        if (updateModel.canShare == 2) {
+            [ZegoToast showText:[NSString zego_localizedString:@"room_student_tip_permission"]];
+        } else {
+            [ZegoToast showText:[NSString zego_localizedString:@"room_student_tip_revoke_share"]];
+        }
+            
+        
     }
     if (updateModel.canShare != self.currentUserModel.canShare) {
         [self handelFileShareAuthority:updateModel.canShare == 2 changeTool:YES];
@@ -526,7 +532,11 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
             @strongify(self);
             if (authority) {
                 if (operationType == 2) {
-                    [ZegoToast showText:[NSString stringWithFormat:@"老师已%@你的摄像头",(updateModel.camera == 2)?@"开启":@"关闭"]];
+                    if (updateModel.camera == 2) {
+                        [ZegoToast showText:[NSString zego_localizedString:@"room_student_tip_turned_on_camera"]];
+                    } else {
+                        [ZegoToast showText:[NSString zego_localizedString:@"room_student_tip_turned_off_camera"]];
+                    }
                 }
                 [self.bottomBar setupCameraOpen:updateModel.camera == 2 react:NO];
             } else {
@@ -543,7 +553,12 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
             @strongify(self);
             if (authority) {
                 if (operationType == 3) {
-                    [ZegoToast showText:[NSString stringWithFormat:@"老师已%@你的麦克风",(updateModel.mic == 2)?@"开启":@"关闭"]];
+                    if (updateModel.mic == 2) {
+                        [ZegoToast showText:[NSString zego_localizedString:@"room_student_tip_turned_on_mic"]];
+                    } else {
+                        [ZegoToast showText:[NSString zego_localizedString:@"room_student_tip_turned_off_mic"]];
+                    }
+                    
                 }
                 [self.bottomBar setupMicOpen:updateModel.mic == 2 react:NO];
             } else {
@@ -665,9 +680,9 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
                 self.currentUserModel.camera = 1;
                 NSInteger count = [self getJoinLiveStudensCount];
                 if (count >= 3) {
-                    [ZegoToast showText:@"演示课堂最多开启3路学生音视频"];
+                    [ZegoToast showText:[NSString zego_localizedString:@"room_tip_channels"]];
                 } else {
-                    [ZegoToast showText:@"打开摄像头失败"];
+                    [ZegoToast showText:[NSString zego_localizedString:@"room_open_camera_failed"]];
                 }
             }
             [ZegoLiveCenter muteVideo:!success];
@@ -697,7 +712,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
         @strongify(self);
         if (!success) {
             self.currentUserModel.camera = 2;
-            [ZegoToast showText:@"关闭摄像头失败"];
+            [ZegoToast showText:[NSString zego_localizedString:@"room_close_camera_failed"]];
         }
         [ZegoLiveCenter muteVideo:success];
         if (complementBlock) {
@@ -724,9 +739,9 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
                 
                 NSInteger count = [self getJoinLiveStudensCount];
                 if (count >= 3) {
-                    [ZegoToast showText:@"演示课堂最多开启3路学生音视频"];
+                    [ZegoToast showText:[NSString zego_localizedString:@"room_tip_channels"]];
                 } else {
-                    [ZegoToast showText:@"打开麦克风失败"];
+                    [ZegoToast showText:[NSString zego_localizedString:@"room_open_mic_failed"]];
                 }
             }
             [ZegoLiveCenter muteAudio:!success];
@@ -745,7 +760,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
         @strongify(self);
         if (!success) {
             self.currentUserModel.mic = 2;
-            [ZegoToast showText:@"关闭麦克风失败"];
+            [ZegoToast showText:[NSString zego_localizedString:@"room_close_mic_failed"]];
         }
         [ZegoLiveCenter muteAudio:success];
         if (complementBlock) {
@@ -778,17 +793,17 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     NSString *tipTitle = nil;
     NSString *tipMessage = nil;
     if (mediaType == AVMediaTypeVideo) {
-        tipTitle = @"摄像头权限";
-        tipMessage = @"请在\"设置 - 隐私 - 相机\"选项中，允许访问您的相机";
+        tipTitle = [NSString zego_localizedString:@"NSCameraUsageDescription"];
+        tipMessage = [NSString zego_localizedString:@"setting_private_camera"];
     } else if (mediaType == AVMediaTypeAudio) {
-        tipTitle = @"麦克风权限";
-        tipMessage = @"请在\"设置 - 隐私 - 麦克风\"选项中，允许访问您的麦克风";
+        tipTitle = [NSString zego_localizedString:@"NSMicrophoneUsageDescription"];
+        tipMessage = [NSString zego_localizedString:@"setting_private_mic"];
     }
     
     UIAlertController * alert = [UIAlertController alertControllerWithTitle:tipTitle message:tipMessage preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleCancel handler:nil];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:[NSString zego_localizedString:@"setting_cancel"] style:UIAlertActionStyleCancel handler:nil];
     [alert addAction:cancel];
-    UIAlertAction *setting = [UIAlertAction actionWithTitle:@"去设置" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertAction *setting = [UIAlertAction actionWithTitle:[NSString zego_localizedString:@"setting_go"] style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
         NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
         if( [[UIApplication sharedApplication] canOpenURL:url] ) {
@@ -864,7 +879,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
         ZegoClassRoomCoverView *cover = [[ZegoClassRoomCoverView alloc] initWithTitle:self.roomId exitButtonTapped:^{
             @strongify(self);
             if (self.currentUserModel.role == 1) { //1：老师
-                [ZegoAlertView alertWithTitle:@"退出课堂" subTitle:@"你可以暂时离开课堂，课堂不会立即结束。结束教学后，学生将被移出课堂" onTapYes:^{
+                [ZegoAlertView alertWithTitle:[NSString zego_localizedString:@"room_exit_class"] subTitle:[NSString zego_localizedString:@"room_tip_exit_class"] onTapYes:^{
                     @strongify(self);
                     [self logoutRoomEndClass:YES];
                 } onTapSecondButton:^{
@@ -872,7 +887,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
                     [self logoutRoomEndClass:NO];
                 } themeStyle:ZegoAlertViewThemeStyleTeacher];
             } else { //2：学生
-                [ZegoAlertView alertWithTitle:@"退出课堂" subTitle:@"确定要退出当前课堂？" onTapYes:^{
+                [ZegoAlertView alertWithTitle:[NSString zego_localizedString:@"room_exit_class"] subTitle:[NSString zego_localizedString:@"room_tip_are_u_sure_exit"] onTapYes:^{
                     @strongify(self);
                     [self logoutRoomEndClass:NO];
                 } onTapSecondButton:^{
@@ -891,7 +906,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     if (self.currentUserModel.canShare == 2) {
         [self.whiteBoardService addWhiteboard];
     } else {
-        [ZegoToast showText:@"老师还未允许你使用共享功能"];
+        [ZegoToast showText:[NSString zego_localizedString:@"wb_tip_not_allowed_share"]];
     }
 }
 
@@ -899,7 +914,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     if (self.currentUserModel.canShare == 2) {
         [self showFileList];
     } else {
-        [ZegoToast showText:@"老师还未允许你使用共享功能"];
+        [ZegoToast showText:[NSString zego_localizedString:@"wb_tip_not_allowed_share"]];
     }
 }
 
@@ -1072,7 +1087,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     [self handleDynamicPPTClickLogicIfNeededWithContainer:container];
     container.whiteboardViewUIDelegate = self;
     container.docsViewUIDelegate = self;
-    [container.whiteboardView setWhiteboardOperationMode:(_drawingToolView.isDragEnable?ZegoWhiteboardOperationModeScroll : ZegoWhiteboardOperationModeDraw) |ZegoWhiteboardOperationModeZoom];
+    [container setupWhiteboardOperationMode:(_drawingToolView.isDragEnable?ZegoWhiteboardOperationModeScroll : ZegoWhiteboardOperationModeDraw) |ZegoWhiteboardOperationModeZoom];
     [self.drawingToolViewService refreshBoardContainer:container];
         
     self.defaultNoteView.hidden = container != nil;
@@ -1122,7 +1137,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     UIView *container = self.whiteBoardService.currentContainer;
     [[ZegoViewCaptor sharedInstance] writeToAlbumWithView:container complete:^(BOOL success, BOOL alert) {
         if (success) {
-            [ZegoToast showText:@"保存成功，可前往相册查看"];
+            [ZegoToast showText:[NSString zego_localizedString:@"wb_tip_save_success"]];
         }else {
             if (alert) {
                 [self presentGalleryAuthRequiredAlert];
@@ -1132,7 +1147,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 }
 
 - (void)presentGalleryAuthRequiredAlert {
-    [ZegoAlertView alertWithTitle:@"照片权限" subTitle:@"请在“设置-GO课堂-照片“选项中，允许应用访问您的设备照片" onTapYes:^{
+    [ZegoAlertView alertWithTitle:[NSString zego_localizedString:@"wb_auth_photo"] subTitle:[NSString zego_localizedString:@"wb_tip_allow_access_photo"] onTapYes:^{
         NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
         if (@available(iOS 10.0, *)) {
             if( [[UIApplication sharedApplication]canOpenURL:url] ) {
@@ -1175,7 +1190,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 
 - (void)whiteBoardListDidDeleteView:(ZegoWhiteBoardViewContainerModel *)whiteBoardViewContainerModel {
     @weakify(self);
-    [ZegoAlertView alertWithTitle:[NSString stringWithFormat:@"确定关闭【%@】吗？",whiteBoardViewContainerModel.selectedBoardContainer.whiteBoardName] onTapYes:^{
+    [ZegoAlertView alertWithTitle:[NSString stringWithFormat:@"%@【%@】？",[NSString zego_localizedString:@"wb_tip_are_u_sure_close"],whiteBoardViewContainerModel.selectedBoardContainer.whiteBoardName] onTapYes:^{
         @strongify(self);
         [self.whiteBoardService removeWhiteBoardWithWhiteBoardViewContainerModel:whiteBoardViewContainerModel];
     }];
@@ -1317,7 +1332,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     DLog(@"重试失败");
     
     [ZegoHUD dismiss];
-    [ZegoAlertView alertWithTitle:@"重新加入失败，请检查网络设置" onTapYes:^{
+    [ZegoAlertView alertWithTitle:[NSString zego_localizedString:@"room_rejoin_fail"] onTapYes:^{
         [self logoutRoomEndClass:NO];
     } onTapRetryButton:^{
         [self reLogin];
@@ -1336,7 +1351,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 - (void)onTempBroken:(int)errorCode roomID:(NSString *)roomID {
     DLog(@"网络异常，正在重新加入...");
     [ZegoLiveCenter writeLog:1 content:[NSString stringWithFormat:@"[DEMO]onTempBroken roomID:%@", roomID]];
-    [ZegoHUD showIndicatorHUDText:@"网络异常，正在重新加入..."];
+    [ZegoHUD showIndicatorHUDText:[NSString zego_localizedString:@"room_network_exception"]];
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     [self performSelector:@selector(reLoginFailed) withObject:self afterDelay:60];
 }

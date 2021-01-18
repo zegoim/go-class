@@ -1,5 +1,6 @@
 package im.zego.goclass.sdk
 
+
 import android.app.Application
 import android.util.Log
 import android.view.TextureView
@@ -27,12 +28,12 @@ class ZegoExpressWrapper : IZegoVideoSDKProxy {
     private var streamCountListener: IStreamCountListener? = null
     private var remoteDeviceStateListener: IRemoteDeviceStateListener? = null
     private var localDeviceErrorListener: ILocalDeviceErrorListener? = null
-    private var reliableMsgListener: IZegoReliableMsgListener? = null
     private var customCommandListener: ICustomCommandListener? = null
+    private var roomExtraInfoUpdateListener: IRoomExtraInfoUpdateListener? = null
     private var loginResult: (Int) -> Unit = {}
     private var isLoginRoom = false
-    private var zegoBigRoomMsgListener :IZegoMsgListener? = null
-    private var zegoMsgListener :IZegoMsgListener? = null
+    private var zegoBigRoomMsgListener: IZegoMsgListener? = null
+    private var zegoMsgListener: IZegoMsgListener? = null
 
     override fun initSDK(
         application: Application,
@@ -220,27 +221,6 @@ class ZegoExpressWrapper : IZegoVideoSDKProxy {
                 remoteDeviceStateListener?.onRemoteMicStatusUpdate(streamID, status)
             }
 
-            override fun onRoomRecvReliableMessage(roomID: String, message: ZegoReliableMessage) {
-                Log.d(
-                    TAG,
-                    "onRoomRecvReliableMessage,key:${message.type},latestSeq:${message.latestSeq}"
-                )
-                reliableMsgListener?.onRecvReliableMessage(
-                    roomID, message.type, message.content, message.latestSeq.toLong()
-                )
-            }
-
-            override fun onRoomUpdateReliableMessageInfo(
-                roomID: String,
-                msgType: String,
-                latestSeq: Int
-            ) {
-                Log.d(TAG, "onRoomUpdateReliableMessageInfo,key:${msgType},latestSeq:${latestSeq}")
-                reliableMsgListener?.onRoomUpdateReliableMessageInfo(
-                    roomID, msgType, latestSeq.toLong()
-                )
-            }
-
             override fun onIMRecvCustomCommand(
                 roomID: String,
                 fromUser: ZegoUser,
@@ -252,6 +232,19 @@ class ZegoExpressWrapper : IZegoVideoSDKProxy {
                     command,
                     roomID
                 )
+            }
+
+            override fun onRoomExtraInfoUpdate(
+                roomID: String,
+                roomExtraInfoList: ArrayList<ZegoRoomExtraInfo>
+            ) {
+                Log.d(
+                    TAG,
+                    "onRoomExtraInfoUpdate,roomID:${roomID},roomExtraInfoList:${roomExtraInfoList}"
+                )
+                if (roomExtraInfoList.isNotEmpty()) {
+                    roomExtraInfoUpdateListener?.onRoomExtraInfoUpdate(roomID, roomExtraInfoList[0])
+                }
             }
         })
 
@@ -382,43 +375,19 @@ class ZegoExpressWrapper : IZegoVideoSDKProxy {
         expressEngine.enableHardwareEncoder(require)
     }
 
-    override fun sendReliableMessage(
+    override fun setRoomExtraInfo(
         roomID: String,
         type: String,
         content: String,
-        seq: Long,
-        callback: IZegoSendReliableMsgCallback?
+        callback: IZegoSetExtraInfoCallback?
     ) {
-        expressEngine.sendReliableMessage(
-            roomID, type, content, seq.toInt()
-        ) { errorCode, _, _, latestSeq ->
-            Log.d(
-                TAG, "sendReliableMessage,seq:${seq},key:${type},content:${content}," +
-                        "returned errorCode:${errorCode},latestSeq:${latestSeq}"
-            )
-            callback?.onSendReliableMessage(errorCode, roomID, type, latestSeq.toLong())
-        }
-    }
-
-    override fun getReliableMessage(
-        roomID: String,
-        messageType: String,
-        callback: IZegoGetReliableMsgCallback?
-    ) {
-        expressEngine.getReliableMessage(roomID, messageType)
-        { errorCode, _, message: ZegoReliableMessage? ->
-            val latestSeq = (message?.latestSeq) ?: 0
-            val content = (message?.content)
+        expressEngine.setRoomExtraInfo(roomID, type, content) { errorCode ->
             Log.d(
                 TAG,
-                "getReliableMessage,errorCode:$errorCode,key:${messageType},content:${content}"
+                "setRoomExtraInfo,key:${type},content:${content}," + "returned errorCode:${errorCode}"
             )
-            callback?.onGetReliableMessage(errorCode, roomID, latestSeq.toLong(), content)
+            callback?.onSetRoomExtraInfo(errorCode)
         }
-    }
-
-    override fun setReliableMessageCallback(listener: IZegoReliableMsgListener?) {
-        reliableMsgListener = listener
     }
 
     override fun setClassUserListener(userListener: IClassUserListener?) {
@@ -447,6 +416,10 @@ class ZegoExpressWrapper : IZegoVideoSDKProxy {
 
     override fun setCustomCommandListener(listener: ICustomCommandListener?) {
         this.customCommandListener = listener
+    }
+
+    override fun setRoomExtraInfoUpdateListener(listener: IRoomExtraInfoUpdateListener?) {
+        this.roomExtraInfoUpdateListener = listener
     }
 
     override fun version(): String {
@@ -479,3 +452,4 @@ class ZegoExpressWrapper : IZegoVideoSDKProxy {
         zegoMsgListener = listener
     }
 }
+

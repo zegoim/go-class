@@ -15,21 +15,19 @@ import androidx.annotation.StringRes
 import androidx.core.view.GravityCompat
 import androidx.core.view.children
 import androidx.drawerlayout.widget.DrawerLayout
-import im.zego.goclass.CONFERENCE_ID
-import im.zego.goclass.DemoApplication
-import im.zego.goclass.dp2px
-import im.zego.goclass.getRoundRectDrawable
+import im.zego.goclass.*
 import im.zego.goclass.classroom.*
 import im.zego.goclass.network.Result
 import im.zego.goclass.network.ZegoApiClient
+import im.zego.goclass.network.ZegoApiErrorCode
+import im.zego.goclass.network.ZegoApiErrorCode.Companion.getPublicMsgFromCode
 import im.zego.goclass.sdk.*
 import im.zego.goclass.tool.*
-import im.zego.goclass.tool.Logger
 import im.zego.goclass.widget.*
 import im.zego.zegodocs.ZegoDocsViewConstants
 import im.zego.zegowhiteboard.ZegoWhiteboardView
 import im.zego.zegowhiteboard.callback.IZegoWhiteboardManagerListener
-import im.zego.goclass.R
+import kotlinx.android.synthetic.main.activity_join.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_main_content.*
 
@@ -41,27 +39,35 @@ class MainActivity : BaseActivity() {
 
     // 分享 PopWindow
     private lateinit var sharePopWindow: SharePopWindow
+
     // 摄像头 PopWindow
     private lateinit var cameraPopWindow: CameraPopWindow
+
     // 加载 Dialog
     private lateinit var loadingDialog: LoadingDialog
+
     // 重新加入 Dialog
     var reLoginDialog: ZegoDialog? = null
 
     // 设备服务：摄像头、麦克风
     val deviceService: ZegoDeviceService = ZegoSDKManager.getInstance().deviceService
+
     // 流服务
     val streamService: ZegoStreamService = ZegoSDKManager.getInstance().streamService
+
     // 房间服务
     val roomService: ZegoRoomService = ZegoSDKManager.getInstance().roomService
 
     // 隐藏顶部栏
     private val handler = Handler()
     private val hideTopBarRunnable = Runnable { layout_top_bar.visibility = View.GONE }
+
     // 白板容器
     private var currentHolder: ZegoWhiteboardViewHolder? = null
+
     // 获取白板列表是否结束
     var getListFinished = false
+
     // 刚刚进房间也会有whiteboardAdd，remove消息过来，这时候缓存一下，再和getList里面对比，删掉重复的
     var tempWbList = mutableListOf<ZegoWhiteboardView>()
 
@@ -88,7 +94,8 @@ class MainActivity : BaseActivity() {
         // 隐藏虚拟按键，并且全屏 tool
         hideBottomUIMenu()
         // 获取推流的流 ID
-        val publishStreamID = streamService.generatePublishStreamID(ClassRoomManager.myUserId.toString())
+        val publishStreamID =
+            streamService.generatePublishStreamID(ClassRoomManager.myUserId.toString())
         streamService.getStream(publishStreamID)?.let {
             // 根据权限打开摄像头、麦克风
             if (it.isCameraOpen()) {
@@ -145,21 +152,10 @@ class MainActivity : BaseActivity() {
      * 请求白板列表，如果为空，则创建一个
      */
     private fun prepareWhiteboard() {
-        // 先主动获取 roomService 最新的 seq 和 whiteboardID，否则后面 setCurrentWhiteboard 会失败
-        roomService.getCurrentWhiteboardID { code: Int, currentWhiteboardID: Long ->
-            if (code == 0) {
-                // 重新计算白板区域
-                container.resize(this)
-                // 再获取当前房间的白板列表
-                requestWhiteboardList(currentWhiteboardID)
-            } else {
-                Toast.makeText(
-                        this,
-                        "获取当前白板失败，errorCode = $code",
-                        Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
+        // 重新计算白板区域
+        container.resize(this)
+        // 再获取当前房间的白板列表
+        requestWhiteboardList()
     }
 
     /**
@@ -173,9 +169,13 @@ class MainActivity : BaseActivity() {
             }
 
             PermissionHelper.onCameraPermissionGranted(this) { grant ->
-                ClassRoomManager.setUserCamera(ClassRoomManager.myUserId, grant)
+                ClassRoomManager.setUserCamera(ClassRoomManager.myUserId, grant) { errorCode ->
+                    ToastUtils.showCenterToast(getPublicMsgFromCode(errorCode, this))
+                }
                 PermissionHelper.onAudioPermissionGranted(this) { grant ->
-                    ClassRoomManager.setUserMic(ClassRoomManager.myUserId, grant)
+                    ClassRoomManager.setUserMic(ClassRoomManager.myUserId, grant) { errorCode ->
+                        ToastUtils.showCenterToast(getPublicMsgFromCode(errorCode, this))
+                    }
                 }
             }
         }
@@ -206,14 +206,14 @@ class MainActivity : BaseActivity() {
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
         decorView.systemUiVisibility = uiOptions
     }
-    
+
     override fun onBackPressed() {
         showExitClassDialog()
     }
 
     private fun initTopBar() {
         // 设置 Title
-        top_bar_title.text = getString(R.string.class_title, CONFERENCE_ID)
+        top_bar_title.text = getString(R.string.room_class_id, CONFERENCE_ID)
         // 退出课堂
         top_bar_exit.setOnClickListener { showExitClassDialog() }
         // 白板区域因为事件被消耗，可能这里无法触发，所以白板那里也要增加点击事件
@@ -237,24 +237,57 @@ class MainActivity : BaseActivity() {
     private fun showExitClassDialog() {
         if (ClassRoomManager.me().isTeacher()) {
             ZegoDialog.Builder(this)
-                .setTitle(R.string.exit_class_title)
-                .setMessage(R.string.exit_class_message)
-                .setPositiveButton(R.string.exit_class_confirm) { dialog, _ ->
+                .setTitle(R.string.room_exit_class)
+                .setMessage(R.string.room_tip_exit_class)
+                .setPositiveButton(R.string.room_end_teaching) { dialog, _ ->
                     dialog.dismiss()
                     // 老师需要结束教学
                     ClassRoomManager.endClass(object : ZegoApiClient.RequestCallback<Any> {
                         override fun onResult(result: Result, t: Any?) {
-                            if (result.code == 0) {
-                                finish()
-                            } else {
-                                ToastUtils.showCenterToast("结束教学失败 ${result.code}")
+                            when (result.code) {
+                                0 -> {
+                                    finish()
+                                }
+                                ZegoApiErrorCode.NEED_LOGIN -> {
+                                    ToastUtils.showCenterToast(
+                                        getString(
+                                            R.string.room_end_teaching_fail,
+                                            result.code
+                                        )
+                                    )
+                                }
+                                else -> {
+                                    val publicMsgFromCode =
+                                        getPublicMsgFromCode(result.code, this@MainActivity)
+                                    if (publicMsgFromCode == "unknown error") {
+                                        ToastUtils.showCenterToast(
+                                            getString(
+                                                R.string.room_end_teaching_fail,
+                                                result.code
+                                            )
+                                        )
+                                    } else {
+                                        ToastUtils.showCenterToast(publicMsgFromCode)
+                                    }
+                                }
                             }
                         }
                     })
                 }
-                .setNegativeButton(R.string.exit_class_cancel) { dialog, _ ->
+                .setNegativeButton(R.string.room_leave_class) { dialog, _ ->
                     dialog.dismiss()
-                    ClassRoomManager.leaveClass()
+                    ClassRoomManager.leaveClass(object : ZegoApiClient.RequestCallback<Any> {
+                        override fun onResult(result: Result, t: Any?) {
+                            if (result.code != 0 && result.code != ZegoApiErrorCode.NEED_LOGIN) {
+                                ToastUtils.showCenterToast(
+                                    getPublicMsgFromCode(
+                                        result.code,
+                                        this@MainActivity
+                                    )
+                                )
+                            }
+                        }
+                    })
                     finish()
                 }
                 .setNegativeButtonBackground(R.drawable.drawable_dialog_confirm2)
@@ -264,15 +297,26 @@ class MainActivity : BaseActivity() {
                 .create().showWithLengthLimit()
         } else {
             ZegoDialog.Builder(this)
-                .setTitle(R.string.exit_class_title)
-                .setMessage(R.string.exit_class_ensure)
-                .setPositiveButton(R.string.button_confirm) { dialog, _ ->
+                .setTitle(R.string.room_exit_class)
+                .setMessage(R.string.room_tip_are_u_sure_exit)
+                .setPositiveButton(R.string.login_button_confirm) { dialog, _ ->
                     dialog.dismiss()
                     // 学生离开课堂
-                    ClassRoomManager.leaveClass()
+                    ClassRoomManager.leaveClass(object : ZegoApiClient.RequestCallback<Any> {
+                        override fun onResult(result: Result, t: Any?) {
+                            if (result.code != 0 && result.code != ZegoApiErrorCode.NEED_LOGIN) {
+                                ToastUtils.showCenterToast(
+                                    getPublicMsgFromCode(
+                                        result.code,
+                                        this@MainActivity
+                                    )
+                                )
+                            }
+                        }
+                    })
                     finish()
                 }
-                .setNegativeButton(R.string.button_cancel) { dialog, _ ->
+                .setNegativeButton(R.string.login_button_cancel) { dialog, _ ->
                     dialog.dismiss()
                 }
                 .show()
@@ -445,11 +489,6 @@ class MainActivity : BaseActivity() {
         ClassRoomManager.setRoomStateListener(object : IZegoRoomStateListener {
             override fun onConnected(errorCode: Int, roomID: String) {
                 dismissLoadingDialog()
-                roomService.getCurrentWhiteboardID { code: Int, currentWhiteboardID: Long ->
-                    if (code == 0) {
-                        container.selectWhiteboardViewHolder(currentWhiteboardID)
-                    }
-                }
             }
 
             override fun onDisconnect(errorCode: Int, roomID: String) {
@@ -458,7 +497,7 @@ class MainActivity : BaseActivity() {
             }
 
             override fun connecting(errorCode: Int, roomID: String) {
-                showLoadingDialog(R.string.network_temp_broken_reconnect)
+                showLoadingDialog(R.string.room_network_exception)
             }
         })
 
@@ -502,17 +541,19 @@ class MainActivity : BaseActivity() {
                         if (on) {
                             PermissionHelper.onCameraPermissionGranted(this@MainActivity) { grant ->
                                 if (grant) {
-                                    ToastUtils.showCenterToast("老师已开启你的摄像头")
+                                    ToastUtils.showCenterToast(getString(R.string.room_student_tip_turned_on_camera))
                                     main_bottom_camera.isSelected = on
                                 } else {
                                     // 关掉
-                                    ClassRoomManager.setUserCamera(ClassRoomManager.myUserId, false)
+                                    ClassRoomManager.setUserCamera(ClassRoomManager.myUserId, false) { errorCode ->
+                                        ToastUtils.showCenterToast(getPublicMsgFromCode(errorCode, this@MainActivity))
+                                    }
                                 }
                                 seat_video_window.onUserCameraChanged(userId, on, selfChanged)
                             }
                         } else {
                             main_bottom_camera.isSelected = false
-                            ToastUtils.showCenterToast("老师已关闭你的摄像头")
+                            ToastUtils.showCenterToast(getString(R.string.room_student_tip_turned_off_camera))
                             seat_video_window.onUserCameraChanged(userId, on, selfChanged)
                         }
                     }
@@ -539,16 +580,18 @@ class MainActivity : BaseActivity() {
                             // 申请权限
                             PermissionHelper.onAudioPermissionGranted(this@MainActivity) { grant ->
                                 if (grant) {
-                                    ToastUtils.showCenterToast("老师已开启你的麦克风")
+                                    ToastUtils.showCenterToast(getString(R.string.room_student_tip_turned_on_mic))
                                     main_bottom_mic.isSelected = on
                                 } else {
                                     // 关掉
-                                    ClassRoomManager.setUserMic(ClassRoomManager.myUserId, false)
+                                    ClassRoomManager.setUserMic(ClassRoomManager.myUserId, false) { errorCode ->
+                                        ToastUtils.showCenterToast(getPublicMsgFromCode(errorCode, this@MainActivity))
+                                    }
                                 }
                                 seat_video_window.onUserMicChanged(userId, on, selfChanged)
                             }
                         } else {
-                            ToastUtils.showCenterToast("老师已关闭你的麦克风")
+                            ToastUtils.showCenterToast(getString(R.string.room_student_tip_turned_off_mic))
                             main_bottom_mic.isSelected = false
                             seat_video_window.onUserMicChanged(userId, on, selfChanged)
                         }
@@ -566,9 +609,9 @@ class MainActivity : BaseActivity() {
                     if (on) {
                         main_whiteboard_tools_view.initTools()
                         main_whiteboard_tools_view.onWhiteboardChanged()
-                        ToastUtils.showCenterToast("老师已允许你使用共享功能")
+                        ToastUtils.showCenterToast(getString(R.string.room_student_tip_permission))
                     } else {
-                        ToastUtils.showCenterToast("老师已收回你的共享权限")
+                        ToastUtils.showCenterToast(getString(R.string.room_student_tip_revoke_share))
                     }
                     // 若当前用户为学生，且没有共享权限，则隐藏白板文件切换/关闭、翻页、白板工具功能
                     updatePreviewRelations()
@@ -596,7 +639,9 @@ class MainActivity : BaseActivity() {
                             main_bottom_camera.isSelected = grant
                         } else {
                             // 关掉
-                            ClassRoomManager.setUserCamera(ClassRoomManager.myUserId, false)
+                            ClassRoomManager.setUserCamera(ClassRoomManager.myUserId, false) { errorCode ->
+                                ToastUtils.showCenterToast(getPublicMsgFromCode(errorCode, this@MainActivity))
+                            }
                         }
                     }
                 } else {
@@ -613,7 +658,9 @@ class MainActivity : BaseActivity() {
                                 main_bottom_mic.isSelected = grant
                             } else {
                                 // 关掉
-                                ClassRoomManager.setUserMic(ClassRoomManager.myUserId, false)
+                                ClassRoomManager.setUserMic(ClassRoomManager.myUserId, false) { errorCode ->
+                                    ToastUtils.showCenterToast(getPublicMsgFromCode(errorCode, this@MainActivity))
+                                }
                             }
                         }
                     }
@@ -635,8 +682,8 @@ class MainActivity : BaseActivity() {
         ClassRoomManager.addRoomStateListener(object : ClassRoomStateListener {
             override fun onEndTeach() {
                 ZegoDialog.Builder(this@MainActivity)
-                    .setMessage(R.string.end_teach_message)
-                    .setPositiveButton(R.string.confirm) { dialog, _ ->
+                    .setMessage(R.string.room_tip_teacher_finished_teaching)
+                    .setPositiveButton(R.string.wb_determine) { dialog, _ ->
                         dialog.dismiss()
                         finish()
                     }.setCancelable(false)
@@ -680,22 +727,22 @@ class MainActivity : BaseActivity() {
      * 显示重连 Dialog
      */
     private fun showDisconnectDialog() {
-        val title = getString(R.string.network_connect_failed_tips)
+        val title = getString(R.string.room_rejoin_fail)
         if (reLoginDialog == null) {
             reLoginDialog = ZegoDialog.Builder(this@MainActivity)
                 .setMessage(title)
                 .setCancelable(false)
-                .setPositiveButton(R.string.button_confirm) { dialog, _ ->
+                .setPositiveButton(R.string.login_button_confirm) { dialog, _ ->
                     dialog.dismiss()
                     //这个时候再调用 leaveRoom 会返回"需要先登陆房间" 的提示
                     //通常收到这个消息的时候，http服务那边心跳肯定已经断了被下线了，所以直接exitRoom
                     ClassRoomManager.exitRoom()
                     finish()
                 }
-                .setNegativeButton(R.string.button_retry) { dialog, _ ->
+                .setNegativeButton(R.string.login_retry) { dialog, _ ->
                     dialog.dismiss()
 
-                    showLoadingDialog(R.string.network_temp_broken_reLogin)
+                    showLoadingDialog(R.string.login_rejoining)
                     ClassRoomManager.reLogin { errorCode ->
                         dismissLoadingDialog()
                         if (errorCode == 0) {
@@ -709,7 +756,21 @@ class MainActivity : BaseActivity() {
                             // 重连失败
                             showDisconnectDialog()
                         }
-
+                        when (errorCode) {
+                            0 -> {
+                                container.removeAllViews()
+                                seat_video_window.removeAllViews()
+                                drawer_whiteboard_list.removeAllWhiteboard()
+                                initViews()
+                                prepareWhiteboard()
+                                prepare()
+                            }
+                            else -> {
+                                ToastUtils.showLoginErrorToast(this, errorCode)
+                                // 重连失败
+                                showDisconnectDialog()
+                            }
+                        }
                     }
                 }
                 .create()
@@ -755,7 +816,9 @@ class MainActivity : BaseActivity() {
             }
             it.setCloseClickListener {
                 main_bottom_camera.isSelected = false
-                ClassRoomManager.setUserCamera(ClassRoomManager.myUserId, false)
+                ClassRoomManager.setUserCamera(ClassRoomManager.myUserId, false) { errorCode ->
+                    ToastUtils.showCenterToast(getPublicMsgFromCode(errorCode, this))
+                }
             }
         }
         main_bottom_camera.setOnClickListener {
@@ -766,13 +829,14 @@ class MainActivity : BaseActivity() {
                     PermissionHelper.onCameraPermissionGranted(this) { grant ->
                         if (grant) {
                             // 打开自己的摄像头，需要像业务后台发起请求 在连麦列表通知里面进行推流
-                            ClassRoomManager.setUserCamera(ClassRoomManager.myUserId, grant)
+                            ClassRoomManager.setUserCamera(ClassRoomManager.myUserId, grant) { errorCode ->
+                                ToastUtils.showCenterToast(getPublicMsgFromCode(errorCode, this))
+                            }
                         }
                     }
                 } else {
-                    Toast.makeText(this, "演示课堂最多开启3路学生音视频", Toast.LENGTH_SHORT).show()
+                    ToastUtils.showCenterToast(getString(R.string.room_tip_channels))
                 }
-
             }
         }
         main_bottom_camera.isSelected = false
@@ -780,7 +844,9 @@ class MainActivity : BaseActivity() {
             PermissionHelper.onCameraPermissionGranted(this) { grant ->
                 main_bottom_camera.isSelected = grant
                 if (grant.not()) {
-                    ClassRoomManager.setUserCamera(ClassRoomManager.myUserId, false)
+                    ClassRoomManager.setUserCamera(ClassRoomManager.myUserId, false) { errorCode ->
+                        ToastUtils.showCenterToast(getPublicMsgFromCode(errorCode, this))
+                    }
                 }
             }
         }
@@ -792,24 +858,30 @@ class MainActivity : BaseActivity() {
                 main_bottom_mic.isSelected = grant
                 // 加入课堂后，服务器是开的状态，本地未授权，所以又关闭mic
                 if (!grant) {
-                    ClassRoomManager.setUserMic(ClassRoomManager.myUserId, false)
+                    ClassRoomManager.setUserMic(ClassRoomManager.myUserId, false) { errorCode ->
+                        ToastUtils.showCenterToast(getPublicMsgFromCode(errorCode, this))
+                    }
                 }
             }
         }
         main_bottom_mic.setOnClickListener {
             if (it.isSelected) {
                 // 关闭自己的麦克风 检查摄像头的状态
-                ClassRoomManager.setUserMic(ClassRoomManager.myUserId, false)
+                ClassRoomManager.setUserMic(ClassRoomManager.myUserId, false) { errorCode ->
+                    ToastUtils.showCenterToast(getPublicMsgFromCode(errorCode, this))
+                }
             } else {
                 if (ClassRoomManager.canOpenCameraOrMic(ClassRoomManager.myUserId)) {
                     PermissionHelper.onAudioPermissionGranted(this) { grant ->
                         if (grant) {
                             // 打开自己的麦克风，需要像业务后台发起请求， 在连麦列表通知里面进行推流
-                            ClassRoomManager.setUserMic(ClassRoomManager.myUserId, grant)
+                            ClassRoomManager.setUserMic(ClassRoomManager.myUserId, grant) { errorCode ->
+                                ToastUtils.showCenterToast(getPublicMsgFromCode(errorCode, this))
+                            }
                         }
                     }
                 } else {
-                    Toast.makeText(this, "演示课堂最多开启3路学生音视频", Toast.LENGTH_SHORT).show()
+                    ToastUtils.showCenterToast(getString(R.string.room_tip_channels))
                 }
             }
         }
@@ -834,7 +906,7 @@ class MainActivity : BaseActivity() {
             if (ClassRoomManager.me().sharable) {
                 sharePopWindow.show(it)
             } else {
-                ToastUtils.showCenterToast(getString(R.string.share_disable_tips))
+                ToastUtils.showCenterToast(getString(R.string.wb_tip_not_allowed_share))
             }
         }
 
@@ -850,11 +922,12 @@ class MainActivity : BaseActivity() {
             val roomUrl =
                 if (SharedPreferencesUtil.isVideoSDKTestEnv()) testRoomUrl else officialRoomUrl
             val nat_env =
-                if (isMainland) getString(R.string.mainland) else getString(R.string.other)
-            val copyText = getString(R.string.copy_text, roomUrl, CONFERENCE_ID, nat_env)
+                if (isMainland) getString(R.string.login_mainland_china) else getString(R.string.login_overseas)
+            val copyText =
+                getString(R.string.room_dialog_classroom_link, roomUrl, CONFERENCE_ID, nat_env)
             val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             clipboardManager.setPrimaryClip(ClipData.newPlainText("Label", copyText))
-            ToastUtils.showCenterToast(R.string.copy_succeed)
+            ToastUtils.showCenterToast(getString(R.string.room_dialog_invitation_successfully))
         }
 
         // 成员
@@ -937,14 +1010,14 @@ class MainActivity : BaseActivity() {
                     }
                 }
             } else {
-                ToastUtils.showCenterToast(getString(R.string.share_disable_tips))
+                ToastUtils.showCenterToast(getString(R.string.wb_tip_not_allowed_share))
             }
         }
         main_whiteboard_container_background.onClickShareFile {
             if (ClassRoomManager.me().sharable) {
                 showRightDrawer(drawer_file_list)
             } else {
-                ToastUtils.showCenterToast(getString(R.string.share_disable_tips))
+                ToastUtils.showCenterToast(getString(R.string.wb_tip_not_allowed_share))
             }
         }
 
@@ -1051,7 +1124,7 @@ class MainActivity : BaseActivity() {
     /**
      * 请求白板列表
      */
-    private fun requestWhiteboardList(currentWhiteboardID: Long) {
+    private fun requestWhiteboardList() {
         ZegoSDKManager.getInstance().getWhiteboardViewList { errorCode, whiteboardViewList ->
             Logger.i(
                 TAG,
@@ -1118,11 +1191,12 @@ class MainActivity : BaseActivity() {
                 }
             } else {
                 getListFinished = true
-                Toast.makeText(
-                    this,
-                    "获取白板列表失败，errorCode = $errorCode",
-                    Toast.LENGTH_SHORT
-                ).show()
+                ToastUtils.showCenterToast(
+                    getString(
+                        R.string.wb_tip_failed_get_whiteboard,
+                        errorCode
+                    )
+                )
             }
         }
     }

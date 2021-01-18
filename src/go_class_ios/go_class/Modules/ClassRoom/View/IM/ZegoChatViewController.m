@@ -15,7 +15,7 @@
 #import "ZegoToast.h"
 #import "ZegoLiveCenter.h"
 #import <Masonry/Masonry.h>
-
+#import "NSString+ZegoExtension.h"
 @interface ZegoChatViewController ()<ZegoChatTextInputViewDelegate,ZegoChatTableDelegate>
 
 @property (nonatomic,strong)ZegoChatTextInputView *textInputView;
@@ -51,7 +51,7 @@
     model.msgStatus = kZegoChatSendSuccess;
     
     ZegoMessageInfo *info = [[ZegoMessageInfo alloc]init];
-    NSString *message = @"我 加入课堂";
+    NSString *message = [NSString stringWithFormat:@"%@ %@",[NSString zego_localizedString:@"room_member_me"],[NSString zego_localizedString:@"room_im_join_class"]];
     info.message = message;
     model.messageInfo = info;
     
@@ -68,9 +68,9 @@
     ZegoMessageInfo *info = [[ZegoMessageInfo alloc]init];
     NSString *message = @"";
     if (memberInfoModel.delta == 1) {//加入课堂
-        message = memberInfoModel.isMyself ? @"我 加入课堂":[NSString stringWithFormat:@"%@ 加入课堂",memberInfoModel.userName];
+        message = [NSString stringWithFormat:@"%@ %@",memberInfoModel.isMyself ? [NSString zego_localizedString:@""] :memberInfoModel.userName,[NSString zego_localizedString:@"login_join_class"]];
     } else if (memberInfoModel.delta == -1) {//离开课堂
-        message = memberInfoModel.isMyself ? @"我 退出课堂":[NSString stringWithFormat:@"%@ 退出课堂",memberInfoModel.userName];
+        message = [NSString stringWithFormat:@"%@ %@",memberInfoModel.isMyself ? [NSString zego_localizedString:@""] :memberInfoModel.userName,[NSString zego_localizedString:@"room_leave_class"]];
     }
     info.message = message;
     model.messageInfo = info;
@@ -130,7 +130,7 @@
 }
 
 - (void)exceedTextNumber:(NSInteger)length {
-    [ZegoToast showToastToTopWIndow:@"最多输入100字符"];
+    [ZegoToast showToastToTopWIndow:[NSString zego_localizedString:@"room_im_max_characters"]];
 }
 
 #pragma marl - ZegoChatTableDelegate

@@ -7,6 +7,7 @@
 //
 
 #import "ZegoClassDefaultNoteView.h"
+#import "NSString+ZegoExtension.h"
 @interface ZegoClassDefaultNoteView ()
 
 @property (nonatomic, weak) IBOutlet UIButton *fileTypeBtn;
@@ -18,6 +19,14 @@
 @property (nonatomic, weak) IBOutlet UIImageView *placeholderIV;
 @end
 @implementation ZegoClassDefaultNoteView
+
+- (void)awakeFromNib {
+    [super awakeFromNib];
+    [self.fileTypeBtn setTitle:[NSString zego_localizedString:@"wb_shared_file"] forState:UIControlStateNormal];
+    [self.whiteboardTypeBtn setTitle:[NSString zego_localizedString:@"wb_shared_wb"] forState:UIControlStateNormal];
+    self.tipLabel.text = [NSString zego_localizedString:@"wb_select_share"];
+    self.placeholderLabel.text = [NSString zego_localizedString:@"wb_tip_wait_teacher_share"];
+}
 
 - (void)showTipStyleWithClassType:(ZegoClassPatternType)classType
 {

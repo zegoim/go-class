@@ -12,6 +12,7 @@
 #import "ZegoClassRoomSharePopView.h"
 #import "ZegoUIConstant.h"
 #import "ZegoToast.h"
+#import "NSString+ZegoExtension.h"
 #define cellWidth 56
 @interface ZegoBottomBarLayout:UICollectionViewLayout
 
@@ -133,11 +134,11 @@
 
 - (void)setup {
     self.cellModels = @[
-        [[ZegoClassRoomBottomCellModel alloc] initWithType:ZegoClassRoomBottomCellTypeCamera isSelected:NO imageName:@"camera_close" selectedImageName:@"camera_open" title:@"摄像头"],
-        [[ZegoClassRoomBottomCellModel alloc] initWithType:ZegoClassRoomBottomCellTypeMic isSelected:NO imageName:@"micphone_close" selectedImageName:@"micphone_open" title:@"麦克风"],
-        [[ZegoClassRoomBottomCellModel alloc] initWithType:ZegoClassRoomBottomCellTypeShare isSelected:NO imageName:@"gongxiang" selectedImageName:@"gongxiang" title:@"共享"],
-        [[ZegoClassRoomBottomCellModel alloc] initWithType:ZegoClassRoomBottomCellTypeInvite isSelected:NO imageName:@"yaoqing" selectedImageName:@"yaoqing" title:@"邀请"],
-        [[ZegoClassRoomBottomCellModel alloc] initWithType:ZegoClassRoomBottomCellTypeMember isSelected:NO imageName:@"chengyuan" selectedImageName:@"chengyuan" title:@"成员"]
+        [[ZegoClassRoomBottomCellModel alloc] initWithType:ZegoClassRoomBottomCellTypeCamera isSelected:NO imageName:@"camera_close" selectedImageName:@"camera_open" title:[NSString zego_localizedString:@"room_controller_camera"]],
+        [[ZegoClassRoomBottomCellModel alloc] initWithType:ZegoClassRoomBottomCellTypeMic isSelected:NO imageName:@"micphone_close" selectedImageName:@"micphone_open" title:[NSString zego_localizedString:@"room_controller_mic"]],
+        [[ZegoClassRoomBottomCellModel alloc] initWithType:ZegoClassRoomBottomCellTypeShare isSelected:NO imageName:@"gongxiang" selectedImageName:@"gongxiang" title:[NSString zego_localizedString:@"room_controller_share"]],
+        [[ZegoClassRoomBottomCellModel alloc] initWithType:ZegoClassRoomBottomCellTypeInvite isSelected:NO imageName:@"yaoqing" selectedImageName:@"yaoqing" title:[NSString zego_localizedString:@"room_controller_invitation"]],
+        [[ZegoClassRoomBottomCellModel alloc] initWithType:ZegoClassRoomBottomCellTypeMember isSelected:NO imageName:@"chengyuan" selectedImageName:@"chengyuan" title:[NSString zego_localizedString:@"room_controller_member"]]
     ];
 
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];

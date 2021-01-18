@@ -305,9 +305,9 @@ class ZegoWhiteboardViewHolder : FrameLayout {
                         name, this
                     ) { success ->
                         if (success) {
-                            ToastUtils.showCenterToast(R.string.save_succeed)
+                            ToastUtils.showCenterToast(context.getString(R.string.wb_tip_save_success))
                         } else {
-                            ToastUtils.showCenterToast(R.string.save_failed)
+                            ToastUtils.showCenterToast(context.getString(R.string.wb_tip_fail_save))
                         }
                     }
 
@@ -319,8 +319,8 @@ class ZegoWhiteboardViewHolder : FrameLayout {
                     )
                 ) {
                     ZegoDialog.Builder(context as Activity)
-                        .setTitle(context.getString(R.string.disable_save_image_title))
-                        .setMessage(context.getString(R.string.jump_settings_for_permission))
+                        .setTitle(context.getString(R.string.wb_tip_unable_save))
+                        .setMessage(context.getString(R.string.wb_tip_open_permission))
                         .setPositiveButton(context.getString(R.string.jump_to_settings)) { dialog, _ ->
                             dialog.dismiss()
                             val intent =
@@ -330,7 +330,7 @@ class ZegoWhiteboardViewHolder : FrameLayout {
                             context.startActivity(intent)
 
                         }
-                        .setNegativeButton(R.string.cancel) { dialog, _ ->
+                        .setNegativeButton(R.string.wb_cancel) { dialog, _ ->
                             dialog.dismiss()
 
                         }
@@ -559,7 +559,7 @@ class ZegoWhiteboardViewHolder : FrameLayout {
             if (errorCode == 0 && zegoWhiteboardView != null) {
                 onReceivePureWhiteboardView(zegoWhiteboardView)
             } else {
-                Toast.makeText(context, "创建白板失败，错误码:$errorCode", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, context.getString(R.string.wb_tip_failed_create_whiteboard, errorCode), Toast.LENGTH_LONG).show()
             }
             requestResult.invoke(errorCode)
         }
@@ -582,7 +582,7 @@ class ZegoWhiteboardViewHolder : FrameLayout {
                     }
                     if (count == 0) {
                         if (!success) {
-                            Toast.makeText(context, "删除白板失败:错误码:$code", Toast.LENGTH_LONG)
+                            Toast.makeText(context, context.getString(R.string.wb_tip_failed_delete_whiteboard, code), Toast.LENGTH_LONG)
                                 .show()
                         } else {
                             zegoDocsView?.unloadFile()
@@ -596,7 +596,7 @@ class ZegoWhiteboardViewHolder : FrameLayout {
             ZegoWhiteboardManager.getInstance().destroyWhiteboardView(currentWhiteboardID)
             { errorCode, _ ->
                 if (errorCode != 0) {
-                    Toast.makeText(context, "删除白板失败:错误码:$errorCode", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, context.getString(R.string.wb_tip_failed_delete_whiteboard, errorCode), Toast.LENGTH_LONG).show()
                 } else {
                     zegoDocsView?.unloadFile()
                     fileLoadSuccessed = false
@@ -637,7 +637,7 @@ class ZegoWhiteboardViewHolder : FrameLayout {
                     }
                     processResult.invoke(errorCode, this)
                 } else {
-                    Toast.makeText(context, "加载文件失败，错误代码 $errorCode", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, context.getString(R.string.wb_tip_failed_load_file, errorCode), Toast.LENGTH_LONG).show()
                     processResult.invoke(errorCode, this)
                     // 可以考虑给个界面按钮点击重试
                 }
@@ -692,7 +692,7 @@ class ZegoWhiteboardViewHolder : FrameLayout {
                 }
             } else {
                 createResult(errorCode)
-                Toast.makeText(context, "加载文件失败，错误代码 $errorCode", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, context.getString(R.string.wb_tip_failed_load_file, errorCode), Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -764,7 +764,7 @@ class ZegoWhiteboardViewHolder : FrameLayout {
             } else {
                 Toast.makeText(
                     context,
-                    "创建白板失败，错误码:$errorCode",
+                    context.getString(R.string.wb_tip_failed_create_whiteboard, errorCode),
                     Toast.LENGTH_LONG
                 ).show()
             }

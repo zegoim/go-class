@@ -1,4 +1,5 @@
-import { ZEGOENV, APPID, DOCS_TEST } from '@/utils/constants'
+import axios from 'axios'
+import { ZEGOENV, APPID } from '@/utils/constants'
 import { createUserId } from '@/utils/tool'
 
 /**
@@ -22,18 +23,41 @@ export class Config {
     this.userID = createUserId() + ''
     this.home = this.createConfig(
       this.homeAppID,
-      'wss://webliveroom-test.zego.im/ws',
+      `wss://webliveroom${this.homeAppID}-api.zego.im/ws`,
       '',
       this.userID,
       []
     )
     this.overseas = this.createConfig(
       this.overseasAppID,
-      'wss://webliveroom-test.zego.im/ws',
-      '',
+      `wss://webliveroom${this.overseasAppID}-api.zegocloud.com/ws`,
+      `wss://weblogger${this.overseasAppID}-api.zegocloud.com/log`,
       this.userID,
       []
     )
+  }
+  /**
+   * 获取文件列表弹窗中的文件数据
+   * 该数据均为体验文件
+   * 如果使用自己上传文件，请注意：
+   * 文件id通过文件共享SDK上传后返回，现测试环境与appID无关联。即多个appID上传文件到测试服务器，多个appID的文件在测试服务器共享。
+   * 上传地址请参考README.md
+   * 将上传文件成功后返回的 fileID 填到本地数据管理中
+   * 其中 isDynamic 仅UI层面显示该文件是否动态 PPT
+   * this.docs_test = [
+   *  {id:'上传文件通过sdk返回的fileid', name:'文件名', isDynamic:'ui层面显示该文件是否是动态 ppt'}
+   * ]
+   */
+  async getFileList() {
+    const res = await axios({
+      method: 'get',
+      url: 'https://storage.zego.im/goclass/config_demo.json',
+      dataType: 'json',
+      crossDomain: true,
+      cache: false
+    })
+    const { docs_test } = res.data
+    this.docs_test = docs_test
   }
 
   createConfig(appID, server, logURL, userID, fileList) {
@@ -49,9 +73,11 @@ export class Config {
   }
 
   async getParams(env = 'home') {
+    await this.getFileList()
     const obj = {}
+    // 测试环境下，使用文件数据均为this.docs_test
     if (this.isTestEnv) {
-      obj.fileList = DOCS_TEST
+      obj.fileList = this.docs_test
     }
     if (env === 'home' && this.serverEnv) {
       obj.server = `wss://webliveroom-${this.serverEnv}.zego.im/ws`

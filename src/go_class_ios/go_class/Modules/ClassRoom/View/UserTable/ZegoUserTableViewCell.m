@@ -12,6 +12,7 @@
 #import "ZegoNetworkManager.h"
 #import "ZegoClassCommand.h"
 #import <NSObject+YYModel.h>
+#import "NSString+ZegoExtension.h"
 @interface ZegoUserTableViewCell ()
 @property (weak, nonatomic) IBOutlet UIButton *cameraStatuBtn;
 @property (weak, nonatomic) IBOutlet UIButton *micStatuBtn;
@@ -40,7 +41,7 @@
     _model = model;
     //优先显示（我），如果不是自己在判断是否是老师。
     if (model.role == 1) {
-        self.nameLabel.text = [NSString stringWithFormat:@"%@(老师)",model.userName];
+        self.nameLabel.text = [NSString stringWithFormat:@"%@(%@)",model.userName,[NSString zego_localizedString:@"login_teacher"]];
     } else {
         self.nameLabel.text = [NSString stringWithFormat:@"%@",model.userName];
     }

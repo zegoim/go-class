@@ -12,10 +12,10 @@
     >
       <div class="dialog-content">
         <div class="des">
-          老师已结束教学
+          {{$t('room.room_tip_teacher_finished_teaching')}}
         </div>
         <div>
-          <el-button class="end" round @click="end">确定</el-button>
+          <el-button class="end" round @click="end">{{$t('room.room_tip_determine')}}</el-button>
         </div>
       </div>
     </el-dialog>

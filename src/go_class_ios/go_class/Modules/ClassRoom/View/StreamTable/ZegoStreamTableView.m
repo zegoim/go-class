@@ -13,7 +13,6 @@
 #import "ZegoToast.h"
 #import "ZegoUIConstant.h"
 
-
 @interface ZegoStreamTableView ()<UITableViewDelegate, UITableViewDataSource>
 
 @property (strong, nonatomic) NSMutableArray<ZegoStreamTableViewCell *> *tableCells;

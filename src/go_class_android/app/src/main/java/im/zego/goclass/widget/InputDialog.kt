@@ -166,7 +166,7 @@ class MaxLengthWatcher(private var maxLength:Int, var editText: EditText) : Text
         s?.let {
             val toString = it.toString()
             if (toString.length > maxLength) {
-                ToastUtils.showCenterToast("最多输入${maxLength}字符")
+                ToastUtils.showCenterToast(editText.context.getString(R.string.room_im_max_characters, maxLength))
                 val subSequence = toString.subSequence(0, maxLength)
                 editText.setText(subSequence, BufferType.EDITABLE)
                 editText.setSelection(subSequence.length)

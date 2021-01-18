@@ -17,7 +17,7 @@
       <i class="fade-item fade-item11"></i>
       <i class="fade-item fade-item12"></i>
     </div>
-    <p>网络异常，正在重新加入...</p>
+    <p>{{$t('room.room_network_exception')}}</p>
   </div>
 </template>
 <script>

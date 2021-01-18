@@ -56,7 +56,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/class_title"
+            android:text="@string/room_class_id"
             android:textColor="@color/text_black"
             android:textSize="15sp" />
 
@@ -68,7 +68,7 @@
             android:layout_centerVertical="true"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
-            android:text="@string/exit"
+            android:text="@string/room_end_sign_out"
             android:textColor="#f54326"
             android:textSize="15sp" />
     </RelativeLayout>

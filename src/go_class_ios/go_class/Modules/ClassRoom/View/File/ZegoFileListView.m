@@ -11,7 +11,7 @@
 #import "UIColor+ZegoExtension.h"
 #import "ZegoDocsViewDependency.h"
 #import "ZegoUIConstant.h"
-
+#import "NSString+ZegoExtension.h"
 @interface ZegoFileListView ()<UITableViewDelegate, UITableViewDataSource>
 @property (strong, nonatomic) UITableView *tableView;
 @property (strong, nonatomic) UILabel *topLabel;
@@ -38,7 +38,7 @@
 - (void)setup {
     self.topLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, self.bounds.size.width - 20, 49)];
     [self addSubview:self.topLabel];
-    self.topLabel.text = @"选择文件";
+    self.topLabel.text = [NSString zego_localizedString:@"room_file_select_file"];
     self.topLabel.textColor = kTextColor1;
     self.topLabel.font = kFontTitle15;
     UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, 48, self.bounds.size.width, 0.5)];
@@ -61,7 +61,7 @@
     self.tableView.bounces = NO;
     self.bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, kScreenHeight - 49, self.bounds.size.width, 49)];
     [self addSubview:self.bottomLabel];
-    self.bottomLabel.text = @"静态：无法展示ppt动画；动态：可展示ppt动画";
+    self.bottomLabel.text = [NSString stringWithFormat:@"%@,%@",[NSString zego_localizedString:@"room_file_static_animation_displayed"],[NSString zego_localizedString:@"room_file_dynamic_animation_show"]];
     self.bottomLabel.backgroundColor = UIColor.whiteColor;
     self.bottomLabel.textAlignment = NSTextAlignmentCenter;
     self.bottomLabel.textColor = kTextColor1;
@@ -86,10 +86,10 @@
     ZegoFileInfoModel *fileInfo = self.files[indexPath.row];
     cell.nameLabel.text = fileInfo.fileName;
     if (fileInfo.fileType == ZegoDocsViewFileTypeDynamicPPTH5) {
-        cell.typeLabel.text = @"动态";
+        cell.typeLabel.text = [NSString zego_localizedString:@"room_file_dynamic"];
         cell.typeLabel.backgroundColor = [UIColor colorWithRGB:@"#ffae00"];
     } else {
-        cell.typeLabel.text = @"静态";
+        cell.typeLabel.text = [NSString zego_localizedString:@"room_file_static_file"];
         cell.typeLabel.backgroundColor = [UIColor colorWithRGB:@"#0045ff"];
     }
     cell.nameLabel.textColor = fileInfo == self.selectedFileInfo ? kThemeColorBlue : kTextColor1;

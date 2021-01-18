@@ -1,0 +1,183 @@
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation" tools:locale="zh">
+
+    <string name="app_name">GoClass</string>
+
+    <!-- 白板 -->
+    <string name="wb_tool_erase">Eraser</string>
+    <string name="wb_tool_revoke">Revoke</string>
+    <string name="wb_tool_redo">Redo</string>
+    <string name="wb_tool_save">Save</string>
+    <string name="wb_tool_brush">Paint brush</string>
+    <string name="wb_tool_laser">Laser pen</string>
+    <string name="wb_tool_choice">Choice select</string>
+    <string name="wb_tool_graphical">Graphical</string>
+    <string name="wb_tool_text">Text</string>
+    <string name="wb_tip_save_success">Saved successfully, you can view in album</string>
+    <string name="wb_tool_drag">Drag</string>
+    <string name="wb_tool_format">Format</string>
+    <string name="wb_tool_clear">Clear</string>
+    <string name="wb_tool_pen_border_thickness">Border thickness</string>
+    <string name="wb_tool_font">Font</string>
+    <string name="wb_tool_font_size">FontSize</string>
+    <string name="wb_tool_text_color">Color</string>
+    <string name="wb_tool_click">Click</string>
+    <string name="wb_tool_shape_selection">Shape Selection</string>
+    <string name="wb_cancel">Cancel</string>
+    <string name="wb_determine">Yes</string>
+    <string name="wb_tip_are_u_sure_close">Are you sure to close【%s】?</string>
+    <string name="wb_tip_exceed_max_number_wb">Exceed the maximum number, please close some whiteboards</string>
+    <string name="wb_tip_exceed_max_number_file">Exceed the maximum number, please close some files</string>
+    <string name="wb_select_share">Please select which one to share</string>
+    <string name="wb_shared_wb">Shared Whiteboard</string>
+    <string name="wb_shared_file">Shared Files</string>
+    <string name="wb_tip_not_allowed_share">The teacher has not allowed you to use the sharing function</string>
+    <string name="wb_preview">Preview</string>
+    <string name="wb_tip_wait_teacher_share">Waiting for teachers to share</string>
+    <string name="wb_file_sheet_list">Sheet list</string>
+    <string name="wb_file_ppt_not_support">PPT does not support dragging, please click the top page turning button</string>
+    <string name="wb_file_board_not_support">Whiteboard does not support dragging, please click the top page turning button</string>
+    <string name="wb_tip_switch_failed">Switch failed</string>
+    <string name="wb_tip_failed_get_whiteboard">Failed to get whiteboard，errorCode = %d</string>
+    <string name="wb_tip_failed_sync_whiteboard">Failed to synchronize whiteboard，errorCode = %d</string>
+    <string name="wb_tip_failed_load_file_whiteboard">Failed to load file whiteboard，errorCode = %d</string>
+    <string name="wb_tip_failed_create_file_whiteboard">Failed to create file whiteboard，errorCode = %d</string>
+    <string name="wb_tip_failed_create_whiteboard">Failed to create  whiteboard，errorCode = %d</string>
+    <string name="wb_tip_failed_delete_whiteboard">Failed to delete whiteboard，errorCode = %d</string>
+    <string name="wb_tip_failed_load_file">Failed to load file，errorCode = %d</string>
+    <string name="wb_tip_fail_save">Failed to save,please try again</string>
+    <string name="wb_tip_unable_save">Unable to save whiteboard picture</string>
+    <string name="wb_tip_open_permission">Please open the storage permission in the system settings</string>
+
+    <!-- 登陆 -->
+    <string name="login_setting">Setting</string>
+    <string name="login_clear_cache">Clear cache</string>
+    <string name="login_other_teacher_in_the_class">There are already other teachers in the class，cannot join</string>
+    <string name="login_class_is_full">The class is full, cannot join</string>
+    <string name="login_interconnected">Mainland China and other regions are not connected, please ensure that all participants are in the same environment</string>
+    <string name="login_welcome_join_goclass">Welcome to join GoClass</string>
+    <string name="login_input_classid">Please enter class ID</string>
+    <string name="login_enter_name">Please enter your name</string>
+    <string name="login_small_class">Small class</string>
+    <string name="login_large_class">Large class</string>
+    <string name="login_teacher">Teacher</string>
+    <string name="login_student">Student</string>
+    <string name="login_join_class">Join Class</string>
+    <string name="login_button_cancel">Cancel</string>
+    <string name="login_button_confirm">Yes</string>
+    <string name="login_retry">Retry</string>
+    <string name="login_access_env">Network access region</string>
+    <string name="login_mainland_china">Mainland China</string>
+    <string name="login_overseas">Other</string>
+    <string name="login_rejoining">Rejoining…</string>
+    <string name="login_class_type">Class type</string>
+    <string name="login_choose_roles">Choose roles</string>
+    <string name="login_room_not_exist">The room doesn\'t exist</string>
+    <string name="login_network_exception_try_again">Network exception, please check the network and try again</string>
+    <string name="login_choose_language">Choose language</string>
+
+    <!-- 房间 -->
+    <string name="room_controller_mic">Microphone</string>
+    <string name="room_controller_camera">Camera</string>
+    <string name="room_controller_switch_camera">Switch Camera</string>
+    <string name="room_controller_share">Share</string>
+    <string name="room_controller_invitation">invite</string>
+    <string name="room_controller_member">members</string>
+    <string name="room_controller_whiteboard">Whiteboard</string>
+    <string name="room_controller_docs">Files</string>
+    <string name="room_member_joined">Joined members(%d)</string>
+    <string name="room_turn_off_camera">Turn off camera</string>
+    <string name="room_teacher">Teacher</string>
+    <string name="room_tip_wait_for_teacher">Waiting for teacher to join</string>
+    <string name="room_class_id">Class ID:%s</string>
+    <string name="room_network_exception">Network exception, rejoining…</string>
+    <string name="room_rejoin_fail">Rejoin failed, check network settings</string>
+    <string name="room_dialog_invitation_successfully">Copy invitation information successfully</string>
+    <string name="room_dialog_classroom_link">Class links：%s,\nClass ID：%s,\nAccess environment：%s</string>
+    <string name="room_file_list">Whiteboard and file list</string>
+    <string name="room_file_select_file">Select file</string>
+    <string name="room_file_animation_displayed">Static: PPT animation cannot be displayed；Dynamic: PPT animation can be displayed</string>
+    <string name="room_file_dynamic">Dynamic</string>
+    <string name="room_file_static_file">Static</string>
+    <string name="room_im_discuss">Discuss</string>
+    <string name="room_im_say_something">Say something~</string>
+    <string name="room_im_send">Send</string>
+    <string name="room_im_join_class">Join</string>
+    <string name="room_im_exit_class">Quit</string>
+    <string name="room_im_go_class">Class</string>
+    <string name="room_end_sign_out">Sign out</string>
+    <string name="room_tip_are_u_sure_exit">Are you sure to quit the current class?？</string>
+    <string name="room_exit_class">Exit Class</string>
+    <string name="room_tip_exit_class">You can leave the class for a while, it won\'t end immediately. After finishing teaching, the students will be moved out of the class.</string>
+    <string name="room_end_teaching">End Teaching</string>
+    <string name="room_leave_class">Leave class</string>
+    <string name="room_tip_teacher_finished_teaching">The teacher has finished Teaching</string>
+    <string name="room_student_tip_turned_on_camera">The teacher has turned on your camera</string>
+    <string name="room_student_tip_turned_off_camera">The teacher has turned off your camera</string>
+    <string name="room_student_tip_turned_on_mic">The teacher has turned on your microphone</string>
+    <string name="room_student_tip_turned_off_mic">The teacher has turned off your microphone</string>
+    <string name="room_student_tip_revoke_share">The teacher has cancelled your sharing permission</string>
+    <string name="room_student_tip_permission">Your teacher has allowed you to use the sharing function</string>
+    <string name="room_tip_channels">Up to 3 channels of students audio and video</string>
+    <string name="room_member_me">(Me)</string>
+    <string name="room_im_max_characters">Support up to %d characters</string>
+    <string name="room_end_teaching_fail">End teaching failure：%d</string>
+    <string name="room_im_me">Me</string>
+
+    <!-- 程序异常 -->
+    <string name="exception_restart_app">Restart the application in %d seconds</string>
+    <string name="exception_exit_app">Sorry, the program is abnormal and will exit soon</string>
+
+    <!-- 设置 -->
+    <string name="setting_language">language</string>
+
+    <string name="official_env">Formal environment</string>
+    <string name="test_env">Testing environment</string>
+    <string name="select_env">Choose the environment</string>
+    <string name="app_id_hint">Please enter the App ID</string>
+    <string name="app_sign_hint">Please enter the App Sign</string>
+    <string name="font_sc">Source Han Sans</string>
+    <string name="font_system">The system font</string>
+    <string name="upload_log">Upload the log</string>
+    <string name="teacher_suffix">(Teacher)</string>
+    <string name="join_max_user_limit">To join the class failed, the current has reached to the greatest limit of %d</string>
+    <string name="join_init_video_failed">Av engine has not been initialized successfully, please check the appID and appSign is correct</string>
+    <string name="join_init_docs_failed">File transcoding service has not been initialized successfully, please check the appID and appSign is correct</string>
+    <string name="join_init_wb_failed">Whiteboard service has not been initialized successfully, please check the appID and appSign is correct</string>
+    <string name="join_other">Failure in room，error code:%d</string>
+    <string name="mainland_value">home</string>
+    <string name="other_value">overseas</string>
+    <string name="title_activity_debug">DebugActivity</string>
+    <string name="go_class_title">Open business background test environment</string>
+    <string name="live_room_title">Open room service test environment</string>
+    <string name="docs_view_title">Open the file service test environment</string>
+    <string name="clear_cur_page">Empty page</string>
+    <string name="jump_to_settings">To set up</string>
+    <string name="upload_file_request_access">Upload a file storage you need to allow access</string>
+    <string name="upload_file">upload file</string>
+    <string name="upload_file_failed_no_access">Upload failed, please allow storage access</string>
+    <string name="cancel_upload_file">Has been cancelled to upload</string>
+    <string name="upload_file_dir_error">The file cannot be uploaded</string>
+    <string name="file_not_existed">File does not exist</string>
+    <string name="failed_to_upload_file">Failed to upload file</string>
+    <string name="upload_progress">Upload progress：</string>
+    <string name="upload_complete">Upload is complete, is transcoding file…</string>
+    <string name="transcoding_complete">Transcoding to complete，fileID =</string>
+    <string name="join_class_failed_try_again">To join the class failed, please try again</string>
+    <string name="failed_to_get_file_list">Failed to get a file list</string>
+    <string name="create_board">whiteboard %2$s created by %1$s</string>
+    <string name="network_request_error">Network request error</string>
+    <string name="network_connection_timeout">Network connection timeout</string>
+    <string name="abnormal">abnormal</string>
+    <string name="repeated_requests">Repeated requests</string>
+    <string name="system_error">System error</string>
+    <string name="parameters_error">The parameters of the error</string>
+    <string name="users_do_not_have_permission_to_modify">Users do not have permission to modify</string>
+    <string name="target_not_in_the_classroom">The target user is in the classroom</string>
+    <string name="need_login_first">Need to log in the room first</string>
+    <string name="users_are_sharing">Users are sharing</string>
+    <string name="users_do_not_have_to_share">Users do not have to share</string>
+    <string name="user_is_not_a_teacher">User is not a teacher</string>
+    <string name="sync_message_error">A synchronous message error</string>
+    <string name="cancel_upload">Cancel the upload</string>
+
+</resources>

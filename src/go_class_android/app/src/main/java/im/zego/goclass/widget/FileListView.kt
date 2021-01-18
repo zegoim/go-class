@@ -44,7 +44,7 @@ class FileListView : RelativeLayout {
         right_drawer_bottom.visibility = View.VISIBLE
         right_drawer_divider2.visibility = View.VISIBLE
         right_drawer_title.let {
-            it.text = context.getString(R.string.file_list_title)
+            it.text = context.getString(R.string.room_file_select_file)
             val params = (it.layoutParams as? MarginLayoutParams)
                 ?: MarginLayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
@@ -79,7 +79,7 @@ class FileListView : RelativeLayout {
             it.addOnItemTouchListener(touchListener)
         }
 
-        val url = "http://zego-public.oss-cn-shanghai.aliyuncs.com/goclass/config.json"
+        val url = "https://storage.zego.im/goclass/config_demo.json"
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
             .build()
@@ -88,7 +88,7 @@ class FileListView : RelativeLayout {
         val call: Call = okHttpClient.newCall(request)
         call.enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                ToastUtils.showCenterToast("获取文件列表失败")
+                ToastUtils.showCenterToast(context.getString(R.string.failed_to_get_file_list))
             }
 
             override fun onResponse(call: Call, response: Response) {
@@ -139,10 +139,10 @@ class FileListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val dynamicTextView = holder.itemView.findViewById<TextView>(R.id.item_file_dynamic)
         nameTextView.text = getFileList()[position].name
         if (getFileList()[position].isDynamic) {
-            dynamicTextView.text = nameTextView.context.getString(R.string.file_dynamic)
+            dynamicTextView.text = nameTextView.context.getString(R.string.room_file_dynamic)
             dynamicTextView.setBackgroundResource(R.drawable.drawable_file_type_dyn)
         } else {
-            dynamicTextView.text = nameTextView.context.getString(R.string.file_static)
+            dynamicTextView.text = nameTextView.context.getString(R.string.room_file_static_file)
             dynamicTextView.setBackgroundResource(R.drawable.drawable_file_type_sta)
         }
     }
@@ -160,7 +160,10 @@ class FileListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val jsonObject = JsonParser.parseString(string).asJsonObject
         val productJson = jsonObject["docs_prod"]
         val testJson = jsonObject["docs_test"]
-        productList = gson.fromJson(productJson, Array<FileData>::class.java).toList()
+
+        if (productJson != null) {
+            productList = gson.fromJson(productJson, Array<FileData>::class.java).toList()
+        }
         testList = gson.fromJson(testJson, Array<FileData>::class.java).toList()
 
         Log.d(TAG, "setFileListJson() called with: productList = $productList")

@@ -3,6 +3,7 @@ package im.zego.goclass.tool
 import android.content.Context
 import android.content.SharedPreferences
 import im.zego.goclass.AuthConstants
+import java.util.*
 
 class SharedPreferencesUtil {
     companion object {
@@ -165,6 +166,24 @@ class SharedPreferencesUtil {
         fun isNextStepFlipPage():Boolean{
             val sharedPreferences = getSharedPreferences(env)
             return sharedPreferences.getBoolean("next_step_flip_page", true)
+        }
+
+        @JvmStatic
+        fun setLastAppLanguageSetting(name: String?) {
+            val sharedPreferences = getSharedPreferences(env)
+            sharedPreferences.edit().putString("language", name).apply()
+        }
+
+        @JvmStatic
+        fun getLastAppLanguageSetting(): String {
+            val sharedPreferences = getSharedPreferences(env)
+            return sharedPreferences.getString("language", Locale.CHINA.language).toString()
+        }
+
+        @JvmStatic
+        fun hasLastAppLanguageSetting(): Boolean {
+            val sharedPreferences = getSharedPreferences(env)
+            return sharedPreferences.contains("language")
         }
 
 /*        @JvmStatic

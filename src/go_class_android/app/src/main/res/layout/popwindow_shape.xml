@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:includeFontPadding="false"
-        android:text="@string/shape_select_title"
+        android:text="@string/wb_tool_shape_selection"
         android:textColor="#18191a"
         android:textSize="12dp"
         app:layout_constraintLeft_toLeftOf="parent"

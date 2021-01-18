@@ -10,7 +10,7 @@
 #import "UIColor+ZegoExtension.h"
 #import "ZegoWhiteBoardListCell.h"
 #import "ZegoUIConstant.h"
-#include "NSString+Size.h"
+#include "NSString+ZegoExtension.h"
 
 @interface ZegoWhiteboardListView()<UITableViewDelegate, UITableViewDataSource>
 
@@ -126,8 +126,8 @@
     headerLabel.font = [UIFont systemFontOfSize:15 weight:UIFontWeightRegular];
     headerLabel.backgroundColor = [UIColor whiteColor];
     headerLabel.textColor = kTextColor1;
-    headerLabel.text = @"白板及文件列表";
-    
+    headerLabel.text = [NSString zego_localizedString:@"room_whiteboard_list"];
+
     UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, 43, self.bounds.size.width, 0.5)];
     line.backgroundColor = kGrayLineColor;
     [header addSubview:line];

@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="25dp"
         android:gravity="center"
-        android:text="@string/chat_window_title"
+        android:text="@string/room_im_discuss"
         android:textColor="#18191a"
         android:textSize="10dp" />
 
@@ -34,7 +34,7 @@
         android:layout_marginBottom="9.5dp"
         android:background="@drawable/drawable_chat_input_bg"
         android:gravity="center_vertical"
-        android:hint="@string/chat_window_input_hint"
+        android:hint="@string/room_im_say_something"
         android:paddingLeft="10dp"
         android:textColorHint="#585c62"
         android:textSize="10dp" />

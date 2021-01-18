@@ -11,11 +11,11 @@ class ElectronConfig extends Config {
   _sign = {
     home: {
       ...this._base,
-      appSign: signToArray('11111')
+      appSign: signToArray('')
     },
     overseas: {
       ...this._base,
-      appSign: signToArray('11111')
+      appSign: signToArray('')
     }
   }
   constructor() {

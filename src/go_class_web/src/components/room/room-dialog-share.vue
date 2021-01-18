@@ -4,22 +4,22 @@
 <template>
   <div class="room-dialog-share">
     <el-dialog
-      title="邀请人员"
+      :title="$t('room.room_dialog_invite_member')"
       :visible.sync="dialogVisible"
       width="380px"
       @close="$emit('handleClose')"
     >
       <div class="dialog-content">
         <div class="classLink">
-          <span class="link">课堂链接</span>
+          <span class="link">{{$t('room.room_dialog_classroom_link')}}</span>
           <span class="linkContent">{{ shareUrl }}</span>
         </div>
         <div class="classID">
-          <span class="linkid">课堂ID</span>
+          <span class="linkid">{{$t('room.room_dialog_class_id')}}</span>
           <span class="linkContent">{{ roomId }}</span>
         </div>
         <div class="classLink">
-          <span class="link">接入环境</span>
+          <span class="link">{{$t('room.room_dialog_access_env')}}</span>
           <span class="linkContent">{{ envName }}</span>
         </div>
         <el-button type="primary" round @click="copyShareUrl">{{ copyLink }}</el-button>
@@ -37,7 +37,7 @@ export default {
       dialogVisible: true,
       roomId: '',
       shareUrl: '',
-      copyLink: '复制邀请链接',
+      copyLink: this.$t('room.room_dialog_copy_link'),
       envName: ''
     }
   },
@@ -49,13 +49,13 @@ export default {
       const { roomId, env } = storage.get('loginInfo') || {}
       if (roomId) {
         this.roomId = roomId
-        this.envName = env === 'home' ? '中国内地' : '海外'
+        this.envName = env === 'home' ? this.$t('room.room_dialog_mainland_china') : this.$t('room.room_dialog_overseas')
         this.shareUrl = `${location.protocol}//${location.host}/#/login?roomId=${roomId}&env=${env}`
       }
     },
     copyShareUrl() {
       copy(this.shareUrl)
-      this.copyLink = '复制成功'
+      this.copyLink = this.$t('room.room_dialog_copy_suc')
     }
   }
 }

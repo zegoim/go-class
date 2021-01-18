@@ -34,33 +34,6 @@
 </template>
 
 <script>
-const controlBtnList = [
-  {
-    name: 'camera',
-    cnName: '摄像头',
-    imgSrc: {
-      open: require('../../assets/icons/room/seating_camer.svg').default,
-      close: require('../../assets/icons/room/seating_camer_close.svg').default
-    }
-  },
-  {
-    name: 'mic',
-    cnName: '麦克风',
-    imgSrc: {
-      open: require('../../assets/icons/room/seating_micophone.svg').default,
-      close: require('../../assets/icons/room/seating_micophone_close.svg').default
-    }
-  },
-  {
-    name: 'can_share',
-    cnName: '共享授权',
-    imgSrc: {
-      open: require('../../assets/icons/room/seating_share.svg').default,
-      close: require('../../assets/icons/room/seating_share_close.svg').default
-    }
-  }
-]
-
 import { debounce } from '@/utils/tool'
 import { roomStore } from '@/service/biz/room'
 import { ROLE_TEACHER, STATE_CLOSE, STATE_OPEN } from '@/utils/constants'
@@ -70,7 +43,33 @@ export default {
   props: ['user', 'isTeacher'],
   data() {
     return {
-      controlBtnList: this.isTeacher ? controlBtnList.slice(0, 2) : controlBtnList
+      btnList: [
+        {
+          name: 'camera',
+          cnName: this.$t('room.room_controller_camera'),
+          imgSrc: {
+            open: require('../../assets/icons/room/seating_camer.svg').default,
+            close: require('../../assets/icons/room/seating_camer_close.svg').default
+          }
+        },
+        {
+          name: 'mic',
+          cnName: this.$t('room.room_controller_mic'),
+          imgSrc: {
+            open: require('../../assets/icons/room/seating_micophone.svg').default,
+            close: require('../../assets/icons/room/seating_micophone_close.svg').default
+          }
+        },
+        {
+          name: 'can_share',
+          cnName: this.$t('room.room_sharing_auth'),
+          imgSrc: {
+            open: require('../../assets/icons/room/seating_share.svg').default,
+            close: require('../../assets/icons/room/seating_share_close.svg').default
+          }
+        }
+      ],
+      controlBtnList: []
     }
   },
   computed: {
@@ -83,6 +82,7 @@ export default {
     this.userId = roomStore.uid
     this.role = roomStore.role
     this.isMe = this.userId == this.user.uid
+    this.controlBtnList = this.isTeacher ? this.btnList.slice(0, 2) : this.btnList
   },
   mounted(){
     this.handleMainBtnClick_ = debounce(this.handleMainBtnClick, 500, true)
@@ -96,9 +96,9 @@ export default {
     },
     getItemContent(item) {
       const isOpen = this.user[item.name] == STATE_OPEN
-      let str = isOpen ? '关闭' : '打开'
+      let str = isOpen ? this.$t('room.room_turn_off') : this.$t('room.room_trun_on')
       if (item.name == 'can_share') {
-        str = isOpen ? '取消' : ''
+        str = isOpen ? this.$t('room.room_cancel') : ''
       }
       return str + item.cnName
     },

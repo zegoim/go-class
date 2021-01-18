@@ -7,16 +7,16 @@
     <div class="content" v-if="role === 2 && classScene === 2">
       <div class="share-content large-class">
         <img src="../../assets/images/whiteboard/default_waiting_share.png" alt />
-        <div>等待老师共享</div>
+        <div>{{$t('wb.wb_tip_wait_teacher_share')}}</div>
       </div>
     </div>
     <div class="content" v-else>
       <div class="share-content">
-        <span>请选择要共享的内容</span>
+        <span>{{$t('wb.wb_select_share')}}</span>
       </div>
       <div class="share-button">
-        <el-button round @click="createWhiteboard">互动白板</el-button>
-        <el-button round @click="showFileListDialog">共享文件</el-button>
+        <el-button round @click="createWhiteboard">{{$t('wb.wb_shared_wb')}}</el-button>
+        <el-button round @click="showFileListDialog">{{$t('wb.wb_shared_file')}}</el-button>
       </div>
     </div>
     
@@ -40,7 +40,7 @@ export default {
      * @desc: 创建普通白板
      */    
     async createWhiteboard() {
-      if (!this.auth) return this.showToast('老师还未允许你使用共享功能')
+      if (!this.auth) return this.showToast(this.$t('wb.wb_tip_not_allowed_share'))
       this.zegoWhiteboardArea.setIsAllowSendRoomExtraInfo(true)
       this.zegoWhiteboardArea && this.zegoWhiteboardArea.createWhiteboard('whiteboardDemo')
     },
@@ -49,7 +49,7 @@ export default {
      * @desc: 打开文件列表弹窗
      */    
     showFileListDialog() {
-      if (!this.auth) return this.showToast('老师还未允许你使用共享功能')
+      if (!this.auth) return this.showToast(this.$t('wb.wb_tip_not_allowed_share'))
       this.zegoWhiteboardArea && this.zegoWhiteboardArea.setFilesListDialogShow(true)
     }
   }
@@ -72,7 +72,9 @@ export default {
   }
 
   .el-button {
-    @include wh(140px, 50px);
+    // @include wh(140px, 50px);
+    height: 50px;
+    padding: 0px 35px;
     @include sc(16px, #18191a);
     @include box-shadow(0 0 30px 10px rgba($color: #000000, $alpha: 0.05));
     margin: 30px 30px 0 0;

@@ -12,7 +12,7 @@
 #import "ZegoUIConstant.h"
 #import "ZegoDrawingToolModel.h"
 #import "ZegoDrawToolGeometryView.h"
-
+#import "NSString+ZegoExtension.h"
 #if ZEGO_TOOL_JUST_TEST_NEEDED == 1
 #define ZEGO_TOOL_TEST_VISIBLE
 #endif
@@ -348,19 +348,19 @@ typedef NS_ENUM(NSUInteger, ZegoDrawingToolIndex) {
 #ifdef ZEGO_TOOL_TEST_VISIBLE
         @{@"text":@"测试", @"selectedImage":@"dianji", @"normalImage":@"dianji", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeJustTest)},
 #endif
-        @{@"text":@"点击", @"selectedImage":@"dianji_click", @"normalImage":@"dianji", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeClick)},
-        @{@"text":@"选择", @"selectedImage":@"xuanze_click", @"normalImage":@"xuanze", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeArrow)},
-        @{@"text":@"拖拽", @"selectedImage":@"tuozhuai_click", @"normalImage":@"tuozhuai", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeDrag)},
-        @{@"text":@"画笔", @"selectedImage":@"huabi_click", @"normalImage":@"huabi", @"isSelected":@(1), @"type":@(ZegoDrawingToolViewItemTypePath)},
-        @{@"text":@"激光笔", @"selectedImage":@"tool_laser_click", @"normalImage":@"tool_laser", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeLaser)},
-        @{@"text":@"文本", @"selectedImage":@"wenben_click", @"normalImage":@"wenben", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeText)},
-        @{@"text":@"图形", @"selectedImage":@"tool_figure_click", @"normalImage":@"tool_figure", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeGeometry)},
-        @{@"text":@"格式", @"selectedImage":@"geshi_click", @"normalImage":@"geshi", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeFormat)},
-        @{@"text":@"橡皮擦", @"selectedImage":@"xiangpica_click", @"normalImage":@"xiangpica", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeEraser)},
-        @{@"text":@"清空", @"selectedImage":@"qingkong_click", @"normalImage":@"qingchu", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeClear)},
-        @{@"text":@"撤销", @"selectedImage":@"chexiao_click", @"normalImage":@"chexiao", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeUndo)},
-        @{@"text":@"重做", @"selectedImage":@"chongzuo_click", @"normalImage":@"chongzuo", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeRedo)},
-        @{@"text":@"保存", @"selectedImage":@"tool_save_click", @"normalImage":@"tool_save", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeSave)},
+        @{@"text":[NSString zego_localizedString:@"wb_tool_click"], @"selectedImage":@"dianji_click", @"normalImage":@"dianji", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeClick)},
+        @{@"text":[NSString zego_localizedString:@"wb_tool_choice"], @"selectedImage":@"xuanze_click", @"normalImage":@"xuanze", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeArrow)},
+        @{@"text":[NSString zego_localizedString:@"wb_tool_drag"], @"selectedImage":@"tuozhuai_click", @"normalImage":@"tuozhuai", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeDrag)},
+        @{@"text":[NSString zego_localizedString:@"wb_tool_brush"], @"selectedImage":@"huabi_click", @"normalImage":@"huabi", @"isSelected":@(1), @"type":@(ZegoDrawingToolViewItemTypePath)},
+        @{@"text":[NSString zego_localizedString:@"wb_tool_laser"], @"selectedImage":@"tool_laser_click", @"normalImage":@"tool_laser", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeLaser)},
+        @{@"text":[NSString zego_localizedString:@"wb_tool_text"], @"selectedImage":@"wenben_click", @"normalImage":@"wenben", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeText)},
+        @{@"text":[NSString zego_localizedString:@"wb_tool_graphical"], @"selectedImage":@"tool_figure_click", @"normalImage":@"tool_figure", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeGeometry)},
+        @{@"text":[NSString zego_localizedString:@"wb_tool_format"], @"selectedImage":@"geshi_click", @"normalImage":@"geshi", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeFormat)},
+        @{@"text":[NSString zego_localizedString:@"wb_tool_erase"], @"selectedImage":@"xiangpica_click", @"normalImage":@"xiangpica", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeEraser)},
+        @{@"text":[NSString zego_localizedString:@"wb_tool_clear"], @"selectedImage":@"qingkong_click", @"normalImage":@"qingchu", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeClear)},
+        @{@"text":[NSString zego_localizedString:@"wb_tool_revoke"], @"selectedImage":@"chexiao_click", @"normalImage":@"chexiao", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeUndo)},
+        @{@"text":[NSString zego_localizedString:@"wb_tool_redo"], @"selectedImage":@"chongzuo_click", @"normalImage":@"chongzuo", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeRedo)},
+        @{@"text":[NSString zego_localizedString:@"wb_tool_save"], @"selectedImage":@"tool_save_click", @"normalImage":@"tool_save", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeSave)},
     ];
 }
 

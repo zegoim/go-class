@@ -141,9 +141,6 @@ object ClassRoomManager {
                         mLoginRspData = loginRspData
                         // login 成功，加入课堂
                         enterRoom(myUserId, userName, roomId) { errorCode ->
-                            if (errorCode != 0) {
-                                ToastUtils.showLoginErrorToast(errorCode)
-                            }
                             onLogin(errorCode)
                         }
                     }
@@ -220,7 +217,7 @@ object ClassRoomManager {
     /**
      * 开启/关闭摄像头
      */
-    fun setUserCamera(targetUserId: Long, cameraOn: Boolean) {
+    fun setUserCamera(targetUserId: Long, cameraOn: Boolean, onChange: (errorCode: Int) -> Unit) {
         Logger.i(TAG, "setUserCamera() targetUserId : $targetUserId, cameraOn: $cameraOn")
         val camera = if (cameraOn) ZegoApiConstants.Status.OPEN else ZegoApiConstants.Status.CLOSE
         mRoomUserMap[targetUserId]?.let {
@@ -242,6 +239,7 @@ object ClassRoomManager {
                             for (listener in mUserListeners) {
                                 listener.onUserCameraChanged(targetUserId, !cameraOn, true)
                             }
+                            onChange(result.code)
                         }
                     }
                 })
@@ -251,7 +249,7 @@ object ClassRoomManager {
     /**
      * 开启/关闭麦克风
      */
-    fun setUserMic(targetUserId: Long, micOn: Boolean) {
+    fun setUserMic(targetUserId: Long, micOn: Boolean, onChange: (errorCode: Int) -> Unit) {
         Logger.i(TAG, "setUserMic() targetUserId : $targetUserId, cameraOn: $micOn")
         val mic = if (micOn) ZegoApiConstants.Status.OPEN else ZegoApiConstants.Status.CLOSE
         mRoomUserMap[targetUserId]?.let {
@@ -273,6 +271,7 @@ object ClassRoomManager {
                             for (listener in mUserListeners) {
                                 listener.onUserMicChanged(targetUserId, !micOn, true)
                             }
+                            onChange(result.code)
                         }
                     }
                 })
@@ -282,7 +281,7 @@ object ClassRoomManager {
     /**
      * 授予/取消权限
      */
-    fun setUserShare(targetUserId: Long, shareEnable: Boolean) {
+    fun setUserShare(targetUserId: Long, shareEnable: Boolean, onChange: (errorCode: Int) -> Unit) {
         val share = if (shareEnable) ZegoApiConstants.Status.OPEN else ZegoApiConstants.Status.CLOSE
         mRoomUserMap[targetUserId]?.let {
             it.sharable = shareEnable
@@ -302,6 +301,7 @@ object ClassRoomManager {
                             for (listener in mUserListeners) {
                                 listener.onUserShareChanged(targetUserId, !shareEnable, true)
                             }
+                            onChange(result.code)
                         }
                     }
                 })
@@ -362,7 +362,7 @@ object ClassRoomManager {
                     if (result.code == 0) {
                         getAttendeeListRspData?.let {
                             heartBeatMonitor?.setAttendeeSeq(it.seq)
-                            mRoomUserMap.clear()
+//                            mRoomUserMap.clear()
                             for (joinRoomUser in it.attendeeList) {
                                 mRoomUserMap[joinRoomUser.uid] = ClassUser.create(joinRoomUser)
                             }
@@ -451,9 +451,9 @@ object ClassRoomManager {
      * 离开课堂，因为离开对别人没有影响，假如断网了，请求失败，也退出房间关闭界面
      * 服务器收不到心跳会对用户进行下线处理
      */
-    fun leaveClass() {
+    fun leaveClass(requestCallback: ZegoApiClient.RequestCallback<Any>?) {
         Logger.i(TAG, "leaveClass()")
-        ZegoApiClient.leaveRoom(myUserId, mRoomId, roomType, null)
+        ZegoApiClient.leaveRoom(myUserId, mRoomId, roomType, requestCallback)
         exitRoom()
     }
 

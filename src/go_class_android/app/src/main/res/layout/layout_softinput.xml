@@ -12,7 +12,7 @@
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="15dp"
-        android:text="@string/send"
+        android:text="@string/room_im_send"
         android:textColor="#007aff"
         android:textSize="15sp" />
 

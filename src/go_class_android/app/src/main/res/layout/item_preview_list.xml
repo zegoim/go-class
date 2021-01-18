@@ -10,7 +10,7 @@
         android:layout_height="40dp"
         android:gravity="center_vertical"
         android:paddingStart="20dp"
-        android:text="@string/preview"
+        android:text="@string/wb_preview"
         android:textColor="#18191a"
         android:textSize="15dp" />
     

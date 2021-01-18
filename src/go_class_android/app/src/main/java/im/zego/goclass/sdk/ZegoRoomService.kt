@@ -1,5 +1,6 @@
 package im.zego.goclass.sdk
 
+import im.zego.zegoexpress.entity.ZegoRoomExtraInfo
 import im.zego.goclass.entity.ZegoStream
 import im.zego.goclass.tool.Logger
 import im.zego.zegowhiteboard.ZegoWhiteboardManager
@@ -22,11 +23,7 @@ class ZegoRoomService(private var zegoVideoSDKProxy: IZegoVideoSDKProxy) {
 
 
     private val KEY_WHITEBOARD = "1001"
-    private var latestWhiteboardSeq: Long = 0
-        set(value) {
-            field = value
-            Logger.i(TAG, "set latestWhiteboardSeq value:${field}")
-        }
+
     var onWhiteboardSelectListener: OnWhiteboardSelectedListener? = null
     var currentWhiteboardID = 0L
         get() {
@@ -34,39 +31,22 @@ class ZegoRoomService(private var zegoVideoSDKProxy: IZegoVideoSDKProxy) {
             return field
         }
 
-    fun registerCallback() {
-        zegoVideoSDKProxy.setReliableMessageCallback(object : IZegoReliableMsgListener {
-            override fun onRecvReliableMessage(
+    private fun registerCallback() {
+        zegoVideoSDKProxy.setRoomExtraInfoUpdateListener(object : IRoomExtraInfoUpdateListener {
+            override fun onRoomExtraInfoUpdate(
                 roomID: String,
-                msgType: String,
-                content: String,
-                latestSeq: Long
+                roomExtraInfo: ZegoRoomExtraInfo
             ) {
                 Logger.d(
                     TAG,
-                    "onRecvReliableMessage,msgType:${msgType},content:${content},latestSeq:${latestSeq}"
+                    "setRoomExtraInfoUpdateListener,roomID:${roomID},roomExtraInfo:${roomExtraInfo}"
                 )
-                if (msgType == KEY_WHITEBOARD && latestSeq > latestWhiteboardSeq) {
-                    latestWhiteboardSeq = latestSeq
-                    currentWhiteboardID = if (content.isBlank()) 0L else content.toLong()
+                if (roomExtraInfo.key == KEY_WHITEBOARD) {
+                    currentWhiteboardID =
+                        if (roomExtraInfo.value.isBlank()) 0L else roomExtraInfo.value.toLong()
                     onWhiteboardSelectListener?.onWhiteboardSelected(currentWhiteboardID)
                 }
             }
-
-            override fun onRoomUpdateReliableMessageInfo(
-                roomID: String,
-                msgType: String,
-                latestSeq: Long
-            ) {
-                Logger.d(
-                    TAG,
-                    "onRoomUpdateReliableMessageInfo,msgType:${msgType},latestSeq:${latestSeq}"
-                )
-                if (msgType == KEY_WHITEBOARD && latestSeq > latestWhiteboardSeq) {
-                    latestWhiteboardSeq = latestSeq
-                }
-            }
-
         })
 
         zegoVideoSDKProxy.setZegoRoomCallback(object : IZegoRoomStateListener {
@@ -109,13 +89,12 @@ class ZegoRoomService(private var zegoVideoSDKProxy: IZegoVideoSDKProxy) {
     }
 
     fun unRegisterCallback() {
-        zegoVideoSDKProxy.setReliableMessageCallback(null)
+        zegoVideoSDKProxy.setRoomExtraInfoUpdateListener(null)
         zegoVideoSDKProxy.setZegoRoomCallback(null, null, null)
         zegoVideoSDKProxy.setCustomCommandListener(null)
     }
 
     private fun clearRoomData() {
-        latestWhiteboardSeq = 0
         currentWhiteboardID = 0L
     }
 
@@ -131,74 +110,38 @@ class ZegoRoomService(private var zegoVideoSDKProxy: IZegoVideoSDKProxy) {
     fun sendCurrentWhiteboardID(whiteboardID: Long, callback: (Int) -> Unit) {
         Logger.i(
             TAG,
-            "sendCurrentWhiteboardID,latestWhiteboardSeq:${latestWhiteboardSeq},whiteboardID:${whiteboardID}"
+            "sendCurrentWhiteboardID, whiteboardID:${whiteboardID}"
         )
-        zegoVideoSDKProxy.sendReliableMessage(roomID,
-            KEY_WHITEBOARD, whiteboardID.toString(), latestWhiteboardSeq,
-            object : IZegoSendReliableMsgCallback {
-                override fun onSendReliableMessage(
-                    errorCode: Int, roomID: String, type: String, latestSeq: Long
-                ) {
+        zegoVideoSDKProxy.setRoomExtraInfo(
+            roomID,
+            KEY_WHITEBOARD,
+            whiteboardID.toString(),
+            object : IZegoSetExtraInfoCallback {
+                override fun onSetRoomExtraInfo(errorCode: Int) {
                     Logger.i(
                         TAG,
-                        "onSendCurrent,errorCode:${errorCode}，latestSeq:${latestSeq},whiteboardID:${whiteboardID}"
+                        "onSendCurrent,errorCode:${errorCode}，KEY_WHITEBOARD:${KEY_WHITEBOARD},whiteboardID:${whiteboardID}"
                     )
                     if (errorCode == 0) {
-                        if (latestSeq > latestWhiteboardSeq) {
-                            latestWhiteboardSeq = latestSeq
-                            currentWhiteboardID = whiteboardID
-                        }
+                        currentWhiteboardID = whiteboardID
                         callback.invoke(errorCode)
                     } else {
                         // 失败了重新获取再试一次
-                        getCurrentWhiteboardID { getResult, _ ->
-                            if (getResult == 0) {
-                                zegoVideoSDKProxy.sendReliableMessage(roomID,
-                                    KEY_WHITEBOARD, whiteboardID.toString(), latestWhiteboardSeq,
-                                    object : IZegoSendReliableMsgCallback {
-                                        override fun onSendReliableMessage(
-                                            errorCode: Int, roomID: String,
-                                            type: String, latestSeq: Long
-                                        ) {
-                                            Logger.i(
-                                                TAG,
-                                                "sendCurrentWhiteboardID2,errorCode:${errorCode}，whiteboardID:${whiteboardID}"
-                                            )
-                                            if (errorCode == 0) {
-                                                if (latestSeq > latestWhiteboardSeq) {
-                                                    latestWhiteboardSeq = latestSeq
-                                                    currentWhiteboardID = whiteboardID
-                                                }
-                                            }
-                                            callback.invoke(errorCode)
-                                        }
-
+                        zegoVideoSDKProxy.setRoomExtraInfo(
+                            roomID,
+                            KEY_WHITEBOARD,
+                            whiteboardID.toString(), object : IZegoSetExtraInfoCallback {
+                                override fun onSetRoomExtraInfo(errorCode: Int) {
+                                    Logger.i(
+                                        TAG,
+                                        "sendCurrentWhiteboardID2,errorCode:${errorCode}，whiteboardID:${whiteboardID}"
+                                    )
+                                    if (errorCode == 0) {
+                                        currentWhiteboardID = whiteboardID
                                     }
-                                )
-                            }
-                        }
-                    }
-                }
-
-            }
-        )
-    }
-
-    fun getCurrentWhiteboardID(resultCallback: (Int, Long) -> Unit) {
-        Logger.i(TAG, "getCurrentWhiteboardID")
-        zegoVideoSDKProxy.getReliableMessage(roomID, KEY_WHITEBOARD,
-            object : IZegoGetReliableMsgCallback {
-                override fun onGetReliableMessage(
-                    errorCode: Int, roomID: String, latestSeq: Long, content: String?
-                ) {
-                    if (errorCode == 0) {
-                        latestWhiteboardSeq = latestSeq
-                        currentWhiteboardID = if (content.isNullOrBlank()) 0L else content.toLong()
-                        Logger.i(
-                            TAG,
-                            "getCurrentWhiteboardID,latestSeq:${latestWhiteboardSeq},currentWhiteboardID:$currentWhiteboardID"
-                        )
-                        resultCallback.invoke(errorCode, currentWhiteboardID)
+                                    callback.invoke(errorCode)
+                                }
+                            })
                     }
                 }
             })

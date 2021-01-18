@@ -36,7 +36,7 @@ class WhiteboardListView : RelativeLayout {
         LayoutInflater.from(context).inflate(R.layout.layout_drawer_right, this, true)
         setBackgroundColor(Color.WHITE)
         right_drawer_title.let {
-            it.text = context.getString(R.string.whiteboard_list_title)
+            it.text = context.getString(R.string.room_file_list)
             val params = (it.layoutParams as? MarginLayoutParams)
                 ?: MarginLayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
@@ -67,13 +67,13 @@ class WhiteboardListView : RelativeLayout {
                         val simpleListAdapter = it.adapter as WhiteboardListAdapter
                         simpleListAdapter.getListData(vh.adapterPosition)?.let { model ->
                             val title =
-                                context.getString(R.string.tips_close_whiteboard, model.name)
+                                context.getString(R.string.wb_tip_are_u_sure_close, model.name)
                             val zegoDialog = ZegoDialog.Builder(context).setMessage(title)
-                                .setPositiveButton(R.string.button_confirm) { dialog, _ ->
+                                .setPositiveButton(R.string.login_button_confirm) { dialog, _ ->
                                     dialog.dismiss()
                                     onWhiteboardItemClosed.invoke(model.whiteboardID)
                                 }
-                                .setNegativeButton(R.string.button_cancel) { dialog, _ ->
+                                .setNegativeButton(R.string.login_button_cancel) { dialog, _ ->
                                     dialog.dismiss()
                                 }.create()
                             zegoDialog.showWithLengthLimit()

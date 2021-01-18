@@ -12,7 +12,6 @@ import java.io.File;
 import im.zego.goclass.AppConstants;
 import im.zego.goclass.AuthConstants;
 import im.zego.goclass.DemoApplication;
-import im.zego.goclass.debug.DebugActivity;
 import im.zego.goclass.network.ZegoApiClient;
 import im.zego.goclass.tool.SharedPreferencesUtil;
 import im.zego.zegodocs.IZegoDocsViewUploadListener;
@@ -22,6 +21,9 @@ import im.zego.zegowhiteboard.ZegoWhiteboardConfig;
 import im.zego.zegowhiteboard.ZegoWhiteboardManager;
 import im.zego.zegowhiteboard.callback.IZegoWhiteboardGetListListener;
 import im.zego.zegowhiteboard.callback.IZegoWhiteboardManagerListener;
+
+import static im.zego.goclass.widget.FontConfig.FONT_FAMILY_DEFAULT_PATH;
+import static im.zego.goclass.widget.FontConfig.FONT_FAMILY_DEFAULT_PATH_BOLD;
 
 /**
  * 主要是对liveroom/express的封装，和白板view,docsview相关回调的监听
@@ -42,7 +44,8 @@ public class ZegoSDKManager {
         return Holder.INSTANCE;
     }
 
-private IZegoVideoSDKProxy zegoSDKProxy = new ZegoExpressWrapper();
+    private IZegoVideoSDKProxy zegoSDKProxy = new ZegoExpressWrapper();
+
     private ZegoStreamService streamService = new ZegoStreamService(zegoSDKProxy);
     private ZegoDeviceService deviceService = new ZegoDeviceService(zegoSDKProxy);
     private ZegoRoomService roomService = new ZegoRoomService(zegoSDKProxy);
@@ -62,36 +65,33 @@ private IZegoVideoSDKProxy zegoSDKProxy = new ZegoExpressWrapper();
 
 
     public void initSDKEnvironment(Application application, InitResult initCallback) {
-        initTestEnv();
-        initVideoSDK(application, initCallback);
+        // 在这里面配置测试环境等开关
+        configTestEnvSwitch();
 
+        initVideoSDK(application, initCallback);
         initDocSdk(application, initCallback);
         initZegoApiClient(application, isMainLandEnv());
     }
 
     /**
-     * 测试环境下，配置一些默认配置项。正式环境不在这里配置
+     * 在这里配置测试环境等开关
+     * 其中环境设置时传入 true 表示开启测试环境，传入 false 表示开启正式环境
      */
-    private void initTestEnv() {
-        if (DemoApplication.isFinal()) {
-            return;
-        }
+    private void configTestEnvSwitch() {
+        // 是否开启业务后台测试环境
+        SharedPreferencesUtil.setGoClassTestEnv(true);
 
-        // 测试版本，首次安装应用。设置各环境的初始值
-        if (!SharedPreferencesUtil.containsGoClassTestEnvSp()) {
-            SharedPreferencesUtil.setGoClassTestEnv(false);
-        }
-        if (!SharedPreferencesUtil.containsVideoSDKTestEnvSp()) {
-            SharedPreferencesUtil.setVideoSDKTestEnv(false);
-        }
-        if (!SharedPreferencesUtil.containsDocsViewTestEnvSp()) {
-            SharedPreferencesUtil.setDocsViewTestEnv(true);
-        }
-        if (!SharedPreferencesUtil.containsNextStepFlipPageSp()) {
-            SharedPreferencesUtil.setNextStepFlipPage(true);
-        }
+        // 是否开启房间服务测试环境
+        SharedPreferencesUtil.setVideoSDKTestEnv(true);
 
+        // 是否开启文件服务测试环境
+        SharedPreferencesUtil.setDocsViewTestEnv(true);
+
+        // 是否开启点击触发翻页功能
+        SharedPreferencesUtil.setNextStepFlipPage(true);
     }
+
+
 
     /**
      * 初始化liveroom/express
@@ -158,6 +158,16 @@ private IZegoVideoSDKProxy zegoSDKProxy = new ZegoExpressWrapper();
         }
     }
 
+    public void changeLanguage(InitResult initCallback) {
+        Log.d(TAG, "changeLanguage() called");
+        ZegoWhiteboardManager.getInstance().uninit();
+        zegoSDKProxy.unInitSDK();
+        initVideoResult = null;
+        initVideoSDK(application, success -> {
+            initCallback.initResult(success);
+        });
+    }
+
     /**
      * 初始化业务后台
      *
@@ -175,7 +185,7 @@ private IZegoVideoSDKProxy zegoSDKProxy = new ZegoExpressWrapper();
         if (isMainLandEnv) {
             return isSmallClass ? AuthConstants.APP_ID : AuthConstants.APP_ID_LARGE;
         } else {
-            return isSmallClass ? AuthConstants.APP_ID_OTHER : AuthConstants.APP_ID_LARGE_OTHER;
+            return isSmallClass ? AuthConstants.APP_ID_OVERSEAS : AuthConstants.APP_ID_LARGE_OVERSEAS;
         }
     }
 
@@ -184,7 +194,7 @@ private IZegoVideoSDKProxy zegoSDKProxy = new ZegoExpressWrapper();
         if (isMainLandEnv) {
             return isSmallClass ? AuthConstants.APP_SIGN : AuthConstants.APP_SIGN_LARGE;
         } else {
-            return isSmallClass ? AuthConstants.APP_SIGN_OTHER : AuthConstants.APP_SIGN_LARGE_OTHER;
+            return isSmallClass ? AuthConstants.APP_SIGN_OVERSEAS : AuthConstants.APP_SIGN_LARGE_OVERSEAS;
         }
     }
 
@@ -288,11 +298,11 @@ private IZegoVideoSDKProxy zegoSDKProxy = new ZegoExpressWrapper();
         ZegoWhiteboardManager.getInstance().setConfig(config);
         ZegoWhiteboardManager.getInstance().init(context, errorCode -> {
             Log.i(TAG, "init Whiteboard  errorCode:" + errorCode);
-            initWhiteboardResult = errorCode == 0;
+            initWhiteboardResult = (errorCode == 0);
             if (errorCode == 0) {
                 // 设置默认字体,内部使用，接口测试中
                 ZegoWhiteboardManager.getInstance()
-                        .setCustomFontFromAsset(DebugActivity.FONT_FAMILY_DEFAULT_PATH, DebugActivity.FONT_FAMILY_DEFAULT_PATH_BOLD);
+                        .setCustomFontFromAsset(FONT_FAMILY_DEFAULT_PATH, FONT_FAMILY_DEFAULT_PATH_BOLD);
             }
             notifyInitResult(initCallback);
         });

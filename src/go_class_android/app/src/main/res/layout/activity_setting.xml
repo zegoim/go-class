@@ -25,35 +25,145 @@
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
             android:gravity="center"
-            android:text="@string/setting"
+            android:text="@string/login_setting"
             android:textColor="@color/text_black"
             android:textSize="16sp" />
 
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/setting_clear_cache"
-        style="?android:attr/borderlessButtonStyle"
+    <RelativeLayout
+        android:id="@+id/setting_language"
         android:layout_width="match_parent"
-        android:layout_height="44dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="24dp"
-        android:text="@string/clear_cache"
-        android:textColor="@color/text_black"
-        android:textSize="16sp" />
+        android:layout_height="57dp"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/setting_language"
+            android:layout_centerVertical="true"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:layout_marginLeft="16dp"/>
+
+        <TextView
+            android:id="@+id/tv_language"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/icon_next"
+            android:layout_marginRight="3dp"
+            android:layout_centerVertical="true"
+            android:textSize="14dp"
+            android:textColor="#565e66"
+            android:layout_marginLeft="16dp"/>
+
+        <TextView
+            android:id="@+id/icon_next"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/setting_next"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#f1f1f1"
+            android:layout_alignParentBottom="true"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/setting_clear_cache"
+        android:layout_width="match_parent"
+        android:layout_height="57dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/login_clear_cache"
+            android:layout_centerVertical="true"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:layout_marginLeft="16dp"/>
+
+        <TextView
+            android:id="@+id/tv_clear_cache"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/icon_next2"
+            android:layout_marginRight="3dp"
+            android:text="0KB"
+            android:layout_centerVertical="true"
+            android:textSize="14dp"
+            android:textColor="#565e66"
+            android:layout_marginLeft="16dp"/>
+
+        <TextView
+            android:id="@+id/icon_next2"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/setting_next"/>
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <TextView
-            android:id="@+id/setting_version"
-            android:layout_width="wrap_content"
-            android:textSize="16sp"
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="40dp"
             android:layout_centerHorizontal="true"
-            android:textColor="@color/text_black2"
-            android:layout_height="wrap_content"/>
+            android:layout_marginBottom="40dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/abi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="@color/text_black2"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/app_version"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="@color/text_black2"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/video_version"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="@color/text_black2"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/docs_version"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="@color/text_black2"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/whiteboard_version"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="@color/text_black2"
+                android:gravity="center" />
+
+        </LinearLayout>
+
     </RelativeLayout>
 </LinearLayout>
