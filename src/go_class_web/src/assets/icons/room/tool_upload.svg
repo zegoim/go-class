@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+<rect class="cls-1" width="20" height="20" transform="translate(20) rotate(90)"/>
+<polygon class="hover-fill" fill="#b1b4bb" fill-rule="evenodd" points="7.9 13.28 12.1 13.28 12.1 8.7 15.7 8.7 10 2.7 4.3 8.7 7.9 8.7 7.9 13.28"/>
+<polygon class="hover-fill" fill="#b1b4bb" fill-rule="evenodd" points="15.6 13.5 15.6 16.1 4.4 16.1 4.4 13.5 2 13.5 2 18.5 18 18.5 18 13.5 15.6 13.5"/>
+</svg>

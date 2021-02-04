@@ -56,15 +56,14 @@
 #import <Masonry/Masonry.h>
 #import "ZegoViewCaptor.h"
 #ifdef IS_USE_LIVEROOM
-#import <ZegoLiveRoom/ZegoLiveRoomApi-ReliableMessage.h>
+#import <ZegoLiveRoom/ZegoLiveRoomApi.h>
 #else
 #import <ZegoExpressEngine/ZegoExpressEngine.h>
 #endif
-
 #import "NSString+ZegoExtension.h"
 typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 
-@interface ZegoClassViewController ()<ZegoWhiteboardListViewDelegate, ZegoFileListViewDelegate, ZegoExcelSheetListViewDelegate, ZegoWhiteboardManagerDelegate, ZegoLiveCenterDelegate, ZegoClassRoomBottomBarDelegate, ZegoClassRoomTopBarDelegate,ZegoPageControlViewDelegate, ZegoWhiteboardViewDelegate, ZegoHttpHeartbeatDelegate,ZegoWhiteBoardServiceDelegate, ZegoDocsViewDelegate, ZegoDrawingToolViewDelegate, ZegoClassJustTestViewControllerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate>
+@interface ZegoClassViewController ()<ZegoWhiteboardListViewDelegate, ZegoFileListViewDelegate, ZegoExcelSheetListViewDelegate, ZegoWhiteboardManagerDelegate, ZegoLiveCenterDelegate, ZegoClassRoomBottomBarDelegate, ZegoClassRoomTopBarDelegate,ZegoPageControlViewDelegate, ZegoWhiteboardViewDelegate, ZegoHttpHeartbeatDelegate,ZegoWhiteBoardServiceDelegate, ZegoDocsViewDelegate, ZegoDrawingToolViewDelegate, ZegoClassJustTestViewControllerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate,UIDocumentPickerDelegate>
 
 @property (weak, nonatomic) IBOutlet ZegoClassDefaultNoteView *defaultNoteView;
 @property (nonatomic, assign) BOOL isFrontCamera;
@@ -106,6 +105,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 @property (nonatomic, strong) ZegoFilePreviewViewModel *previewManager;
 @property (nonatomic, strong) NSMutableArray <ZegoRoomMemberInfoModel *> *roomMemberArray;
 @property (nonatomic, strong) NSMutableArray <ZegoStreamWrapper *> *joinLiveMemberArray;
+@property (nonatomic, assign) BOOL uploadDynamicFile;
 
 @end
 
@@ -137,7 +137,9 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     [self loadInitRoomMemberInfo];
     [self startHeartbeat];
     [self forceOrientationLandscape];
-    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [ZegoToast showStickyWithMessage:[NSString zego_localizedString:@"room_login_time_limit_15"] Indicator:NO];
+    });
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logoutRoomEndClass:) name:kZegoAPPTeminalNotification object:nil];
 }
 
@@ -648,6 +650,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 }
 
 - (void)leaveRoom {
+    [ZegoToast dismissStickyAnimation:NO];
     [ZegoHttpHeartbeat stop];
     [self.whiteBoardService.currentContainer.whiteboardView removeLaser];
     [self reset];
@@ -1006,7 +1009,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 - (void)httpHeartbeatDidInactivate {
     [ZegoLiveCenter writeLog:1 content:[NSString stringWithFormat:@"[DEMO]httpHeartbeatDidInactivate roomID:%@", self.roomId]];
     DLog(@"httpHeartbeatDidInactivate");
-    [self reLoginFailed];
+//    [self reLoginFailed];
 }
 
 - (void)httpHeartbeatDidReceived:(ZegoHttpHeartbeatResponse *)heartBeatResponse needUpdateAttendeeList:(BOOL)needUpdateAttendeeList needUpdateJoinLiveList:(BOOL)needUpdateJoinLiveList {
@@ -1128,8 +1131,23 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
         case ZegoDrawingToolViewItemTypeJustTest:
             [self presentJustTestViewController];
             break;
+        
+            break;
         default:
             break;
+    }
+}
+
+- (void)uploadFileWithType:(BOOL)isDynamicFile {
+    if (self.whiteBoardService.orderedBoardModelContainers.count > 9) {
+        [ZegoToast showText:[NSString zego_localizedString:@"wb_tip_exceed_max_number_file"]];
+    } else {
+        if (isDynamicFile) {
+            self.uploadDynamicFile = YES;
+        } else {
+            self.uploadDynamicFile = NO;
+        }
+        [self selectFileToUpload];
     }
 }
 
@@ -1171,6 +1189,147 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     ZegoClassJustTestViewController *vc = [[ZegoClassJustTestViewController alloc] initWithDict:dict];
     vc.delegate = self;
     [self presentViewController:vc animated:YES completion:nil];
+}
+
+- (void)selectFileToUpload {
+    NSArray *documentTypes = @[@"public.content",
+                               @"com.adobe.pdf",
+                               @"com.microsoft.word.doc",
+                               @"com.microsoft.excel.xls",
+                               @"com.microsoft.powerpoint.ppt",
+                               @"public.image"];
+    UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:documentTypes inMode:UIDocumentPickerModeOpen];
+    documentPicker.delegate = self;
+    if (@available(iOS 11.0, *)) {
+        documentPicker.allowsMultipleSelection = NO;
+    }
+    documentPicker.modalPresentationStyle = UIModalPresentationFormSheet;
+    [self presentViewController:documentPicker animated:YES completion:nil];
+}
+
+#pragma mark - UIDocumentPickerDelegate
+- (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray <NSURL *>*)urls NS_AVAILABLE_IOS(11_0)
+{
+    if([urls isKindOfClass:[NSArray class]])
+        [self documentPicker:controller didPickDocumentAtURL:urls.firstObject];
+}
+
+// 选中icloud里的pdf文件 iOS 8-11
+- (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentAtURL:(NSURL *)url
+{
+    BOOL fileUrlAuthozied = [url startAccessingSecurityScopedResource];
+    if(fileUrlAuthozied){
+        NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
+        NSError *error;
+        __weak typeof(self) weakSelf = self;
+        [fileCoordinator coordinateReadingItemAtURL:url options:0 error:&error byAccessor:^(NSURL *newURL) {
+            [weakSelf uploadFileWithUrl:newURL ];
+        }];
+        if (error) {
+            [url stopAccessingSecurityScopedResource];
+        }
+    } else {
+        NSLog(@"--- no permission ---");
+    }
+}
+
+- (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller {
+    NSLog(@"--- cancel ---");
+    //重置上传按钮状态
+    [self.drawingToolView enableItemType:ZegoDrawingToolViewItemTypeFileUpload isEnabled:YES];
+}
+
+
+- (void)uploadFileWithUrl:(NSURL *)url
+{
+    [self.drawingToolView enableItemType:ZegoDrawingToolViewItemTypeFileUpload isEnabled:NO];
+    NSLog(@"uploadFileWithUrl, url: %@", [url path]);
+
+    [url startAccessingSecurityScopedResource];
+    NSArray *component = [url.path componentsSeparatedByString:@"/"];
+    if (component.count < 1) {
+        return;
+    }
+    NSString *lastComponent = component.lastObject;
+    NSArray *nameAndType = [lastComponent componentsSeparatedByString:@"."];
+    
+    if (nameAndType.count < 2) {
+        return;
+    }
+    NSString *fileName = nameAndType.firstObject;
+    NSString *fileType = nameAndType.lastObject;
+    [ZegoToast showStickyWithMessage:[NSString stringWithFormat:@"%@(%%0)",[NSString zego_localizedString:@"doc_uploading"]] Indicator:YES];
+    ZegoDocsViewRenderType type = self.uploadDynamicFile ? ZegoDocsViewRenderTypeDynamicPPTH5 : ZegoDocsViewRenderTypeVectorAndIMG;
+    @weakify(self);
+    [[ZegoDocsViewManager sharedInstance] uploadFile:[url path] renderType:type completionBlock:^(ZegoDocsViewUploadState state, ZegoDocsViewError errorCode, NSDictionary * _Nonnull infoDictionary) {
+        @strongify(self);
+        if (errorCode == ZegoDocsViewSuccess) {
+            if (state == ZegoDocsViewUploadStateUpload) {
+                NSNumber * upload_percent = infoDictionary[UPLOAD_PERCENT];
+                NSLog(@"upload_percent is %0.2f",upload_percent.floatValue);
+                [ZegoToast updateStickyMessage:[NSString stringWithFormat:@"%@(%.0f%%)",[NSString zego_localizedString:@"doc_uploading"],upload_percent.floatValue * 100]];
+                if (upload_percent.floatValue >= 1) {
+                    [ZegoToast updateStickyMessage:[NSString zego_localizedString:@"doc_converting"]];
+                }
+            }else if (state == ZegoDocsViewUploadStateConvert){
+                NSString * fileID = infoDictionary[UPLOAD_FILEID];
+                ZegoFileInfoModel *fileInfo = [[ZegoFileInfoModel alloc] init];
+                fileInfo.fileID = fileID;
+                fileInfo.fileName = fileName;
+                fileInfo.fileType = [self getFileTypeFromString:fileType];
+                [ZegoToast dismissStickyAnimation:YES];
+                [self.whiteBoardService addDocBoardWithInfo:fileInfo whiteBoardName:fileInfo.fileName sheetIndex:0 createSheets:YES complete:^(ZegoWhiteboardViewError errorCode) {
+                    
+                }];
+                [self.drawingToolView enableItemType:ZegoDrawingToolViewItemTypeFileUpload isEnabled:YES];
+                [self.drawingToolView changeToItemType:self.drawingToolView.currentSelectedIndex response:YES];
+            }
+        }else{
+            NSLog(@"error %lu",(unsigned long)errorCode);
+            if (state == ZegoDocsViewUploadStateUpload) {
+                [ZegoToast showStickyWithMessage:[NSString zego_localizedString:@"doc_uploading_failed"] Indicator:NO];
+            } else {
+               
+                if (errorCode == ZegoDocsViewErrorFileSizeLimit) {
+                    [ZegoToast showStickyWithMessage:[NSString zego_localizedString:@"doc_uploading_size_limit"] Indicator:NO];
+                } else if (errorCode == ZegoDocsViewErrorFileNotExist) {
+                    [ZegoToast showStickyWithMessage:[NSString zego_localizedString:@"doc_file_not_found"] Indicator:NO];
+                } else if (errorCode == ZegoDocsViewErrorFileContentEmpty) {
+                    [ZegoToast showStickyWithMessage:[NSString zego_localizedString:@"doc_file_empty"] Indicator:NO];
+                } else if (errorCode == ZegoDocsViewErrorConvertFail) {
+                    [ZegoToast showStickyWithMessage:[NSString zego_localizedString:@"doc_formating_failed"] Indicator:NO];
+                } else {
+                    [ZegoToast showStickyWithMessage:[NSString zego_localizedString:@"doc_file_not_supported"] Indicator:NO];
+                }
+            }
+            [self.drawingToolView enableItemType:ZegoDrawingToolViewItemTypeFileUpload isEnabled:YES];
+        }
+        [url stopAccessingSecurityScopedResource];
+    }];
+
+}
+
+- (ZegoDocsViewFileType)getFileTypeFromString:(NSString *)typeString {
+    NSDictionary *typeSummary = @{
+        @"xls": @(ZegoDocsViewFileTypeELS),
+        @"xlsx": @(ZegoDocsViewFileTypeELS),
+        
+        @"ppt": @(ZegoDocsViewFileTypePPT),
+        @"pptx": @(ZegoDocsViewFileTypePPT),
+        
+        @"pdf": @(ZegoDocsViewFileTypePDF),
+        
+        @"doc": @(ZegoDocsViewFileTypeDOC),
+        @"docx": @(ZegoDocsViewFileTypeDOC),
+        
+        @"txt": @(ZegoDocsViewFileTypeTXT),
+        
+        @"jpg": @(ZegoDocsViewFileTypeIMG),
+        @"jpeg": @(ZegoDocsViewFileTypeIMG),
+        @"png": @(ZegoDocsViewFileTypeIMG),
+        @"bmp": @(ZegoDocsViewFileTypeIMG),
+    };
+    return [typeSummary[typeString] integerValue];
 }
 
 #pragma mark - ZegoFileListDelegate & ZegoSheetListDelegate & ZegoWhiteboardListViewDelegate
@@ -1350,6 +1509,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 
 - (void)onTempBroken:(int)errorCode roomID:(NSString *)roomID {
     DLog(@"网络异常，正在重新加入...");
+    [ZegoHUD dismiss];
     [ZegoLiveCenter writeLog:1 content:[NSString stringWithFormat:@"[DEMO]onTempBroken roomID:%@", roomID]];
     [ZegoHUD showIndicatorHUDText:[NSString zego_localizedString:@"room_network_exception"]];
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
@@ -1457,6 +1617,20 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 
 - (void)onReceiveRoomMessage:(NSArray<ZegoMessageInfo *> *)messageList roomID:(NSString *)roomId {
     [self.chatList onReceiveMessage:messageList roomID:roomId];
+}
+
+- (void)onKickOut:(int)reason roomID:(NSString *)roomID customReason:(NSString *)customReason {
+    if ([customReason isEqual: @"online_time_limit"]) {
+        UINavigationController *navVC = (UINavigationController *)[UIApplication sharedApplication].keyWindow.rootViewController;
+        if ([navVC.visibleViewController.presentedViewController isKindOfClass:[UIDocumentPickerViewController class]]) {
+            [self dismissViewControllerAnimated:YES completion:nil];
+        }
+        @weakify(self)
+        [ZegoAlertView alertWithTitle:[NSString zego_localizedString:@"room_login_time_out"] hasCancelButton:NO onTapYes:^{
+            @strongify(self)
+            [self leaveRoom];
+        }];
+    }
 }
 
 #pragma mark- --点击手势代理，为了去除手势冲突--

@@ -4,12 +4,15 @@
 <template>
   <div class="zego-whiteboard-area" v-if="!!client">
     <slot></slot>
+    <file-upload-percent-dialog v-if="fileUploadStatus === 1 || fileUploadStatus === 8" :percent="fileUploadPercent" :fileUploadStatus="fileUploadStatus"></file-upload-percent-dialog>
   </div>
 </template>
 <script>
 import zegoClient from '@/service/zego/zegoClient'
 import ErrorHandle from '@/utils/error'
 import { ZEGOENV } from '@/utils/constants'
+import FileUploadPercentDialog from '@/components/base/file-upload-percent-dialog'
+let extraTask = null
 
 export default {
   name: 'ZegoWhiteboardArea',
@@ -47,7 +50,7 @@ export default {
       activeTextPencil: null, // 当前激活白板工具类型
       activePopperType: '', // 当前激活白板文件类型
       activeToolType: 1, // 当前激活白板默认选择工具类型
-      pencilTextTypes: [1, 2, 4, 8, 16, 'graph'], // 白板工具类型
+      pencilTextTypes: [1, 2, 4, 8, 16, 'graph','upload'], // 白板工具类型
       graphTypes: [4, 8, 16], // 图形类型
       graphType:8,// 图形类型默认选中矩形
       activeColor: '#f64326', // 默认激活颜色
@@ -62,6 +65,10 @@ export default {
       thumbnailsImg: [], // 缩略图列表
       filesListDialogShow: false, // 文件列表弹窗
       isAllowSendRoomExtraInfo: true, // 是否发送房间附加信息
+      fileUploadPercent: 0, // 文件上传进度
+      fileUploadStatus: 0, // 文件上传状态
+      waitting: false,
+      uploadFileFlag: false
     }
   },
   inject: ['zegoLiveRoom'],
@@ -69,6 +76,9 @@ export default {
     return {
       zegoWhiteboardArea: this
     }
+  },
+  components:{
+    FileUploadPercentDialog
   },
   computed: {
     // 用户名
@@ -105,6 +115,7 @@ export default {
       }
     },   
     defaultSelectWBInfo(newVal) {
+      console.warn('defaultSelectWBInfo RoomExtraInfo',newVal.data)
       this.isAllowSendRoomExtraInfo = false
       this.handleRemoteWhiteboardChange(newVal)
     },
@@ -119,6 +130,7 @@ export default {
       if(newVal !== oldVal){
         // 切换文件之前是动态ppt且选中了点击工具，则重置画具
         if(oldVal && this.activeToolType == 256){
+          console.warn('这里执行了setToolType，值为1')
           this.activeWBView.setToolType(1)
           this.setActiveToolType(1)
           this.resetActiveTextPencil()
@@ -133,6 +145,13 @@ export default {
   async mounted() {
     await this.initClient()
     await this.initWhiteboardArea()
+    /**
+     * @desc: 断线重连相关处理，重新更新白板列表和激活白板
+     */      
+    window.addEventListener('online', () => {
+      this.reUpdateWBList()
+      this.activeWBView.serviceHandle.reload()
+    })
   },
   methods: {
     /**
@@ -141,12 +160,24 @@ export default {
      */    
     handleRemoteWhiteboardChange(res) {
       if (!res) return
-      const { type, data } = res
+      const {type, data} = res
       if (type === '1001' && data !== this.activeWBId && data) {
-        if (this.originWBViewList.length === 0) this.getViewList()
-        this.checkRemoteView(data)
+        console.warn('handleRemoteWhiteboardChange', {res})
+        if (!this.originWBViewList.length) {
+          console.warn('handleRemoteWhiteboardChange 列表长度不为0', this.originWBViewList.length,this.WBViewList.length)
+          !extraTask && (extraTask = setInterval(() => {
+            if (this.originWBViewList.length) {
+              this.checkRemoteView(data)
+              clearInterval(extraTask)
+              extraTask = null
+            }
+          }, 10))
+        } else {
+          this.checkRemoteView(data)
+        }
       }
     },
+
     /**
      * @desc: 初始化相关client-sdk
      */    
@@ -208,7 +239,12 @@ export default {
        */      
       this.docsClient.on('onLoadFile', async res => {
         console.log('docsClient.onLoadFile---', { res })
-        await this.createFileWBView(res)
+        try {
+          await this.createFileWBView(res)
+          // if (this.activeViewIsPPTH5) this.stopPlay()
+        } catch (e) {
+          console.error('createFileWBView', e)
+        }
       })
       /**
        * @desc: 动态PPT步数改变的回调
@@ -219,11 +255,40 @@ export default {
         console.log('======onStepChange', res.page, res.step, res.notify)
       })
       /**
-       * @desc: 断线重连相关处理，重新更新白板列表和激活白板
+       * @desc: 监听上传文档
+       * @return {文档相关信息} res
        */      
-      window.addEventListener('online', () => {
-        this.reUpdateWBList()
-        this.activeWBView.serviceHandle.reload()
+      this.docsClient.on('onUpload', async res => {
+        this.uploadFileFlag = true
+        console.log('docsClient.onLoadFile---', { res })
+        var ZegoDocsViewUploadState = {
+          1: '上传中',
+          2: '已上传',
+          4: '排队中',
+          8: '转换中',
+          16: '转换成功',
+          32: '转换失败',
+          64: '取消上传'
+        };
+        this.fileUploadStatus = res.status
+        if (res.status === 1 && res.uploadPercent !== 100) {
+          console.log(`文件${ZegoDocsViewUploadState[res.status]}，进度${res.uploadPercent}% :`, res);
+          this.fileUploadPercent = res.uploadPercent
+        } else if (res.uploadPercent == 100) {
+          this.fileUploadPercent = 100
+        } else if (res.status === 16) {
+          this.fileUploadPercent = 0
+          this.fileUploadStatus = 0
+          this.createDocView(res.fileID)
+        } else if (this.fileUploadStatus === undefined){
+          this.fileUploadStatus = 0
+          // if(!res.error) this.$message('文件上传失败，请重试')
+        }else {
+          console.log(`文件${ZegoDocsViewUploadState[res.status]}:`, res);
+        }
+        console.warn(this.fileUploadStatus)
+        let errorCode = res.error?.code || res.code 
+        this.translateUploadFileCode(errorCode)
       })
        /**
         * @desc: 监听键盘按键事件
@@ -244,10 +309,54 @@ export default {
       })
     },
     /**
+     * @desc: 创建共享文件
+     * @param {id} 文件id
+     */
+    async createDocView(id) {
+      const checkResult = this.checkViewFileMaxLength('file')
+      if (checkResult) return this.$message(checkResult)
+      if (this.waitting) return
+      this.waitting = true
+      // 如果新建文件之前的是动态ppt，需手动停止该文件音视频
+      if (this.activeViewIsPPTH5) this.stopPlay()
+      this.setIsAllowSendRoomExtraInfo(true)
+      await this.createFileView(id)
+      this.waitting = false
+    },
+    /**
      * @desc: 向本地白板列表添加白板
      * @param {白板} view
      */    
     addView(view) {
+      // console.warn('addView this.originWBViewList',this.originWBViewList)
+      // // 新增白板与在已有白板列表中的创建时间比较，白板列表中的创建时间更早，则该新增白板不是最新
+      // let isLocal = this.originWBViewList.find(x => {
+      //   console.warn('fileinfo',view.getFileInfo(),x.getFileInfo())
+      //   return view.getFileInfo()?.fileID === x.getFileInfo()?.fileID
+      // })
+      // let isNotLatest = this.originWBViewList.find(x => {
+      //   console.warn('createtime: ',view.getCreateTime() < x.getCreateTime())
+      //   return view.getCreateTime() < x.getCreateTime()
+      // })
+      // console.warn('addview isLocal isNotLatest',isLocal, isNotLatest)
+      // // 接收到的白板是比之前接受的同fileid的白板时间更早创建，则以接受白板为准
+      // if(view.getFileInfo()) {
+      //   if(isLocal && isNotLatest){
+      //     console.warn('两个并发创建的文件白板，后收到的白板view比原本的更新')
+      //     // 移除旧的同fileid的白板,将新接收的view添加入列表中
+      //     this.removeByFileID(this.originWBViewList, view.getFileInfo()?.fileID)
+      //     this.originWBViewList.unshift(view)
+      //     //发送房间附加消息同步其他端
+      //     this.activeWBId = view.getID()
+      //     console.warn('this.activeWBId',this.activeWBId)
+      //     this.setIsAllowSendRoomExtraInfo(true)
+      //     this.notifyAllViewChanged()
+      //   }else{
+      //     console.warn('列表中的文件白板创建时间比接收的view创建时间更早一些,无视此次viewadd传来的view')
+      //   }
+      // }else{
+      //   this.originWBViewList.unshift(view)
+      // }
       this.originWBViewList.unshift(view)
       this.getViewList(false)
     },
@@ -281,14 +390,16 @@ export default {
       let viewList = []
       // 如果是true 则从服务器拉取白板列表
       if (isPullNew) {
+        // arr = await this.client.getViewList()
+        // viewList = this.checkWBCreateTime(arr)
         viewList = await this.client.getViewList()
         this.originWBViewList = viewList
       } else {
         viewList = this.originWBViewList
       }
+      console.warn(viewList)
       const excelSheetsMap = {}
-      viewList = viewList
-        .map(view => {
+      viewList = viewList.map(view => {
           const fileInfo = view.getFileInfo && view.getFileInfo()
           // 如果是Excel文件，将每个sheet的id存入excelSheetsMap
           if (fileInfo && fileInfo.fileType === 4) {
@@ -298,7 +409,7 @@ export default {
             }
             excelSheetsMap[fileID].push(view)
             const lastMatched = this.getLastMatchedViewByFileID(fileID)
-            if (view && lastMatched && view.whiteboardID === lastMatched.whiteboardID) {
+            if (view.whiteboardID === lastMatched.whiteboardID) {
               return this.addAttrToView(view)
             }
             return null
@@ -307,8 +418,8 @@ export default {
           return this.addAttrToView(view)
         })
         .filter(x => x)
-
       this.excelSheetsMap = excelSheetsMap
+      console.warn('excelSheetsMap',excelSheetsMap)
       this.WBViewList = viewList
       return viewList
     },
@@ -320,7 +431,7 @@ export default {
      */    
     getLastMatchedViewByFileID(fileID) {
       let lastMatched
-      for (let i = this.originWBViewList.length - 1; i > 0; i--) {
+      for (let i = this.originWBViewList.length - 1; i >= 0; i--) {
         if (this.originWBViewList[i].getFileInfo()?.fileID === fileID) {
           lastMatched = this.originWBViewList[i]
           break
@@ -426,11 +537,11 @@ export default {
       }
 
       if (type === 'view' && viewList.length >= 10) {
-        return '已超过最大数量，请关闭部分白板'
+        return this.$t('wb.wb_tip_exceed_max_number_wb')
       }
 
       if (type === 'file' && fileList.length >= 10) {
-        return '已超过最大数量，请关闭部分文件'
+        return this.$t('wb.wb_tip_exceed_max_number_file')
       }
     },
 
@@ -441,7 +552,7 @@ export default {
     updateActiveView(activeWBView) {
       this.$set(this, 'activeWBId', activeWBView.whiteboardID)
       this.$set(this, 'activeWBView', activeWBView)
-
+      console.warn('更新activeWBId',this.activeWBId)
       // 每次切换文件/白板 关闭缩略图
       this.isThumbnailsVisible = false
       // 获取文件相关参数
@@ -450,11 +561,12 @@ export default {
       this.activeViewIsPDF = !!(fileInfo && fileInfo.fileType === 8)
       this.activeViewIsPPT = !!(fileInfo && fileInfo.fileType === 1)
       this.activeViewIsExcel = !!(fileInfo && fileInfo.fileType === 4)
-      // 如果是Excel文件，获取需要渲染的sheet
+
       if (this.activeViewIsExcel) {
         this.activeExcelSheets = this.excelSheetsMap[fileInfo.fileID]
         this.activeExcelSheetNames = this.excelSheetNamesIdMap[fileInfo.fileID]
       }
+
       if (!fileInfo) {
         this.zgDocsView = null
       }
@@ -464,6 +576,7 @@ export default {
       this.activeToolType = activeWBView.getToolType() || 0
       
       if (this.activeToolType === 0) {
+        console.warn('这里执行了setToolType，值为null')
         activeWBView.setToolType(null)
       }
 
@@ -477,7 +590,9 @@ export default {
      * @param {白板id} id
      */    
     async checkRemoteView(id) {
+      console.warn('checkRemoteView 查询中', id)
       if (this.originWBViewList.find(item => item.whiteboardID === id)) {
+        console.warn('查到目标白板，进入selectRemoteView')
         this.selectRemoteView(id, true)
       } else {
         this.selectTimerTryTimes = this.selectTimerTryTimes + 1
@@ -495,28 +610,31 @@ export default {
      * @desc: 从服务器获取白板
      * @param {目标id} id
      */    
-    selectRemoteView(id, setSheetID = false) {
+    async selectRemoteView(id, setSheetID = false) {
+      console.warn('进入selectRemoteView',id)
       if (this.isCreating || !id) return
-
+      console.warn('selectRemoteView', {originWBViewList: this.originWBViewList})
       const view = this.originWBViewList.find(v => id == v.whiteboardID)
       if (!view) {
         this.showToast('远端白板不存在，请尝试刷新重试')
         return
       }
+      console.warn('selectRemoteView 查询到目标白板', view,view.whiteboardID)
       this.$set(this, 'activeWBView', view)
-      // 通过普通白板关联的文件信息加载文件
+      this.$set(this, 'activeWBId', view.whiteboardID)
       const fileInfo = this.activeWBView && this.activeWBView.getFileInfo()
       this.$nextTick(() => {
         if (fileInfo) {
-          // Excel文件
           if (fileInfo.fileType === 4) {
             this.isCreating = id
           }
+          console.warn('加载文件白板')
           this.loadFileView(id, fileInfo, setSheetID)
         } else {
           this.loadNormalWhiteboard()
         }
       })
+
     },
 
     /**
@@ -524,10 +642,10 @@ export default {
      * @param {文件id} id
      * @param {文件信息} fileInfo
      * @param {是否设置sheet id} setSheetID
-     * 文件白板实质上就是一层文件view上面叠加一层透明的普通白板结合，
      * 加载文件白板就是先根据普通白板id去加载该白板再根据关联的文件信息进行创建和加载对应的文件
      */    
     async loadFileView(id, fileInfo, setSheetID = false) {
+      console.warn('根据白板id，loadFileView',id)
       const isExcelFile = fileInfo.fileType === 4
       if (isExcelFile && !setSheetID) {
         // 通过文件id获得Excel文件需要渲染的sheet
@@ -538,15 +656,20 @@ export default {
         }
       }
       this.isRemote = true
-      // 创建和加载文件
+      // 创建文件
       const zgDocsView = this.docsClient.createView(this.parentId, id, fileInfo.fileName)
       try {
         const res = await zgDocsView.loadFile(fileInfo.fileID, fileInfo.authKey)
         this.zgDocsView = zgDocsView
         this.testPPT(fileInfo.fileID)
+        console.warn({zgDocsView: this.zgDocsView})
+        // this.splitExcelSheetSuffixHandle(res)
+        // this.updateExcelSheetNamesIdMap(res, fileInfo.fileID)
+        // this.updateActiveView(this.activeWBView)
         this.$nextTick(() => {
           this.splitExcelSheetSuffixHandle(res)
           this.updateExcelSheetNamesIdMap(res, fileInfo.fileID)
+          this.updateActiveView(this.activeWBView)
         })
       } catch (e) {
         console.error(e)
@@ -554,6 +677,7 @@ export default {
       }
       this.isCreating = false
     },
+
 
     /**
      * @desc: 加载普通白板
@@ -589,15 +713,13 @@ export default {
         const fileInfo = item.getFileInfo() || {}
         return fileID === fileInfo.fileID
       })
-
+      console.warn('matchedView',matchedView)
       if (matchedView) {
         return this.selectRemoteView(matchedView.whiteboardID)
       }
 
       this.isRemote = false
-      const zgDocsView = fileName
-        ? this.docsClient.createView(this.parentId, undefined, fileName)
-        : this.docsClient.createView(this.parentId)
+      const zgDocsView = this.docsClient.createView(this.parentId, '', fileName)
       try {
         const res = await zgDocsView.loadFile(fileID, '')
         // 处理Excel文件中每个sheet的文件后缀
@@ -617,19 +739,23 @@ export default {
      * @param {创建文件之后得到的相关文件参数} res
      */    
     async createFileWBView(res) {
+      console.warn('执行 createFileWBView，创建文件白板')
       // 创建Excel文件白板
       const isRemoteNoHasExcelFile =
         res.fileType === 4 && !this.originWBViewList.find(x => res.name === x.getName())
+
       if (isRemoteNoHasExcelFile) {
         await this.createExcelSheetView(res)
         return
       }
 
       let activeWBView = this.activeWBView
+      // let isRemote = this.originWBViewList.find(x => res.fileID === x.selfWBID)
+      // console.warn('createFileWBView',isRemote)
       // 创建普通文件白板
       if (!this.isRemote) {
+        console.warn('本地维护的白板列表无此白板，开始根据文件信息创建对应白板')
         try {
-          console.warn('创建文件白板回调返回参数：',res)
           activeWBView = await this.client.createView({
             roomID: this.roomID,
             name: res.fileName || `file-${res.fileID}`,
@@ -657,6 +783,8 @@ export default {
             this.showToast('共享失败')
           }
         }
+      }else{
+        console.warn('服务器有此白板')
       }
 
       const fileInfo = activeWBView?.getFileInfo() || {}
@@ -675,44 +803,41 @@ export default {
      * @param {创建文件回调返回的相关参数} res
      */    
     async createExcelSheetView(res) {
+      console.warn('createExcelSheetView')
       const { sheets } = res
       let activeWBView = this.activeWBView
       if (!this.isRemote) {
+        const sheetsPromiseFuncs = sheets.map((sheetName) => {
+        return async () => {
+          return await this.client.createView({
+            roomID: this.roomID,
+            name: res.name,
+            aspectWidth: this.aspectWidth,
+            aspectHeight: this.aspectHeight,
+            pageCount: res.pageCount,
+            fileInfo: {
+              fileID: res.fileID,
+              fileName: sheetName,
+              authKey: res.authKey,
+              fileType: res.fileType
+            }
+          });
+        };
+      });
+
         try {
-          const views = []
-          let createSingleExcelSheetFunc = async (sheets, index = 0) => {
-            const sheetName = sheets[index]
-            const options = {
-              roomID: this.roomID,
-              name: res.name || res.fileName,
-              aspectWidth: this.aspectWidth,
-              aspectHeight: this.aspectHeight,
-              pageCount: res.pageCount,
-              fileInfo: {
-                fileID: res.fileID,
-                fileName: sheetName,
-                authKey: res.authKey,
-                fileType: res.fileType
-              }
-            }
-            const view = await this.client.createView(options)
-            if (view) views.push(view)
-            if (index < sheets.length - 1) {
-              index = index + 1
-              await createSingleExcelSheetFunc(sheets, index)
-            } else {
-              createSingleExcelSheetFunc = null
-            }
-          }
-          await createSingleExcelSheetFunc(sheets)
-          activeWBView = views[0]
-          this.originWBViewList = [...views, ...this.originWBViewList]
+          const views = await Promise.all(
+            sheetsPromiseFuncs.map((x) => x())
+          );
+          activeWBView = views[0];
+          this.originWBViewList = [...views, ...this.originWBViewList];
         } catch (error) {
-          const { code } = error
+          console.log(error);
+          const { code } = error;
           if (code === ErrorHandle.timeout) {
-            this.showToast('请求超时')
+            this.showToast("请求超时");
           } else {
-            this.showToast('共享失败')
+            this.showToast("共享失败");
           }
         }
       }
@@ -740,8 +865,10 @@ export default {
      * @return {文件id} fileID
      */    
     updateExcelSheetNamesIdMap(res, fileID) {
+      console.warn('updateExcelSheetNamesIdMap res',res)
       if (res.fileType === 4 && !this.excelSheetNamesIdMap[fileID]) {
         this.excelSheetNamesIdMap[fileID] = res.file_list.map(file => file.file_name)
+        console.warn('this.excelSheetNamesIdMap',this.excelSheetNamesIdMap)
       }
     },
 
@@ -941,6 +1068,7 @@ export default {
       if (this.activeWBView) {
         this.activeWBView.setScaleFactor(_zoom)
         if (this.activeToolType === 0) {
+          console.warn('这里执行了setToolType，值为null')
           this.activeWBView.setToolType(null)
         }
       }
@@ -1041,10 +1169,12 @@ export default {
         await this.createWhiteboard()
         return
       }
+      console.warn('重连网络白板列表:',this.originWBViewList)
       if (!this.originWBViewList.find(x => x.whiteboardID === this.activeWBId)) {
         this.checkRemoteView(this.WBViewList[0].whiteboardID)
       }
     },
+
     async selectExcelSheetView(id) {
       if (this.isCreating || !id) return
 
@@ -1068,6 +1198,7 @@ export default {
         this.splitExcelSheetSuffixHandle(res)
         this.updateExcelSheetNamesIdMap(res, fileInfo.fileID)
         this.zgDocsView = zgDocsView
+        this.testPPT(fileInfo.fileID)
         console.warn(id, this.activeWBView, fileInfo)
       } catch (e) {
         console.error(e)
@@ -1089,6 +1220,98 @@ export default {
      */    
     setGraphType(type){
       this.graphType = type
+    },
+
+    /**
+     * @desc: 上传文件
+     * @param {文件} file
+     * @param {fileType} 上传文件类型
+     */ 
+    uploadFile(file, fileType){
+      try {
+        this.docsClient.uploadFile(file, fileType)
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    /**
+     * 当多于两个用户同时共享同一份文件，根据白板创建时间来判断渲染当白板
+     */
+    checkWBCreateTime(arr){
+      console.warn('checkWBCreateTime',arr)
+      let obj = {};
+      let peon = arr.reduce((cur, next) => {
+        console.warn(11111,next.getFileInfo()?.fileID || next.getID(),next.getCreateTime())
+        obj[next.getFileInfo()?.fileID || next.getID()] ? "" : obj[next.getFileInfo()?.fileID || next.getID()] = true && cur.push(next);
+        var repeatNum = obj[next.getFileInfo()?.fileID || next.getID()]
+        if (next.getCreateTime() < cur[repeatNum - 1].getCreateTime()) {
+          console.warn(next.getID(),next.getCreateTime())
+          cur[repeatNum - 1] = next
+        } 
+        return cur;
+      }, [])
+      console.log(peon);
+      return peon
+    },
+    /**
+     * @desc: 根据属性删除数组指定元素
+     * @param {数组} arr
+     * @param {属性} attr
+     * @param {属性值} value
+     */    
+    removeByFileID(arr, value) {
+      console.warn('removeByValue - arr, value',arr, value)
+      // var index=0;
+      // for(var i in arr){
+      //     if(arr[i][attr]==value){
+      //         index=i;
+      //         break;
+      //     }
+      // }
+      // arr.splice(index,1);
+      // console.warn('removeByValue',arr)
+      for (var i = arr.length - 1; i >= 0; --i) {
+        if (arr[i].getFileInfo()?.fileID == value) {
+            arr.splice(i,1);
+        }
+      }
+      console.warn('addview 处理之后的arr', arr)
+    },
+    
+    /**
+     * @desc: 上传文件错误码转译
+     * @param {错误码} code
+     * @return {*}
+     */    
+    translateUploadFileCode(code){
+      console.warn('文件上传错误码：',code)
+      if(!code) return;
+      switch (code) {
+        case 2010001:
+          this.$message(this.$t('doc.doc_file_not_found'))
+          break;
+        case 2010002:
+          this.$message(this.$t('doc.doc_uploading_failed'))
+          break;
+        case 2020003:
+          this.$message(this.$t('doc.doc_file_not_supported'))
+          break;
+        case 2020004:
+          this.$message(this.$t('doc.doc_converting_failed'))
+          break;
+        case 2020001:
+          this.$message(this.$t('doc.doc_file_not_supported'))
+          break;
+        case 2020002:
+          this.$message(this.$t('doc.doc_uploading_size_limit'))
+          break;
+        case 2020006:
+          this.$message(this.$t('doc.doc_file_empty'))
+          break;
+        default:
+          this.$message(this.$t('doc.doc_uploading_failed'))
+          break;
+      }
     }
   }
 }

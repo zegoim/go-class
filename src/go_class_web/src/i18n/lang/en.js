@@ -6,7 +6,7 @@ export const en = {
         "request_failed_code_502":"Request failed with status code 502",
         "user_no_permission":"User does not have permission to modify",
         "target_user_not_in_room":"The target user is not in the classroom",
-        "need_login":"Need to log in to the room first",
+        "need_login":"Need to log in to the room first"
     },
     "login": {
         "login_welcome": "Welcome",
@@ -69,12 +69,28 @@ export const en = {
         "wb_tool_revoke": "Revoke",
         "wb_tool_redo": "Redo",
         "wb_tool_save": "Save",
-        "wb_tip_save_success": "Saved successfully, you can view in album",
+        "wb_tip_save_success": "Saved successfully",
         "wb_auth_photo": "Authority of photo",
         "wb_tip_allow_access_photo": "Please allow the application to access your device‘s photos in the option of \"Settings-GOClass-Photos\" ",
         "wb_tip_got_it": "Got it",
         "wb_tip_go_to_set": "Go to set",
-        "wb_priview":"priview"
+        "wb_priview":"priview",
+        "wb_tool_upload_files":"Upload",
+        "wb_tool_upload_static":"Upload Static Files",
+        "wb_tool_upload_dynamic":"Upload Dynamic Files",
+        "wb_tool_upload_static_content":"Support PPT(X),DOC(X),XLS(X),PDF,TXT,JPG,JPEG,PNG,BMP,HEIC format",
+        "wb_tool_upload_dynamic_content":"Support PPTX,PPT format"
+    },
+    "doc":{
+        "doc_uploading":"File uploading({n}%)",
+        "doc_converting":"The file is transcoding",
+        "doc_uploading_failed":"Failed to upload the file,please try again ",
+        "doc_converting_failed":"Failed to transcode the file,please try again ",
+        "doc_uploading_size_limit":"The file size exceeds the limit, please select again",
+        "doc_file_not_supported":"The file does not conform to the specification, please select again",
+        "doc_file_not_found":"The file does not exist",
+        "doc_formating_failed":"Format conversion failed, please select again",
+        "doc_file_empty":"The file content is empty, please select again "
     },
     "room":{
         "room_I": "I",
@@ -161,6 +177,9 @@ export const en = {
         "room_tip_channels": "Up to 3 channels of students audio and video",
         "room_enable_setting":"Please enable",
         "room_permissions":"permission in settings",
-        "room_permissions_obtained":"permission obtained successfully"
+        "room_permissions_obtained":"permission obtained successfully",
+        "room_login_time_limit_15":"Class experience is 15 minutes",
+        "room_login_time_out":"Class experience time has expired",
+        "room_login_time_confirm":"Confirm"
     }
   }

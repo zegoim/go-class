@@ -11,8 +11,8 @@
 </template>
 
 <script>
-import PageLayoutRoom from '@/components/base/page-layout-room.vue'
-import LargeClassLayoutRoom from '@/components/base/largeClass-layout-room'
+import PageLayoutRoom from '@/components/scene/page-layout-room.vue'
+import LargeClassLayoutRoom from '@/components/scene/largeClass-layout-room'
 import ZegoLiveRoom from '@/components/zego/zego-live-room.vue'
 import { storage } from '@/utils/tool'
 

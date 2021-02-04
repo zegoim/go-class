@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -17,7 +17,8 @@
 		5C3D9DB325AEDD34006681CC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5C3D9DB225AEDD34006681CC /* LaunchScreen.storyboard */; };
 		5C3D9DB525AEDD8D006681CC /* ZegoSettingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C3D9DB425AEDD8D006681CC /* ZegoSettingViewController.xib */; };
 		5C3D9DB925AEDDF0006681CC /* ZegoClassViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C3D9DB825AEDDF0006681CC /* ZegoClassViewController.xib */; };
-		5C3D9DBE25B055FE006681CC /* ZegoSettingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C3D9DBD25B055FE006681CC /* ZegoSettingViewController.xib */; };
+		5C3D9DC625B14909006681CC /* ZegoSettingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C3D9DC525B14909006681CC /* ZegoSettingViewController.xib */; };
+		5C3D9DC925B189E4006681CC /* ZegoUploadFileTypeSelectorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3D9DC825B189E4006681CC /* ZegoUploadFileTypeSelectorView.m */; };
 		5C6205792553EFE100FFAE2B /* ZegoClassDefaultNoteView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6205782553EFE100FFAE2B /* ZegoClassDefaultNoteView.m */; };
 		5CA0057525AEB6D70032EF64 /* Localizeble.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5CA0057725AEB6D70032EF64 /* Localizeble.strings */; };
 		5CA2751D250A003A00D79E51 /* ZegoRoomMemberListRspModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA27519250A003900D79E51 /* ZegoRoomMemberListRspModel.m */; };
@@ -147,7 +148,9 @@
 		5C3D9DB225AEDD34006681CC /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5C3D9DB425AEDD8D006681CC /* ZegoSettingViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ZegoSettingViewController.xib; sourceTree = "<group>"; };
 		5C3D9DB825AEDDF0006681CC /* ZegoClassViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ZegoClassViewController.xib; sourceTree = "<group>"; };
-		5C3D9DBD25B055FE006681CC /* ZegoSettingViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ZegoSettingViewController.xib; sourceTree = "<group>"; };
+		5C3D9DC525B14909006681CC /* ZegoSettingViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ZegoSettingViewController.xib; sourceTree = "<group>"; };
+		5C3D9DC725B189E4006681CC /* ZegoUploadFileTypeSelectorView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZegoUploadFileTypeSelectorView.h; sourceTree = "<group>"; };
+		5C3D9DC825B189E4006681CC /* ZegoUploadFileTypeSelectorView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZegoUploadFileTypeSelectorView.m; sourceTree = "<group>"; };
 		5C6205772553EFE100FFAE2B /* ZegoClassDefaultNoteView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZegoClassDefaultNoteView.h; sourceTree = "<group>"; };
 		5C6205782553EFE100FFAE2B /* ZegoClassDefaultNoteView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZegoClassDefaultNoteView.m; sourceTree = "<group>"; };
 		5CA0057625AEB6D70032EF64 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizeble.strings; sourceTree = "<group>"; };
@@ -458,7 +461,7 @@
 				5C3D9DB825AEDDF0006681CC /* ZegoClassViewController.xib */,
 				86D5F9F12484AC3F002ED31E /* ZegoSettingViewController.h */,
 				86D5F9F22484AC3F002ED31E /* ZegoSettingViewController.m */,
-				5C3D9DBD25B055FE006681CC /* ZegoSettingViewController.xib */,
+				5C3D9DC525B14909006681CC /* ZegoSettingViewController.xib */,
 				864A7FC12557A6C3007EF894 /* ZegoClassJustTestViewController.h */,
 				864A7FC22557A6C3007EF894 /* ZegoClassJustTestViewController.m */,
 				864A7FC32557A6C3007EF894 /* ZegoClassJustTestViewController.xib */,
@@ -565,6 +568,8 @@
 				86261186250A3F4400EA21A6 /* ZegoDrawingToolView.m */,
 				86FDF937256B6624000727D5 /* ZegoDrawingToolModel.h */,
 				86FDF938256B6624000727D5 /* ZegoDrawingToolModel.m */,
+				5C3D9DC725B189E4006681CC /* ZegoUploadFileTypeSelectorView.h */,
+				5C3D9DC825B189E4006681CC /* ZegoUploadFileTypeSelectorView.m */,
 				8627AD54256C9FFC0060853E /* FormatTool */,
 				86FDF932256B6192000727D5 /* GeometryTool */,
 			);
@@ -850,6 +855,7 @@
 				86165DD5247E71B5007EA3FE /* Frameworks */,
 				86165DD6247E71B5007EA3FE /* Resources */,
 				8684FBDC24908D1B00F79C47 /* ShellScript */,
+				C70A80BF0774F5995E0315CF /* [CP] Embed Pods Frameworks */,
 				5C52FC5F24E156790044B38D /* Embed Frameworks */,
 			);
 			buildRules = (
@@ -913,7 +919,7 @@
 				864A7FC52557A6C3007EF894 /* ZegoClassJustTestViewController.xib in Resources */,
 				5C3050C025A86C1700AEDE94 /* ZegoClassRoomCameraPopView.xib in Resources */,
 				5C3050B225A86B9300AEDE94 /* ZegoClassRoomTopBar.xib in Resources */,
-				5C3D9DBE25B055FE006681CC /* ZegoSettingViewController.xib in Resources */,
+				5C3D9DC625B14909006681CC /* ZegoSettingViewController.xib in Resources */,
 				5C3D9DB525AEDD8D006681CC /* ZegoSettingViewController.xib in Resources */,
 				5C3D9DB125AEDD12006681CC /* Main.storyboard in Resources */,
 				5C3050B925A86BFF00AEDE94 /* ZegoClassRoomSharePopView.xib in Resources */,
@@ -963,6 +969,23 @@
 			shellScript = "
 ";
 		};
+		C70A80BF0774F5995E0315CF /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-go_class/Pods-go_class-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-go_class/Pods-go_class-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-go_class/Pods-go_class-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -982,6 +1005,7 @@
 				5C179C7B255A8E7900FC138E /* ZegoClassEnvManager.m in Sources */,
 				8684FBC4248DDF5B00F79C47 /* ZegoClassRoomCoverView.m in Sources */,
 				86939DB424879E8100A68E15 /* ZegoLiveCenterModel.m in Sources */,
+				5C3D9DC925B189E4006681CC /* ZegoUploadFileTypeSelectorView.m in Sources */,
 				86284D5A255A31650017BA22 /* ZegoImBubbleImage.m in Sources */,
 				862611A9250A3F4400EA21A6 /* ZegoFilePreviewViewModel.m in Sources */,
 				86165E06247E722B007EA3FE /* UIColor+ZegoExtension.m in Sources */,
@@ -1236,7 +1260,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/go_class/CommonView",
 				);
-				MARKETING_VERSION = 2.5.0;
+				MARKETING_VERSION = 2.4.0;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",
@@ -1279,7 +1303,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/go_class/CommonView",
 				);
-				MARKETING_VERSION = 2.5.0;
+				MARKETING_VERSION = 2.4.0;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",

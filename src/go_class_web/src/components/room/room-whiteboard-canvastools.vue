@@ -8,14 +8,15 @@
         :class="[
           'tool-item',
           item.name === 'undo' && 'divide-line undo',
+          item.name === 'save' && 'divide-line save',
           item.name === 'clearCurrentPage' && 'divide-line clearCurrentPage',
           isClickable(item) && 'active',
           hoverState ? '':'forbid',
-          item.popperType === 'graph' && item.clicked && 'active'
+          item.clicked && 'active'
         ]"
         v-for="item in canvasToolList"
         :key="item.name"
-        @click.prevent.stop="setToolType_(item)"
+        @click="setToolType_(item)"
         @mouseover.prevent.stop = 'itemHoverState(item.type)'
       >
         <div v-html="require(`../../assets/icons/room/${item.imgName}.svg`).default"></div>
@@ -37,7 +38,6 @@ const canvasToolConf = {
   size: 6,
   textSize: 24
 }
-// const canvasToolList = 
 
 export default {
   name: 'RoomWhiteboardTools',
@@ -110,9 +110,21 @@ export default {
           name: 'redo',
           imgName: 'tool_redo',
           cnName: this.$t('wb.wb_tool_redo'),
+        },{
+          name: 'snapshot',
+          imgName: 'tool_save',
+          cnName: this.$t('wb.wb_tool_save'),
+        },
+        {
+          imgName: 'tool_upload',
+          cnName: this.$t('wb.wb_tool_upload_files'),
+          type: 'upload',
+          clicked: false,
+          popperType: 'upload'
         }
       ],
-      hoverState: true
+      hoverState: true,
+      isNotDoType:['redo','undo','snapshot','upload']
     }
   },
   mounted() {
@@ -120,6 +132,16 @@ export default {
       this.setToolType(this.canvasToolList.find(v => v.type == this.initType))
     }
     this.setToolType_ = debounce(this.setToolType, 500, true)
+  },
+  watch:{
+    activeTextPencil(newVal,oldVal){
+      if(oldVal === 'upload' && !this.isNotDoType.includes(newVal)){
+        this.resetUploadIconStatus(oldVal)
+      }
+      if(oldVal === 'graph' && !this.isNotDoType.includes(newVal)){
+        this.resetGraphIconStatus()
+      }
+    }
   },
   computed: {
     /**
@@ -142,6 +164,9 @@ export default {
     },
     graphType(){
       return this.zegoWhiteboardArea.graphType
+    },
+    fileUploadStatus(){
+      return this.zegoWhiteboardArea.fileUploadStatus
     }
   },
   methods: {
@@ -161,7 +186,9 @@ export default {
      * @param {type} hover经过的工具类型
      */    
     itemHoverState(type){
-      if(this.activeViewIsPPTH5){
+      if (type === 'upload'){
+        this.hoverState = this.fileUploadStatus === 0 || this.fileUploadStatus === 16
+      } else if(this.activeViewIsPPTH5){
         this.hoverState = true
       } else {
         this.hoverState = type === 256 ? false : true
@@ -169,35 +196,60 @@ export default {
     },
 
     /**
-     * @desc: 设置工具类型
+     * @desc: 设置工具类型 
      */    
-    setToolType(item) {
+    async setToolType(item) {
       const type = item.type
+      if(!this.hoverState) return;
       // 非动态ppt文件不可以选择点击工具
       if(!this.activeViewIsPPTH5 && type === 256) return;
       // 多选图元点击橡皮擦可批量删除
       if(type === 64) this.zegoWhiteboardArea.deleteSelectedGraphics()
       this.zegoWhiteboardArea.setActivePopperType(item.popperType)
       
+      const isNotDoType = !(item.name ==='redo' || item.name ==='undo' || item.name === 'snapshot')
       // 点击工具，将 图形 按钮点击激活样式关闭
       var graphIcon = this.canvasToolList.filter(function(item){
         return item.popperType == "graph"; 
       })
-      graphIcon[0].clicked = false
+      
+      if(isNotDoType) graphIcon[0].clicked = false
+
+      // 点击工具，将 上传 按钮点击激活样式关闭
+      var uploadIcon = this.canvasToolList.filter(function(item){
+        return item.popperType == "upload"; 
+      })
+      if(isNotDoType) uploadIcon[0].clicked = false
 
       if (typeof type === 'number') {
         this.zegoWhiteboardArea.setActiveToolType(type)
+        console.warn('这里设置白板工具类型:',type)
         this.zegoWhiteboardArea.activeWBView.setToolType(type || null)
       } else {
         // 点击图形按钮，默认为矩形
         if(item.popperType === 'graph'){
           item.clicked = true
+          console.warn('这里设置白板工具类型-图形:',this.zegoWhiteboardArea.graphType)
           this.zegoWhiteboardArea.activeWBView.setToolType(this.zegoWhiteboardArea.graphType)
           this.zegoWhiteboardArea.setActiveToolType(this.zegoWhiteboardArea.graphType)
+        }else if(item.popperType === 'upload'){
+          const checkResult = this.zegoWhiteboardArea.checkViewFileMaxLength('file')
+          if (checkResult) {
+            return this.$message(checkResult)
+          }else{
+            item.clicked = true
+            // this.zegoWhiteboardArea.activeWBView.setToolType(null)
+            // this.zegoWhiteboardArea.setActiveToolType('upload')
+          }
         } else {
-          this.zegoWhiteboardArea.activeWBView[item.name]()
+          if (item.name === 'snapshot') {
+            const wbname = this.zegoWhiteboardArea.activeWBView.getName()
+            const data = await this.zegoWhiteboardArea.activeWBView[item.name]({userData:'11'})
+            this.saveFile(data.image,`${wbname}`)
+          } else {
+            this.zegoWhiteboardArea.activeWBView[item.name]()
+          }
         }
-        
       }
       if (this.zegoWhiteboardArea.pencilTextTypes.includes(type)) {
         this.zegoWhiteboardArea.setActiveTextPencil(type)
@@ -206,14 +258,29 @@ export default {
         this.zegoWhiteboardArea.resetActiveTextPencil()
       }
     },
+    /**
+     * 在本地进行文件保存
+     * @param  {String} data     要保存到本地的图片数据
+     * @param  {String} filename 文件名
+     */
+    saveFile(data, filename) {
+        const save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
+        save_link.href = data;
+        let downloadFilename = filename.endsWith('png') ? filename : filename + '.png'
+        save_link.download = downloadFilename;
 
+        const event = document.createEvent('MouseEvents');
+        event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+        save_link.dispatchEvent(event);
+        this.$message(this.$t('wb.wb_tip_save_success'))
+    },
     /**
      * @desc: 重置工具面板
      * @param {type} 类型
      */    
     resetCanvasToolList(type) {
       const tool = this.canvasToolList.find(item => item.type && item.type == type)
-      if (tool) {
+      if (tool.type !== 'upload') {
         this.zegoWhiteboardArea.setActiveColor(tool.color)
         this.zegoWhiteboardArea.setActiveBrushSize(tool.size)
         this.zegoWhiteboardArea.setActiveTextSize(tool.textSize)
@@ -235,6 +302,19 @@ export default {
       if (tool) {
         tool[key] = value
       }
+    },
+    resetUploadIconStatus(){
+      var uploadIcon = this.canvasToolList.filter(function(item){
+        return item.popperType == "upload"; 
+      })
+      uploadIcon[0].clicked = false
+      this.zegoWhiteboardArea.resetActiveTextPencil()
+    },
+    resetGraphIconStatus(){
+      var uploadIcon = this.canvasToolList.filter(function(item){
+        return item.popperType == "upload"; 
+      })
+      uploadIcon[0].clicked = false
     }
   }
 }
@@ -310,13 +390,11 @@ export default {
         stroke: #0044ff;
       }
     }
-    
-
     .tooltip {
       @include sc(12px, #fff);
       @include abs-pos(50%, 110%, auto, auto);
       display: none;
-      padding: 10px;
+      padding: 9px;
       white-space: nowrap;
       background: #18191a;
       border-radius: 4px;

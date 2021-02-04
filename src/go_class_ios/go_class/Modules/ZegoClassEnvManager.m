@@ -29,17 +29,15 @@
         _roomSeviceTestEnv = [[NSUserDefaults standardUserDefaults] boolForKey:Zego_Env_RoomSeviceEnv];
         _docsSeviceTestEnv = [[NSUserDefaults standardUserDefaults] boolForKey:Zego_Env_DocsSeviceEnv];
         _pptStepDefaultMode = [[NSUserDefaults standardUserDefaults] boolForKey:Zego_Test_pptStepDefaultMode];
-        NSString *isChinese = [[NSUserDefaults standardUserDefaults] objectForKey:Zego_Env_Language_Chinese];
-        _isChinese = isChinese?[isChinese isEqual:@"YES"]:YES;
+        _isChinese = [[[NSUserDefaults standardUserDefaults] objectForKey:Zego_Env_Language_Chinese] isEqual:@"NO"] ? NO : YES;
     }
     return self;
 }
 
 - (void)setNomalEnv {
-    [self setBusinessTestEnv:NO];
-    [self setRoomSeviceTestEnv:NO];
-    [self setDocsSeviceTestEnv:YES];
-    [self setPptStepDefaultMode:YES];
+    [self setBusinessTestEnv:YES];
+    [self setRoomSeviceTestEnv:YES];
+    [self setDocsSeviceTestEnv:NO];
 }
 
 - (void)setBusinessTestEnv:(BOOL)businessEnv {

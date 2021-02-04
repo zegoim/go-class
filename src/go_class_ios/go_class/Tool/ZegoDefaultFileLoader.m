@@ -19,7 +19,7 @@
 #import <YYModel/YYModel.h>
 
 //文件列表获取地址
-static NSString *kZegoFileListServerHost = @"https://storage.zego.im/goclass/config_demo.json";
+static NSString *kZegoFileListServerHost = @"https://storage.zego.im/goclass/config.json";
 
 @interface ZegoDefaultFileLoader ()
 @property (nonatomic, strong) AFHTTPSessionManager *httpManager;

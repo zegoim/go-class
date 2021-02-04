@@ -22,7 +22,7 @@
 }
 
 - (NSString *)requestUrl {
-    NSString *url = [self.host stringByAppendingPathComponent:self.path];
+    NSString *url = [self.host stringByAppendingFormat:@"%@",self.path];
     return url;
 }
 

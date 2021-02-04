@@ -15,7 +15,8 @@ import java.util.*
  */
 class SelectLanguagePopWindow(context: Context, selectLanguage: String) : BasePopWindow(
     context,
-    contentView = LayoutInflater.from(context).inflate(R.layout.popwindow_select_language, null, false)
+    contentView = LayoutInflater.from(context)
+        .inflate(R.layout.popwindow_select_language, null, false)
 ) {
     private var confirmListener: (String) -> Unit = {}
     private val mContext = context;
@@ -47,14 +48,6 @@ class SelectLanguagePopWindow(context: Context, selectLanguage: String) : BasePo
         }
 
         contentView.confirm.setOnClickListener {
-            when {
-                mSelectLanguage.equals("English") -> {
-                    setCurrentLanguageLocale(mContext, Locale.ENGLISH)
-                }
-                else -> {
-                    setCurrentLanguageLocale(mContext, Locale.CHINESE)
-                }
-            }
             confirmListener.invoke(mSelectLanguage)
             if (super.isShowing()) super.dismiss()
         }

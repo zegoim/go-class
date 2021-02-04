@@ -30,6 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)fadeInView:(UIView *)view onLeftOfView:(UIView *)rightView offset:(CGPoint)offset;
 + (void)fadeView:(nullable UIView *)view completion:(void (^ __nullable)(BOOL finished))completion;
 + (void)fadeView:(nullable UIView *)view animated:(BOOL)animated completion:(void (^ __nullable)(BOOL finished))completion;
++ (void)fadeInView:(UIView *)view onLeftOfView:(UIView *)rightView offset:(CGPoint)offset completion:(void (^ __nullable)(BOOL finished))completion dismissCompletion:(void (^ __nullable)(void))dismissCompletion;
 @end
 
 NS_ASSUME_NONNULL_END

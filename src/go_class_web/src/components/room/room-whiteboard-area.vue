@@ -52,9 +52,9 @@ export default {
     activeViewIsPPTH5() {
       return this.zegoWhiteboardArea.activeViewIsPPTH5
     },
-    WBViewList11() {
-      return this.zegoWhiteboardArea.WBViewList
-    }
+    // WBViewList11() {
+    //   return this.zegoWhiteboardArea.WBViewList
+    // }
   },
   watch: {
     'zegoWhiteboardArea.WBViewList': function() {
@@ -166,78 +166,13 @@ export default {
   .whiteboard-canvas-wrap {
     flex: 1;
     position: relative;
-    border: 1px solid aliceblue;
-
     .whiteboard-canvas {
       @include wh(100%, 100%);
       position: relative;
       margin: 0 auto;
-      //position: absolute !important;
+      border: 1px solid aliceblue;
+      box-sizing: border-box;
     }
-
-    // .canvas-tools {
-    //   @include abs-pos(50%, 10px, auto, auto);
-    //   @include box-shadow(0px 10px 30px 0px rgba(0, 0, 0, 0.05));
-    //   transform: translate(0, -50%);
-    //   background: #fff;
-    //   z-index: 9;
-    //   border-radius: 4px;
-
-    //   .tool-item {
-    //     @include wh(20px, 20px);
-    //     position: relative;
-    //     margin: 16px 10px;
-    //     cursor: pointer;
-
-    //     &.divide-line {
-    //       margin-top: -4px;
-    //       padding-top: 10px;
-    //       border-top: 1px solid rgba(237, 239, 243, 1);
-    //     }
-
-    //     &.disabled {
-    //       pointer-events: none;
-    //     }
-
-    //     &:hover {
-    //       /deep/ {
-    //         .hover-fill {
-    //           fill: #18191a;
-    //         }
-    //         .hover-stroke {
-    //           stroke: #18191a;
-    //         }
-    //       }
-
-    //       .tooltip {
-    //         display: block;
-    //         background: rgba(0, 0, 0, 0.7);
-    //       }
-    //     }
-
-    //     &.active {
-    //       /deep/ {
-    //         .hover-fill {
-    //           fill: #0044ff;
-    //         }
-    //         .hover-stroke {
-    //           stroke: #0044ff;
-    //         }
-    //       }
-    //     }
-
-    //     .tooltip {
-    //       @include sc(12px, #fff);
-    //       @include abs-pos(50%, 110%, auto, auto);
-    //       display: none;
-    //       padding: 10px;
-    //       white-space: nowrap;
-    //       background: #18191a;
-    //       border-radius: 4px;
-    //       transform: translate(0, -50%);
-    //     }
-    //   }
-    // }
   }
 }
 </style>

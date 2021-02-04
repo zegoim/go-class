@@ -59,7 +59,7 @@ go_class 是一个集成即构 Express-Video SDK，互动白板和文件共享�
    ![配置业务服务host](http://doc.oa.zego.im/Pics/iOS/GoClass/host-setting.png)
    
    然后可以通过调用demo 中的ZegoClassEnvManager 单例的 setNormalEnv 方法设置默认环境，也可以在此方法中修改为你的目标环境。 
-   ![设置默认环境](http://doc.oa.zego.im/Pics/iOS/GoClass/app-env.png)
+   ![设置默认环境](http://doc.oa.zego.im/Pics/iOS/GoClass/host-setting.png)
    
 6.将iOS设备连接到开发电脑，依次Xcode左上角的Generic iOS Device选择该iOS设备。
 

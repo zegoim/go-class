@@ -19,6 +19,7 @@
 - (BOOL)itemCanBeSelectedWithType:(ZegoDrawingToolViewItemType)itemType;
 - (void)didChangeFormat:(ZegoDrawToolFormat *)format;
 - (void)selecteColor:(UIColor *)color;
+- (void)uploadFileWithType:(BOOL)isDynamicFile;
 
 @end
 
@@ -27,6 +28,7 @@
 @property (nonatomic, weak) id<ZegoDrawingToolViewDelegate> delegate;
 @property (nonatomic, strong , readonly) UIColor *selectedColor;
 @property (nonatomic, assign , readonly) BOOL isDragEnable;
+@property (nonatomic, assign) NSInteger currentSelectedIndex;
 
 + (instancetype)defaultInstance;
 

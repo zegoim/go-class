@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ZegoErrorMap : NSObject
 
 + (NSString *)messageWithCode:(NSInteger)errorCode;
-
++ (void)resetErrorMessage;
 @end
 
 NS_ASSUME_NONNULL_END

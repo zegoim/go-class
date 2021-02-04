@@ -11,7 +11,6 @@ import java.io.File;
 
 import im.zego.goclass.AppConstants;
 import im.zego.goclass.AuthConstants;
-import im.zego.goclass.DemoApplication;
 import im.zego.goclass.network.ZegoApiClient;
 import im.zego.goclass.tool.SharedPreferencesUtil;
 import im.zego.zegodocs.IZegoDocsViewUploadListener;
@@ -199,11 +198,11 @@ public class ZegoSDKManager {
     }
 
     public String roomSDKMessage() {
-        if (zegoSDKProxy.isLiveRoom()) {
-            return "liveRoom " + zegoSDKProxy.version();
-        } else {
-            return "express" + zegoSDKProxy.version();
-        }
+        return zegoSDKProxy.rtcSDKName() + zegoSDKProxy.version();
+    }
+
+    public String rtcSDKName() {
+        return zegoSDKProxy.rtcSDKName();
     }
 
     public boolean isLiveRoom() {
@@ -262,11 +261,9 @@ public class ZegoSDKManager {
         config.setAppSign(getAppSign());
         config.setTestEnv(docsViewEnvTest);
 
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            config.setLogFolder(context.getExternalFilesDir(null).getAbsolutePath() + File.separator+ AppConstants.LOG_SUBFOLDER);
-            config.setDataFolder(context.getExternalFilesDir(null).getAbsolutePath() + File.separator + "zegodocs" + File.separator + "data");
-            config.setCacheFolder(context.getExternalFilesDir(null).getAbsolutePath() + File.separator + "zegodocs" + File.separator + "cache");
-        }
+        config.setLogFolder(context.getExternalFilesDir(null).getAbsolutePath() + File.separator + AppConstants.LOG_SUBFOLDER);
+        config.setDataFolder(context.getExternalFilesDir(null).getAbsolutePath() + File.separator + "zegodocs" + File.separator + "data");
+        config.setCacheFolder(context.getExternalFilesDir(null).getAbsolutePath() + File.separator + "zegodocs" + File.separator + "cache");
 
         String pptStepMode;
         if (SharedPreferencesUtil.isNextStepFlipPage()) {
@@ -308,7 +305,7 @@ public class ZegoSDKManager {
         });
     }
 
-    public void unInitSDKEnvironment() {
+    public void uninitSDKEnvironment() {
         Log.d(TAG, "unInitSDKEnvironment() called");
         initVideoResult = null;
         initDocsResult = null;
@@ -349,6 +346,10 @@ public class ZegoSDKManager {
 
     public void setRoomStateListener(IZegoRoomStateListener listener) {
         roomService.setZegoRoomStateListener(listener);
+    }
+
+    public void setKickOutListener(IKickOutListener listener) {
+        roomService.setKickOutListener(listener);
     }
 
     public void setWhiteboardSelectListener(OnWhiteboardSelectedListener listener) {

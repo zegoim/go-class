@@ -11,13 +11,16 @@ import android.view.*
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.core.view.children
-import im.zego.goclass.sdk.ZegoSDKManager
+import im.zego.goclass.R
 import im.zego.goclass.classroom.ClassRoomManager
+import im.zego.goclass.dp2px
+import im.zego.goclass.sdk.ZegoSDKManager
+import im.zego.goclass.tool.ToastUtils
 import im.zego.zegodocs.ZegoDocsViewConstants
+import im.zego.zegodocs.ZegoDocsViewConstants.ZegoDocsViewErrorInternal
+import im.zego.zegodocs.ZegoDocsViewConstants.ZegoDocsViewErrorUploadDuplicated
 import im.zego.zegowhiteboard.ZegoWhiteboardView
 import im.zego.zegowhiteboard.callback.IZegoWhiteboardViewScrollListener
-import im.zego.goclass.R
-import im.zego.goclass.dp2px
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -310,15 +313,14 @@ class WhiteboardContainer : FrameLayout {
                 requestResult.invoke(errorCode, whiteboardViewHolder)
             }
         } else {
-            Toast.makeText(context, context.getString(R.string.wb_tip_exceed_max_number_wb), Toast.LENGTH_SHORT)
-                .show()
+            ToastUtils.showCenterToast(context.getString(R.string.wb_tip_exceed_max_number_wb))
         }
 
     }
 
     fun createFileWhiteBoardView(
         fileID: String,
-        requestResult: (Int, ZegoWhiteboardViewHolder) -> Unit
+        requestResult: (Int, ZegoWhiteboardViewHolder?) -> Unit
     ) {
         Log.i(TAG, "container createFileWhiteBoardView,fileID:${fileID}")
         val count = getFileWhiteboardHolderCount()
@@ -331,6 +333,7 @@ class WhiteboardContainer : FrameLayout {
             } else {
                 // 什么也不做
             }
+            requestResult(ZegoDocsViewErrorUploadDuplicated,holder)
         } else {
             if (count < ZegoSDKManager.MAX_FILE_WB_COUNT) {
                 val viewHolder = ZegoWhiteboardViewHolder(context)
@@ -344,33 +347,24 @@ class WhiteboardContainer : FrameLayout {
                             if (currentResult == 0) {
                                 selectWhiteboardViewHolder(roomService.currentWhiteboardID)
                             } else {
-                                Toast.makeText(
-                                    context,
-                                    context.getString(R.string.wb_tip_failed_sync_whiteboard, currentResult),
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                ToastUtils.showCenterToast(context.getString(R.string.wb_tip_failed_sync_whiteboard, currentResult))
                             }
                         }
                     } else {
                         requestResult(errorCode, viewHolder)
-                        removeView(holder)
+                        removeView(viewHolder)
                         if (!viewHolder.isDocsViewLoadSuccessed()) {
                             // 加载文件失败
-                            Toast.makeText(context, context.getString(R.string.wb_tip_failed_load_file_whiteboard, errorCode), Toast.LENGTH_LONG)
-                                .show()
+                            ToastUtils.showCenterToast(context.getString(R.string.wb_tip_failed_load_file_whiteboard, errorCode))
                         } else {
                             // 创建白板失败
-                            Toast.makeText(context, context.getString(R.string.wb_tip_failed_create_file_whiteboard, errorCode), Toast.LENGTH_LONG)
-                                .show()
+                            ToastUtils.showCenterToast(context.getString(R.string.wb_tip_failed_create_file_whiteboard, errorCode))
                         }
                     }
                 }
             } else {
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.wb_tip_exceed_max_number_file),
-                    Toast.LENGTH_SHORT
-                ).show()
+                requestResult(ZegoDocsViewErrorInternal, null)
+                ToastUtils.showCenterToast(context.getString(R.string.wb_tip_exceed_max_number_file))
             }
         }
 
@@ -467,11 +461,7 @@ class WhiteboardContainer : FrameLayout {
                 if (errorCode == 0) {
                     selectWhiteboardViewHolder(roomService.currentWhiteboardID)
                 } else {
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.wb_tip_failed_sync_whiteboard, errorCode),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    ToastUtils.showCenterToast(context.getString(R.string.wb_tip_failed_sync_whiteboard, errorCode))
                 }
             }
         } else {

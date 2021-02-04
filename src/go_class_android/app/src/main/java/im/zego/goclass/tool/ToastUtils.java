@@ -62,21 +62,34 @@ public final class ToastUtils {
         toast.show();
     }
 
+    private static void showCenterHorizontalToastInner(Context context, String msg) {
+        Toast toast = getToast(context);
+        toast.getView().measure(
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        toast.setGravity(Gravity.TOP, 0, (int) KotlinUtilsKt.dp2px(context, 30f));
+        //获取自定义视图
+        TextView tvMessage = toast.getView().findViewById(R.id.toast_text);
+        //设置文本
+        tvMessage.setText(msg);
+        //显示
+        toast.show();
+    }
 
     public static void setAppContext(Context context) {
         appContext = context;
     }
 
     public static void showCenterToast(String string) {
-        showCenterToastInner(appContext, string);
+        showCenterHorizontalToastInner(appContext, string);
     }
 
     public static void showCenterToast(@StringRes int stringID) {
-        showCenterToastInner(appContext, appContext.getString(stringID));
+        showCenterHorizontalToastInner(appContext, appContext.getString(stringID));
     }
 
     public static void showCenterToast(@StringRes int stringID, Object... formatArgs) {
-        showCenterToastInner(appContext, appContext.getString(stringID, formatArgs));
+        showCenterHorizontalToastInner(appContext, appContext.getString(stringID, formatArgs));
     }
 
     public static void showLoginErrorToast(Context context, int errorCode) {

@@ -4,14 +4,14 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
+import android.os.LocaleList
 import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
-import im.zego.goclass.AppLanguage.createLanguageContext
 import im.zego.goclass.AppLanguage.getCurrentLanguageLocale
-import im.zego.goclass.sdk.ZegoSDKManager
 import im.zego.goclass.tool.SharedPreferencesUtil
 import im.zego.goclass.tool.ZegoUtil
 import java.util.*
+
 
 open class BaseActivity : AppCompatActivity() {
 
@@ -31,22 +31,35 @@ open class BaseActivity : AppCompatActivity() {
         if (mLocale!!.language != appLocale.language) {
             mLocale = appLocale
             recreate()
-            // 切换语言需要重新初始化
-            ZegoSDKManager.getInstance().changeLanguage { _ ->
-
-            }
         }
     }
 
 
     override fun attachBaseContext(newBase: Context) {
-        val languageContext: Context = createLanguageContext(newBase)
-        super.attachBaseContext(languageContext)
-        val configuration: Configuration = languageContext.resources.configuration
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            mLocale = configuration.locales.get(0)
+        val currentLanguageLocale = getCurrentLanguageLocale()
+        // fix appcompat 1.2.0 bug,create new configuration
+        val configuration = Configuration(newBase.resources.configuration)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) { // apply locale
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                val localeList = LocaleList(currentLanguageLocale)
+                LocaleList.setDefault(localeList)
+                configuration.setLocales(localeList)
+            } else {
+                configuration.setLocale(currentLanguageLocale)
+            }
+            val newContext = newBase.createConfigurationContext(configuration)
+            super.attachBaseContext(newContext)
         } else {
-            mLocale = configuration.locale
+            configuration.locale = currentLanguageLocale
+            val displayMetrics = newBase.resources.displayMetrics
+            newBase.resources.updateConfiguration(configuration, displayMetrics)
+            super.attachBaseContext(newBase)
+        }
+
+        mLocale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            configuration.locales.get(0)
+        } else {
+            configuration.locale
         }
     }
 }

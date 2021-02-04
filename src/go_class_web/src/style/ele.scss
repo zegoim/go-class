@@ -1,0 +1,45 @@
+.el-message{
+    min-width: auto !important;
+    top: 58px !important;
+    padding: 0 14px;
+    height: 34px;
+    line-height: 34px;
+    border-radius: 4px;
+    background-color: rgba($color: #000000, $alpha: 0.7);
+    border: none;
+    .el-icon-success,
+    .el-icon-warning,
+    .el-icon-info,
+    .el-icon-error {
+        display: none;
+    }
+    .el-message__content{
+        color: #fff;
+        font-size: 14px;
+    }
+    /*elementui loading css 覆盖 开始*/
+    @keyframes rotating {
+        0%{
+            transform: rotateZ(360deg);
+        }
+        100%{
+            transform: rotateZ(0);
+        }
+    }
+    .el-icon-loading::before{
+        content: '';
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        background: url('../assets/icons/room/toast_loading.png') no-repeat left top;
+        background-size: 100% 100%;
+    }
+
+}
+
+.el-divider {
+    background-color: #edeff3;
+}
+
+
+@import '~element-ui/lib/theme-chalk/index.css'

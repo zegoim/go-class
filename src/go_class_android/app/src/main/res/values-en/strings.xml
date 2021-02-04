@@ -15,6 +15,7 @@
     <string name="wb_tip_save_success">Saved successfully, you can view in album</string>
     <string name="wb_tool_drag">Drag</string>
     <string name="wb_tool_format">Format</string>
+    <string name="wb_tool_upload_files">Upload</string>
     <string name="wb_tool_clear">Clear</string>
     <string name="wb_tool_pen_border_thickness">Border thickness</string>
     <string name="wb_tool_font">Font</string>
@@ -24,6 +25,10 @@
     <string name="wb_tool_shape_selection">Shape Selection</string>
     <string name="wb_cancel">Cancel</string>
     <string name="wb_determine">Yes</string>
+    <string name="wb_tool_upload_static_content">Support PPT(X),DOC(X),XLS(X),PDF,TXT,JPG,JPEG,PNG,BMP,HEIC format</string>
+    <string name="wb_tool_upload_static">Upload Static Files</string>
+    <string name="wb_tool_upload_dynamic">Upload Dynamic Files</string>
+    <string name="wb_tool_upload_dynamic_content">Support PPTX,PPT format</string>
     <string name="wb_tip_are_u_sure_close">Are you sure to close【%s】?</string>
     <string name="wb_tip_exceed_max_number_wb">Exceed the maximum number, please close some whiteboards</string>
     <string name="wb_tip_exceed_max_number_file">Exceed the maximum number, please close some files</string>
@@ -46,7 +51,7 @@
     <string name="wb_tip_failed_load_file">Failed to load file，errorCode = %d</string>
     <string name="wb_tip_fail_save">Failed to save,please try again</string>
     <string name="wb_tip_unable_save">Unable to save whiteboard picture</string>
-    <string name="wb_tip_open_permission">Please open the storage permission in the system settings</string>
+    <string name="wb_tip_open_permission">Please enable storage permissions in the system settings</string>
 
     <!-- 登陆 -->
     <string name="login_setting">Setting</string>
@@ -147,20 +152,25 @@
     <string name="mainland_value">home</string>
     <string name="other_value">overseas</string>
     <string name="title_activity_debug">DebugActivity</string>
+    <string name="wb_tip_unable_upload_file">Unable to upload the file</string>
     <string name="go_class_title">Open business background test environment</string>
     <string name="live_room_title">Open room service test environment</string>
     <string name="docs_view_title">Open the file service test environment</string>
     <string name="clear_cur_page">Empty page</string>
-    <string name="jump_to_settings">To set up</string>
+    <string name="jump_to_settings">Go to set</string>
     <string name="upload_file_request_access">Upload a file storage you need to allow access</string>
     <string name="upload_file">upload file</string>
     <string name="upload_file_failed_no_access">Upload failed, please allow storage access</string>
     <string name="cancel_upload_file">Has been cancelled to upload</string>
     <string name="upload_file_dir_error">The file cannot be uploaded</string>
-    <string name="file_not_existed">File does not exist</string>
-    <string name="failed_to_upload_file">Failed to upload file</string>
-    <string name="upload_progress">Upload progress：</string>
-    <string name="upload_complete">Upload is complete, is transcoding file…</string>
+    <string name="doc_file_not_found">The file does not exist</string>
+    <string name="doc_file_not_supported">The file does not conform to the specification, please select again</string>
+    <string name="doc_uploading_failed">Failed to upload the file,please try again</string>
+    <string name="upload_convert_fail">Failed to convert, please choose again</string>
+    <string name="doc_file_empty">The file content is empty, please select again</string>
+    <string name="doc_uploading">File uploading (%1$.2f%&#37;) </string>
+    <string name="doc_uploading_size_limit">The file size exceeds the limit, please select again</string>
+    <string name="doc_converting">The file is transcoding</string>
     <string name="transcoding_complete">Transcoding to complete，fileID =</string>
     <string name="join_class_failed_try_again">To join the class failed, please try again</string>
     <string name="failed_to_get_file_list">Failed to get a file list</string>
@@ -179,5 +189,8 @@
     <string name="user_is_not_a_teacher">User is not a teacher</string>
     <string name="sync_message_error">A synchronous message error</string>
     <string name="cancel_upload">Cancel the upload</string>
+    <string name="room_login_time_limit_15">Class experience is 15 minutes</string>
+    <string name="room_login_time_out">Class experience time has expired</string>
+    <string name="doc_converting_failed">Failed to transcode the file,please try again</string>
 
 </resources>

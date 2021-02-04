@@ -49,7 +49,7 @@
               :value="item.whiteboardID"
               :label="item.fileName"
             >
-              <div class="label">{{ item.fileName }}</div>
+              <div class="label">{{ item.fileName }} </div>
             </el-option>
           </el-select>
         </div>
@@ -197,6 +197,8 @@ export default {
      * @desc: 当前激活是否Excel
      */
     activeViewIsExcel() {
+      // const fileInfo = this.zegoWhiteboardArea.activeWBView?.getFileInfo();
+      // return fileInfo?.fileType === 4
       return this.zegoWhiteboardArea.activeViewIsExcel
     },
     /**
@@ -271,6 +273,7 @@ export default {
      * @desc: 处理展示Excel sheet名
      */
     computedExcelSheets() {
+      console.warn('this.zegoWhiteboardArea.activeExcelSheetNames',this.zegoWhiteboardArea.activeExcelSheetNames)
       const res = this.zegoWhiteboardArea.activeExcelSheetNames.map((name) => {
         const item =
           this.zegoWhiteboardArea.activeExcelSheets.find((x) => {
@@ -326,9 +329,13 @@ export default {
       if (this.activeViewIsPPTH5) this.zegoWhiteboardArea.stopPlay()
       // 切换文件/白板需通过房间附加信息通知对端
       this.zegoWhiteboardArea.setIsAllowSendRoomExtraInfo(true)
-      const activeItem = this.computedViewList.find((item) => item.selfWBID === id)
-      console.warn('handleWBSelect', activeItem.whiteboardID)
+      const activeItem = this.computedViewList.find((item) => {
+        return item.selfWBID === id
+      })
+      console.warn('handleWBSelect:',activeItem.whiteboardID)
       this.zegoWhiteboardArea.selectRemoteView(activeItem.whiteboardID)
+      this.zegoWhiteboardArea.notifyAllViewChanged()
+      console.warn('当前激活工具',this.zegoWhiteboardArea.activeToolType)
     },
     /**
      * @desc: 删除白板
@@ -355,11 +362,12 @@ export default {
      * @desc: 处理文件名过长
      */
     hideTitle(name) {
+      // console.warn(name)
       let last = 0
       let all = name.length
       let fisrt = name.substring(0, 3)
-      last = all - 9
-      if (all > 13) {
+      last = all - 8
+      if (all > 10) {
         return fisrt + '...' + name.substring(last, all)
       } else {
         return name
@@ -421,7 +429,6 @@ export default {
      * @param {type} 放大/缩小
      */
     handleZoomChange(type) {
-      console.warn(this.activeViewIsPPTH5, this.activeToolType)
       if (this.activeToolType === 256 && this.activeViewIsPPTH5) return
       let zoom
       if (type === 1 && this.zoomIndex <= this.zoomList.length - 1) {
@@ -680,6 +687,16 @@ export default {
 
   .excel-sheets {
     margin-left: 30px;
+    input{
+      overflow: hidden;    
+      text-overflow:ellipsis;    
+      white-space: nowrap;
+    }
+    .label{
+      overflow: hidden;    
+      text-overflow:ellipsis;    
+      white-space: nowrap;
+    }
   }
   .thumb-button {
     display: flex;

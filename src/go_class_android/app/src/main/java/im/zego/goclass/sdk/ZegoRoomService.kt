@@ -1,8 +1,15 @@
 package im.zego.goclass.sdk
 
 import im.zego.zegoexpress.entity.ZegoRoomExtraInfo
+import im.zego.goclass.R
+import im.zego.goclass.classroom.ClassRoomManager
 import im.zego.goclass.entity.ZegoStream
+import im.zego.goclass.network.Result
+import im.zego.goclass.network.ZegoApiClient
+import im.zego.goclass.network.ZegoApiErrorCode
 import im.zego.goclass.tool.Logger
+import im.zego.goclass.tool.ToastUtils
+import im.zego.goclass.widget.ZegoDialog
 import im.zego.zegowhiteboard.ZegoWhiteboardManager
 
 const val OUTSIDE = 0
@@ -19,6 +26,7 @@ class ZegoRoomService(private var zegoVideoSDKProxy: IZegoVideoSDKProxy) {
     private var state = OUTSIDE
     private var roomID = ""
     var zegoRoomStateListener: IZegoRoomStateListener? = null
+    var kickOutListener: IKickOutListener? = null
     var customCommandListener: ICustomCommandListener? = null
 
 
@@ -68,6 +76,9 @@ class ZegoRoomService(private var zegoVideoSDKProxy: IZegoVideoSDKProxy) {
         }, object : IKickOutListener {
             override fun onKickOut(reason: Int, roomID: String, customReason: String) {
                 Logger.d(TAG, "onKickOut:reason:${reason}")
+                if (customReason.isNotEmpty() && customReason.equals("online_time_limit")) {
+                    kickOutListener?.onKickOut(reason, roomID, customReason)
+                }
             }
 
         }, object : IStreamCountListener {
@@ -195,6 +206,7 @@ class ZegoRoomService(private var zegoVideoSDKProxy: IZegoVideoSDKProxy) {
         zegoVideoSDKProxy.logoutRoom(roomID)
         state = OUTSIDE
         zegoRoomStateListener = null
+        kickOutListener = null
         this.roomID = ""
         clearAll()
     }

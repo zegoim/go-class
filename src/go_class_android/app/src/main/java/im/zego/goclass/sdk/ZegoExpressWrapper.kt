@@ -4,6 +4,7 @@ package im.zego.goclass.sdk
 import android.app.Application
 import android.util.Log
 import android.view.TextureView
+import im.zego.goclass.AppConstants
 import im.zego.goclass.entity.ChatMsg
 import im.zego.goclass.entity.ZegoClassUser
 import im.zego.goclass.entity.ZegoPlayStream
@@ -12,7 +13,10 @@ import im.zego.zegoexpress.ZegoExpressEngine
 import im.zego.zegoexpress.callback.IZegoEventHandler
 import im.zego.zegoexpress.constants.*
 import im.zego.zegoexpress.entity.*
+import im.zego.zegoexpress.entity.ZegoEngineConfig
+import im.zego.zegoexpress.entity.ZegoLogConfig
 import org.json.JSONObject
+import java.io.File
 import java.util.*
 
 class ZegoExpressWrapper : IZegoVideoSDKProxy {
@@ -43,6 +47,12 @@ class ZegoExpressWrapper : IZegoVideoSDKProxy {
         initCallback: ZegoSDKManager.InitResult
     ) {
         Log.d(TAG, "init ZegoExpressEngine ,version:${ZegoExpressEngine.getVersion()}")
+        val config = ZegoEngineConfig()
+        val zegoLogConfig = ZegoLogConfig()
+        zegoLogConfig.logPath = application.getExternalFilesDir(null)!!.absolutePath + File.separator + AppConstants.LOG_SUBFOLDER
+        zegoLogConfig.logSize = 5*1024*1024
+        config.logConfig = zegoLogConfig
+        ZegoExpressEngine.setEngineConfig(config)
         val engine = ZegoExpressEngine.createEngine(
             appID, appSign, testEnv,
             ZegoScenario.COMMUNICATION, application, null
@@ -99,14 +109,25 @@ class ZegoExpressWrapper : IZegoVideoSDKProxy {
                 errorCode: Int,
                 extendedData: JSONObject
             ) {
-                Log.d(TAG, "onRoomStateUpdate:state :${state},errorCode:${errorCode}")
+                Log.d(TAG, "onRoomStateUpdate:state :${state},errorCode:${errorCode},extendedData:${extendedData}")
                 when (state) {
                     ZegoRoomState.DISCONNECTED -> {
                         if (isLoginRoom) {
                             loginResult.invoke(errorCode)
                             isLoginRoom = false
                         } else {
-                            zegoRoomStateListener?.onDisconnect(errorCode, roomID)
+                            // extendedData 是可能为空的，且 getString("XX") 为空时会直接抛异常，optString() 这个方法可以在 value 没有数据的时候返回 null 值
+                            val msg =
+                                if (extendedData != null) {
+                                    extendedData.optString("custom_kickout_message")
+                                } else {
+                                    ""
+                                }
+                            if (msg == "online_time_limit") {
+                                kickOutListener?.onKickOut(0, roomID, msg)
+                            } else {
+                                zegoRoomStateListener?.onDisconnect(errorCode, roomID)
+                            }
                         }
                     }
                     ZegoRoomState.CONNECTED -> {
@@ -256,6 +277,8 @@ class ZegoExpressWrapper : IZegoVideoSDKProxy {
     }
 
     override fun isLiveRoom() = false
+
+    override fun rtcSDKName() = "Express"
 
     override fun startPublishing(
         streamID: String,

@@ -6,7 +6,7 @@ export const zh = {
         "request_failed_code_502":"请求服务器错误",
         "user_no_permission":"用户没有权限修改",
         "target_user_not_in_room":"目标用户不在教室",
-        "need_login":"需要先登录房间",
+        "need_login":"需要先登录房间"
     },
     "login": {
         "login_welcome": "欢迎加入",
@@ -69,12 +69,28 @@ export const zh = {
         "wb_tool_revoke": "撤销",
         "wb_tool_redo": "重做",
         "wb_tool_save": "保存",
-        "wb_tip_save_success": "保存成功，可前往相册查看",
+        "wb_tip_save_success": "保存成功",
         "wb_auth_photo": "照片权限",
         "wb_tip_allow_access_photo": "请在“设置-GO课堂-照片”选项中，允许应用访问您的设备照片",
         "wb_tip_got_it": "知道了",
         "wb_tip_go_to_set": "去设置",
-        "wb_priview":"预览"
+        "wb_priview":"预览",
+        "wb_tool_upload_files":"上传",
+        "wb_tool_upload_static":"上传静态文件",
+        "wb_tool_upload_dynamic":"上传动态文件",
+        "wb_tool_upload_static_content":"支持 PPT(X)、DOC(X)、XLS(X)、PDF、TXT、JPG、JPEG、PNG、BMP、HEIC 格式",
+        "wb_tool_upload_dynamic_content":"支持 PPTX、PPT 格式"
+    },
+    "doc":{
+        "doc_uploading":"文件上传中（{n}%)",
+        "doc_converting":"文件正在转码 ",
+        "doc_uploading_failed":"文件上传失败，请重试 ",
+        "doc_converting_failed":"文件转码失败，请重试 ",
+        "doc_uploading_size_limit":"文件大小超过限制，请重新选择 ",
+        "doc_file_not_supported":"文件不符合规范，请重新选择 ",
+        "doc_file_not_found":"文件不存在 ",
+        "doc_formating_failed":"格式转换失败，请重新选择 ",
+        "doc_file_empty":"文件内容为空，请重新选择 "
     },
     "room": {
         "room_select":"请选择",
@@ -160,6 +176,9 @@ export const zh = {
         "room_tip_channels": "演示课堂最多开启3路学生音视频",
         "room_enable_setting":"请在设置中开启",
         "room_permissions":"权限",
-        "room_permissions_obtained":"权限获取成功"
+        "room_permissions_obtained":"权限获取成功",
+        "room_login_time_limit_15":"课堂体验时长为15分钟",
+        "room_login_time_out":"课堂体验时长已到期",
+        "room_login_time_confirm":"确定"
     }  
 }

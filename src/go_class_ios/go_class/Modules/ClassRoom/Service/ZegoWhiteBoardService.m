@@ -29,8 +29,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 @property (nonatomic, strong) NSMutableArray<ZegoBoardContainer *> *boardContainers;        //BoardContainer数组
 //排序，整理好的ZegoWhiteBoardViewContainerModel数组，供显示白板列表使用
 @property (nonatomic, strong, readwrite) NSArray<ZegoWhiteBoardViewContainerModel *> *orderedBoardModelContainers;        //BoardContainerModel数组
-@property (nonatomic, assign) ZegoWhiteboardID changeWhiteBoardID; //标记获取白板列表之前的当前白板id，使用后清除
-
+@property (nonatomic, assign) ZegoWhiteboardID changeWhiteboardID;
 @end
 
 @implementation ZegoWhiteBoardService
@@ -64,8 +63,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     for (ZegoWhiteboardView *whiteBoardView in orderedWhiteBoardList) {
         [self addWhiteBoardWithWhiteBoardView:whiteBoardView ];
     }
-    [self changeWhiteBoardWithID:self.changeWhiteBoardID];
-    self.changeWhiteBoardID = 0;
+    [self changeWhiteBoardWithID:(self.changeWhiteboardID)];
 }
 
 - (void)addWhiteboard {
@@ -100,7 +98,6 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     ZegoBoardContainer *strongContainer = container;
     [self addBoardContainerView:strongContainer];
     @weakify(self);
-    self.currentContainer = strongContainer;
     [container addWhiteboarView:whiteboardView complete:^(ZegoWhiteboardViewError errorCode) {
         @strongify(self);
         if(errorCode == 0) {
@@ -109,7 +106,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
           [self showNetworkError];
         }
     }];
-
+    self.currentContainer = strongContainer;
 }
 
 //点击文件列表创建文件
@@ -173,9 +170,8 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
             return;
         }
         self.currentContainer = container;
-    } else {
-        self.changeWhiteBoardID = whiteboardID;
     }
+    _changeWhiteboardID = whiteboardID;
 }
 
 - (void)changeWhiteBoardWithBoardContainer:(ZegoBoardContainer * _Nullable )boardContainer {

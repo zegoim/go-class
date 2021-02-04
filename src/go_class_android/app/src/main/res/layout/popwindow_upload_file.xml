@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@drawable/upload_options_block2"
+    android:paddingHorizontal="21dp"
+    android:paddingTop="20dp"
+    android:paddingBottom="26dp">
+
+    <RelativeLayout
+        android:id="@+id/rl_static"
+        android:layout_width="178dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/upload_static_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wb_tool_upload_static"
+            android:textColor="#18191a"
+            android:textSize="11dp"
+            android:textStyle="normal"/>
+
+        <TextView
+            android:id="@+id/upload_static_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="9dp"
+            android:includeFontPadding="false"
+            android:layout_below="@+id/upload_static_title"
+            android:text="@string/wb_tool_upload_static_content"
+            android:textColor="#999999"
+            android:textSize="10dp"/>
+
+        <ImageView
+            android:id="@+id/iv_upload_static"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/static_file" />
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginVertical="11dp"
+        android:background="#edeff3"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rl_static"
+        app:layout_constraintBottom_toTopOf="@+id/rl_dynamic"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_dynamic"
+        android:layout_width="178dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/upload_dynamic_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wb_tool_upload_dynamic"
+            android:textColor="#18191a"
+            android:textSize="11dp"
+            android:textStyle="normal"/>
+
+        <TextView
+            android:id="@+id/upload_dynamic_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="9dp"
+            android:includeFontPadding="false"
+            android:layout_below="@+id/upload_dynamic_title"
+            android:text="@string/wb_tool_upload_dynamic_content"
+            android:textColor="#999999"
+            android:textSize="10dp"/>
+
+        <ImageView
+            android:id="@+id/iv_upload_dynamic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/dynamic_file" />
+
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

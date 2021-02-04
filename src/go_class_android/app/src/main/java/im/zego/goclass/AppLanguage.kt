@@ -1,6 +1,7 @@
 package im.zego.goclass
 
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Build
 import android.os.LocaleList
 import androidx.annotation.StringRes
@@ -15,32 +16,8 @@ object AppLanguage {
 
     @JvmStatic
     fun initLanguageSetting(context: Context) {
-        appContext = context
-        initLanguageSetting()
-    }
+        appContext = context.applicationContext
 
-    @JvmStatic
-    fun getCurrentLanguageLocale() = currentLocale
-
-    fun setCurrentLanguageLocale(context: Context, locale: Locale) {
-        currentLocale = locale
-        SharedPreferencesUtil.setLastAppLanguageSetting(locale.toLanguageTag()) // languageTag 能区分中文 zh 和繁体中文 zh-tw
-    }
-
-    fun createLanguageContext(context: Context): Context {
-        val resources = context.resources
-        val configuration = resources.configuration
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { // apply locale
-            configuration.setLocale(getCurrentLanguageLocale())
-        } else { // updateConfiguration
-            configuration.locale = getCurrentLanguageLocale()
-            resources.updateConfiguration(configuration, resources.displayMetrics)
-        }
-        return context.createConfigurationContext(configuration)
-    }
-
-    private fun initLanguageSetting() {
         currentLocale = if (SharedPreferencesUtil.hasLastAppLanguageSetting()) {
             val lastLanguage = SharedPreferencesUtil.getLastAppLanguageSetting()
             val langStr = lastLanguage.split('-')
@@ -51,28 +28,30 @@ object AppLanguage {
                 Locale(langStr[0])
             }
         } else {
-            Logger.i("AppLanguage", "system locale: " + getSystemPreferredLanguageLocale())
-            when (getSystemPreferredLanguageLocale().language) {
+            val locale =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                    LocaleList.getDefault()[0]
+                else
+                    Locale.getDefault()
+
+            when (locale.language) {
+                Locale.CHINESE.language -> Locale.CHINESE
+                Locale.TRADITIONAL_CHINESE.language -> Locale.TRADITIONAL_CHINESE
                 Locale.ENGLISH.language -> Locale.ENGLISH
+                Locale.JAPANESE.language -> Locale.JAPANESE
+                Locale.KOREAN.language -> Locale.KOREAN
                 else -> Locale.CHINESE
             }
         }
         Logger.i("AppLanguage", "initLanguageSetting,currentLocale: $currentLocale")
     }
 
-    private fun getSystemPreferredLanguageLocale(): Locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) LocaleList.getDefault()[0] else Locale.getDefault()
+    @JvmStatic
+    fun getCurrentLanguageLocale() = currentLocale
 
-    /**
-     * 返回传入的参数
-     * @param context
-     * @param res
-     * @return
-     */
-    @StringRes
-    fun transferToSceneString(context: Context, @StringRes res: Int): Int {
-        val resourceName = context.resources.getResourceEntryName(res)
-        var stringId = context.resources.getIdentifier(resourceName, "string", context.packageName)
-        stringId = if (stringId == 0) res else stringId
-        return stringId
+    @JvmStatic
+    fun setCurrentLanguageLocale(locale: Locale) {
+        currentLocale = locale
+        SharedPreferencesUtil.setLastAppLanguageSetting(locale.toLanguageTag()) // languageTag 能区分中文 zh 和繁体中文 zh-tw
     }
 }

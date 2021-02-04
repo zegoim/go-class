@@ -11,7 +11,7 @@
 #import "ZegoUIConstant.h"
 #import "UIColor+ZegoExtension.h"
 #import "NSString+ZegoExtension.h"
-#import "ZegoClassEnvManager.h"
+
 @interface ZegoBoardContainer()<UIScrollViewDelegate, ZegoDocsViewDelegate, ZegoWhiteboardViewDelegate>
 @property (nonatomic, assign) ZegoWhiteboardOperationMode currentMode;
 @end
@@ -106,11 +106,7 @@ static int nameIndex = 0;
     model.aspectWidth = 16.0 * 5;
     model.aspectHeight = 9.0;
     model.pageCount = 5;
-    if ([ZegoClassEnvManager shareManager].isChinese) {
-        model.name = [NSString stringWithFormat:@"%@%@%@%d",userName,[NSString zego_localizedString:@"wb_created_by"],[NSString zego_localizedString:@"wb_whiteboard_by"], ++nameIndex];
-    } else {
-        model.name = [NSString stringWithFormat:@"%@%d %@%@",[NSString zego_localizedString:@"wb_whiteboard_by"], ++nameIndex,[NSString zego_localizedString:@"wb_created_by"],userName];
-    }
+    model.name = [NSString stringWithFormat:@"%@%@%d",userName,[NSString zego_localizedString:@"wb_created_by"], ++nameIndex];
     @weakify(self);
     [[ZegoWhiteboardManager sharedInstance] createWhiteboardView:model
                                                    completeBlock:^(ZegoWhiteboardViewError errorCode, ZegoWhiteboardView *whiteboardView) {

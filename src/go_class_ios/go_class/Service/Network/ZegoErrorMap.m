@@ -37,6 +37,10 @@
     return message;
 }
 
++ (void)resetErrorMessage {
+    [self sharedInstance].errorMessageDic = nil;
+}
+
 #pragma mark - get
 - (NSDictionary *)errorMessageDic
 {

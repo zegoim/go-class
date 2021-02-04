@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "ZegoLiveCenter.h"
 #ifdef IS_USE_LIVEROOM
-#import <ZegoLiveRoom/ZegoLiveRoomApi-ReliableMessage.h>
+#import <ZegoLiveRoom/ZegoLiveRoomApi.h>
 #else
 #import <ZegoExpressEngine/ZegoExpressEngine.h>
 #endif

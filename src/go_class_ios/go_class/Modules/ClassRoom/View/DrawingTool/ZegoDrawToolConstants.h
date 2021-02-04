@@ -27,7 +27,7 @@ typedef NS_ENUM(NSUInteger, ZegoDrawingToolViewItemType) {
     ZegoDrawingToolViewItemTypeLaser        = 0x80,     // 激光笔
     ZegoDrawingToolViewItemTypeClick = 0x100,    // 动态 PPT 点击
     ZegoDrawingToolViewItemTypeSave         = 0x101,    // 白板截图
-    
+    ZegoDrawingToolViewItemTypeFileUpload   = 0x102,    // 文件上传
     ZegoDrawingToolViewItemTypeJustTest     = ~0,       // 仅供内部测试
 };
 
