@@ -16,6 +16,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)showToastToTopWIndow:(NSString *)text;
 
++ (void)showStickyWithMessage:(NSString *)text Indicator:(BOOL)indicator;
+
++ (void)updateStickyMessage:(NSString *)text;
+
++ (void)dismissStickyAnimation:(BOOL)animation;
 @end
 
 NS_ASSUME_NONNULL_END

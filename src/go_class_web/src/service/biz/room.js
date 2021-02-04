@@ -15,7 +15,8 @@ export const bus = new Vue()
 Vue.prototype.$bus = bus
 
 const timeout = 10000
-const loginCodes = [10005, 10006]
+// const loginCodes = [10005, 10006]
+const loginCodes = [10006]
 const errorTips = {
   'Network Error': i18n.t('login.login_network_exception'),
   [`timeout of ${timeout}ms exceeded`]: i18n.t('system.timeout_exceeded'),
@@ -36,6 +37,7 @@ const translateError = res => {
 
 const handleError = res => {
   Message.closeAll()
+  console.warn(res.ret.message)
   Message({
     customClass: 'common-toast',
     type: 'error',
@@ -134,6 +136,7 @@ class RoomStore {
         if (!res.data || !reg.test(res.data)) return
         try {
           res = JSON.parse(res.data)
+          console.warn('后台 message',res)
           res = JSON.parse(res.body.custommsg)
           res = JSON.parse(res.custom_content)
           console.log('====edu_zpush====', res)

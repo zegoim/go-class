@@ -13,6 +13,8 @@
 #import "ZegoDrawingToolModel.h"
 #import "ZegoDrawToolGeometryView.h"
 #import "NSString+ZegoExtension.h"
+#import "ZegoUploadFileTypeSelectorView.h"
+
 #if ZEGO_TOOL_JUST_TEST_NEEDED == 1
 #define ZEGO_TOOL_TEST_VISIBLE
 #endif
@@ -34,6 +36,7 @@ typedef NS_ENUM(NSUInteger, ZegoDrawingToolIndex) {
     ZegoDrawingToolIndexUndo,           //撤销
     ZegoDrawingToolIndexRedo,           //重做
     ZegoDrawingToolIndexSave,           //保存
+    ZegoDrawingToolIndexFileUpload,      //文件上传
     ZegoDrawingToolIndexTotalCount,     //教具总数 13-14
 };
 
@@ -111,6 +114,7 @@ typedef NS_ENUM(NSUInteger, ZegoDrawingToolIndex) {
     ZegoDrawingToolModel *toolModel = self.toolModels[toolIndex];
     if (response) {
         [self tableView:self.toolTableView didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:toolIndex inSection:0]];
+        self.currentSelectedIndex = toolIndex;
         return;
     }
     toolModel.isSelected = YES;
@@ -134,6 +138,7 @@ typedef NS_ENUM(NSUInteger, ZegoDrawingToolIndex) {
     if (!toolModel) {
         return;
     }
+    toolModel.isSelected = NO;
     toolModel.isEnabled = isEnabled;
     [self.toolTableView reloadData];
 }
@@ -152,41 +157,43 @@ typedef NS_ENUM(NSUInteger, ZegoDrawingToolIndex) {
     return self.toolModels.count;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 36;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     ZegoDrawingToolTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ZegoDrawingToolTableViewCell"];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    cell.selectedColor = _selectedColor;
+    cell.selectedColor = self.selectedColor;
     cell.toolModel  = self.toolModels[indexPath.row];
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    self.currentSelectedIndex = indexPath.row;
     ZegoDrawingToolModel * selectedTool = self.toolModels[indexPath.row];
     BOOL geoViewAlreadySelected = NO;
     if (selectedTool.type == ZegoDrawingToolViewItemTypeGeometry) {
         geoViewAlreadySelected = selectedTool.isSelected;
     }
-    
-    if ([self.delegate itemCanBeSelectedWithType:selectedTool.type]) {
-        for (ZegoDrawingToolModel * model in self.toolModels) {
-            // 到 模型数组 中遍历模型, 视情况更改被选中教具的 isSelected 选中状态
-            if (model.type == selectedTool.type) {
-                model.isSelected = YES;
-            }else {
-                model.isSelected = NO;
-            }
-            if (selectedTool.type == ZegoDrawingToolViewItemTypeText && model.type == ZegoDrawingToolViewItemTypeArrow) {
-                model.isSelected = YES;
+    if (selectedTool.type == ZegoDrawingToolViewItemTypeFileUpload) {
+        selectedTool.isSelected = !selectedTool.isSelected;
+    } else {
+        if ([self.delegate itemCanBeSelectedWithType:selectedTool.type]) {
+            for (ZegoDrawingToolModel * model in self.toolModels) {
+                // 到 模型数组 中遍历模型, 视情况更改被选中教具的 isSelected 选中状态
+                if (model.type == selectedTool.type) {
+                    model.isSelected = YES;
+                }else {
+                    model.isSelected = NO;
+                }
+                if (selectedTool.type == ZegoDrawingToolViewItemTypeText && model.type == ZegoDrawingToolViewItemTypeArrow) {
+                    model.isSelected = YES;
+                }
             }
         }
     }
+    
 
     if ([self.delegate respondsToSelector:@selector(selectItemType:selected:)]) {
         [self.delegate selectItemType:selectedTool.type selected:selectedTool.isSelected];
@@ -203,6 +210,13 @@ typedef NS_ENUM(NSUInteger, ZegoDrawingToolIndex) {
         if (!geoViewAlreadySelected) {
             [self.geoView selectItemWithType:ZegoDrawingToolViewItemTypeRect];
         }
+    } else if (selectedTool.type == ZegoDrawingToolViewItemTypeFileUpload){
+        if (selectedTool.isEnabled) {
+            [self showFileTypeSelectorViewWithTableView:tableView];
+        } else {
+            return;
+        }
+        
     }
     
     [self.toolTableView reloadData];
@@ -320,6 +334,20 @@ typedef NS_ENUM(NSUInteger, ZegoDrawingToolIndex) {
     [ZegoViewAnimator fadeInView:self.geoView onLeftOfView:tableView offset:CGPointMake(-8, pointY)];
 }
 
+- (void)showFileTypeSelectorViewWithTableView:(UITableView *)tableView {
+    ZegoUploadFileTypeSelectorView *typeView = [[ZegoUploadFileTypeSelectorView alloc] initWithFrame:CGRectMake(0, 0, 218, 140)];
+    typeView.didClickUploadFileType = ^(BOOL isDynamicFile) {
+        if ([self.delegate respondsToSelector:@selector(uploadFileWithType:)]) {
+            [self.delegate uploadFileWithType:isDynamicFile];
+        }
+        [ZegoViewAnimator dismiss];
+    };
+
+    [ZegoViewAnimator fadeInView:typeView onLeftOfView:tableView offset:CGPointMake(-8, self.bounds.size.height - 140 - 3) completion:nil dismissCompletion:^{
+        [self enableItemType:ZegoDrawingToolViewItemTypeFileUpload isEnabled:YES];
+    }];
+}
+
 #pragma mark -- Getter
 - (NSArray *)colorArray
 {
@@ -361,6 +389,7 @@ typedef NS_ENUM(NSUInteger, ZegoDrawingToolIndex) {
         @{@"text":[NSString zego_localizedString:@"wb_tool_revoke"], @"selectedImage":@"chexiao_click", @"normalImage":@"chexiao", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeUndo)},
         @{@"text":[NSString zego_localizedString:@"wb_tool_redo"], @"selectedImage":@"chongzuo_click", @"normalImage":@"chongzuo", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeRedo)},
         @{@"text":[NSString zego_localizedString:@"wb_tool_save"], @"selectedImage":@"tool_save_click", @"normalImage":@"tool_save", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeSave)},
+        @{@"text":[NSString zego_localizedString:@"wb_tool_upload_files"], @"selectedImage":@"upload_select", @"normalImage":@"upload", @"isSelected":@(0), @"type":@(ZegoDrawingToolViewItemTypeFileUpload)},
     ];
 }
 
@@ -400,6 +429,7 @@ typedef NS_ENUM(NSUInteger, ZegoDrawingToolIndex) {
             @(ZegoDrawingToolViewItemTypeLaser):        @(ZegoDrawingToolIndexLaser),
             @(ZegoDrawingToolViewItemTypeClick):        @(ZegoDrawingToolIndexClick),
             @(ZegoDrawingToolViewItemTypeSave):         @(ZegoDrawingToolIndexSave),
+            @(ZegoDrawingToolViewItemTypeFileUpload):   @(ZegoDrawingToolIndexFileUpload),
         };
     }
     return _toolTypeIndexMap;
@@ -450,7 +480,8 @@ typedef NS_ENUM(NSUInteger, ZegoDrawingToolIndex) {
                                  toolModel.type == ZegoDrawingToolViewItemTypeDrag ||
                                  toolModel.type == ZegoDrawingToolViewItemTypeFormat ||
                                  toolModel.type == ZegoDrawingToolViewItemTypeClick ||
-                                 toolModel.type == ZegoDrawingToolViewItemTypeGeometry)) {
+                                 toolModel.type == ZegoDrawingToolViewItemTypeGeometry||
+                                 toolModel.type == ZegoDrawingToolViewItemTypeFileUpload)) {
         self.titleLabel.textColor = UIColorHex(#0044ff);
         self.iconImageView.image = [UIImage imageNamed:toolModel.selectedImage];
     } else {

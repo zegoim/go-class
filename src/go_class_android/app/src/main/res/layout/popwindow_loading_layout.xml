@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:paddingLeft="13dp"
+    android:paddingRight="16dp"
+    android:orientation="horizontal">
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="19dp"
+        android:layout_height="19dp"
+        android:indeterminateBehavior="repeat"
+        android:indeterminateDrawable="@drawable/progress_bar" />
+
+    <TextView
+        android:id="@+id/upload_state_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginVertical="9dp"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:text="@string/wb_tool_upload_dynamic_content"/>
+
+</LinearLayout>

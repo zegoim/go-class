@@ -102,6 +102,12 @@
         android:text="@string/wb_tool_save" />
 
     <TextView
+        android:id="@+id/upload_files"
+        style="@style/tools_text_style"
+        android:drawableTop="@drawable/drawable_tools_upload"
+        android:text="@string/wb_tool_upload_files" />
+
+    <TextView
         android:id="@+id/clear_cur_page"
         style="@style/tools_text_style"
         android:visibility="gone"

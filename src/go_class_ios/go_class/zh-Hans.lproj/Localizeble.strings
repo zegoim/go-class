@@ -46,8 +46,7 @@
 "login_interconnected" = "国内和海外不互通，请确保体验者均连接相同环境";
 "login_setting" = "设置";
 "login_clear_cache" = "清除缓存";
-"wb_created_by" = "创建的";
-"wb_whiteboard_by" = "白板";
+"wb_created_by" = "创建的白板";
 "wb_preview" = "预览";
 "wb_file_sheet_list" = "Sheet列表";
 "wb_file_ppt_not_support" = "PPT暂不支持拖拽，请点击顶部翻页按钮";
@@ -186,4 +185,23 @@
 
 "room_whiteboard_list" = "白板列表";
 "room_setting_language" = "语言";
+"wb_tool_upload_files" = "上传";
+"wb_tool_upload_static" = "上传静态文件";
+"wb_tool_upload_dynamic" = "上传动态文件";
+"wb_tool_upload_static_content" = "支持 PPT(X)、DOC(X)、XLS(X)、PDF、TXT、JPG、JPEG、PNG、BMP,HEIC 格式";
+"wb_tool_upload_dynamic_content" = "支持 PPTX、PPT 格式";
+"wb_tip_unable_upload_file" = "无法上传文件";
+"wb_tip_open_permission" = "请在系统的设置中开启存储权限";
+"doc_uploading" = "文件上传中";
+"doc_converting" = "文件正在转码 ";
+"doc_uploading_failed" = "文件上传失败，请重试";
+"doc_converting_failed" = "文件转码失败，请重试";
+"doc_uploading_size_limit" = "文件大小超过限制，请重新选择";
+"doc_file_not_supported" = "文件不符合规范，请重新选择";
+"doc_file_not_found" = "文件不存在";
+"doc_formating_failed" = "格式转换失败，请重新选择";
+"doc_file_empty" = "文件内容为空，请重新选择";
+"room_login_time_limit_15" = "课堂体验时长为15分钟";
+"room_login_time_out" = "课堂体验时长已到期";
+"room_login_time_confirm" = "确定";
 

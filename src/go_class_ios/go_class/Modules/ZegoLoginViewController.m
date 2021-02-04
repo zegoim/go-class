@@ -27,8 +27,10 @@
 #import "ZegoRotationManager.h"
 #import "ZegoClassEnvManager.h"
 #import "NSString+ZegoExtension.h"
-
-#define IS_OPENSOURCE
+#import "ZegoErrorMap.h"
+#ifndef IS_OPENSOURCE
+#import "ZegoEnvSettingViewController.h"
+#endif
 
 @interface ZegoLoginViewController ()<UITextFieldDelegate,ZegoLiveCenterDelegate>
 @property (weak, nonatomic) IBOutlet UITextField *classRoomTF;
@@ -248,7 +250,10 @@
 }
 
 - (IBAction)onTestButtonTapped {
-
+#ifndef IS_OPENSOURCE
+    ZegoEnvSettingViewController *setting = [[ZegoEnvSettingViewController alloc] init];
+    [self presentViewController:setting animated:YES completion:nil];
+#endif
 }
 
 - (IBAction)onRoleTypeButtonTapped:(id)sender {
@@ -325,6 +330,7 @@
     @weakify(self);
     settingVC.languageChangeBlock = ^{
         @strongify(self);
+        [ZegoErrorMap resetErrorMessage];
         [self updateLocalLanguage];
     };
     [self.navigationController pushViewController:settingVC animated:YES];

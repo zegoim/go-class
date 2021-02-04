@@ -1,4 +1,7 @@
+# README
+
 # 1. 简介
+
 
 go_class_web 是一个集成即构 Express-Video SDK，互动白板和文件共享的功能示例项目，目的是提供一个场景让用户可以更具像化的了解即构的互动白板和文件共享的功能和使用场景。开发人员可以参考该项目，实现自己的项目。本项目是采用 JavaScript 编程语言，基于开源的 VUE 框架开发出来的前端应用。
 
@@ -20,6 +23,7 @@ go_class_web 是一个集成即构 Express-Video SDK，互动白板和文件共�
 
 #### token
 
+
 token 生成方法请参考 [ZEGO开发者中心](https://console.zego.im/acount)。
 
 
@@ -32,10 +36,10 @@ token 生成方法请参考 [ZEGO开发者中心](https://console.zego.im/acount
 #### 填写运行项目配置参数
 
 
-将上述相关配置参数填写在 go_class_web/src/utils/config_data.js 文件中
+将上述相关配置参数填写在 go_class_web/src/utils/config_data.js 文件中，缺一不可
 
 
-![image.png](https://cdn.nlark.com/yuque/0/2021/png/2309522/1610962055214-49648fb1-aec3-4a9a-83f1-cf9de49a2379.png)
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/2309522/1612348478563-432c85fc-871b-447c-9ada-5e49e855541f.png#align=left&display=inline&height=902&margin=%5Bobject%20Object%5D&name=image.png&originHeight=902&originWidth=716&size=154950&status=done&style=none&width=716)
 
 
 # 3. 快速启动
@@ -88,31 +92,14 @@ ZEGO 文档中心有关于 [小班课](https://doc-zh.zego.im/zh/5308.html) 以�
 # 6. FAQ
 
 
-Q: 如果想在项目中使用自己的文件体验功能
+Q: 如果想在项目中的文件列表弹窗中添加自己上传的文件
 
 
-A: 目前项目中是连接oss服务获取文件列表数据，如需体验自定义文件，可自行上传文件。
-上传地址：
+A: 将上传文件成功后返回的 fileID 按照规定的数据格式，填到本地数据管理中，如图所示
 
 
-1. [国内](https://zegodev.gitee.io/zego-express-webrtc-sample/docsSharing/index.html)
-2. [海外](https://zegodev.github.io/zego-express-webrtc-sample/docsSharing/index.html)
-
-
-
-具体步骤：
-
-
-输入appID->userID、token填test->初始化->切换为测试环境->选择要上传的文件->选择renderType->上传->成功后会返回fileID
-
-
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/2309522/1612418539160-7f640abd-01b1-4b58-9aed-3cf3bb1857ca.png#align=left&display=inline&height=662&margin=%5Bobject%20Object%5D&name=image.png&originHeight=662&originWidth=1782&size=137954&status=done&style=none&width=1782)
 注意：在连接测试环境的情况下，文件id通过文件共享SDK上传后返回，与appID无关联。
-
-
-将原先获取文件列表数据的方法删除并将上传文件成功后返回的 fileID 按照规定的数据格式，填到本地数据管理中，如图所示
-
-![image.png](https://cdn.nlark.com/yuque/0/2021/png/2309522/1610523400529-28660639-f65f-46f5-8a0f-e77ea3a4827e.png#align=left&display=inline&height=503&margin=%5Bobject%20Object%5D&name=image.png&originHeight=1006&originWidth=1596&size=245467&status=done&style=none&width=798)
-
 
 文件共享参考API文档：
 

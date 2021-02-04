@@ -30,7 +30,7 @@ class WebZegoClient extends ZegoClient {
     logURL && (config.logURL = logURL)
     this.setState({ user })
     zg.setLogConfig(config)
-
+    zg.setDebugVerbose(false)
     this._docsClient = zgDocsClient
 
     console.warn('init web sdk done')

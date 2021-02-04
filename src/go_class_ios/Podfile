@@ -4,8 +4,9 @@
 target 'go_class' do
   # Comment the next line if you don't want to use dynamic frameworks use_frameworks!
 
-  pod 'ZegoWhiteboardView/LiveRoom'
-  pod 'ZegoDocsView/Basic_zh'
+  pod 'ZegoWhiteboardView/LiveRoom','1.16.0'
+  pod 'ZegoDocsView/Basic_zh','1.16.0'
+  pod 'ZegoLiveRoom/WhiteBoard','1.21.1.22'
   
   
   pod 'YYWebImage'

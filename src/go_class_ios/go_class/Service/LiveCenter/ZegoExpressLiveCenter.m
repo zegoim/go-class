@@ -364,17 +364,22 @@ static ZegoExpressLiveCenter *sharedInstance = nil;
 - (void)onRoomStateUpdate:(ZegoRoomState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData roomID:(NSString *)roomID {
     self.roomState = state;
     self.roomID = roomID;
+    NSString *customReason = [extendedData objectForKey:@"custom_kickout_message"];
     switch (state) {
         case ZegoRoomStateDisconnected:
-            self.streamList = nil;
-            if (self.loginCompleteAction) {
-                self.loginCompleteAction(errorCode);
-                self.loginCompleteAction = nil;
+            if (customReason.length > 0 && [self.delegate respondsToSelector:@selector(onKickOut:roomID:customReason:)]) {
+                [self.delegate onKickOut:1 roomID:roomID customReason:@"online_time_limit"];
+            } else {
+                self.streamList = nil;
+                if (self.loginCompleteAction) {
+                    self.loginCompleteAction(errorCode);
+                    self.loginCompleteAction = nil;
+                }
+                if ([self.delegate respondsToSelector:@selector(onDisconnect:roomID:)]) {
+    //                [self.delegate onDisconnect:errorCode roomID:roomID];
+                }
+                
             }
-            if ([self.delegate respondsToSelector:@selector(onDisconnect:roomID:)]) {
-//                [self.delegate onDisconnect:errorCode roomID:roomID];
-            }
-            
             break;
         case ZegoRoomStateConnecting:
             self.streamList = nil;

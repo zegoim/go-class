@@ -198,6 +198,21 @@ SOFTWARE.
 
 
 
+## ZegoDocsView
+
+Copyright © 2018-2020 ZEGO. All Rights Reserved.
+
+
+## ZegoLiveRoom
+
+Copyright © 2018-2020 ZEGO. All Rights Reserved.
+
+
+## ZegoWhiteboardView
+
+Copyright © 2018-2020 ZEGO. All Rights Reserved.
+
+
 ## libextobjc
 
 Copyright (c) 2012 Justin Spahr-Summers

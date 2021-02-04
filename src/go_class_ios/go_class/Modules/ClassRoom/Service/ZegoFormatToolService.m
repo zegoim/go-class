@@ -141,4 +141,10 @@
     }
 }
 
+- (void)uploadFileWithType:(BOOL)isDynamicFile {
+    if ([self.delegate respondsToSelector:@selector(uploadFileWithType:)]) {
+        [self.delegate uploadFileWithType:isDynamicFile];
+    }
+}
+
 @end

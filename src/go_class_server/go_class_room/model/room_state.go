@@ -69,12 +69,12 @@ func ExistsRoomState(ctx context.Context, roomId string) bool {
 func SetSharingUid(ctx context.Context, roomId string, oldVal, newVal int64) (bool, error) {
 	script := `
     local key = KEYS[1]
-    local oldVal = tonumber(ARGV[1])
-	local newVal = tonumber(ARGV[2])
+    local oldVal = ARGV[1]
+	local newVal = ARGV[2]
 
-	local sharingUid = 0
+	local sharingUid = "0"
 	if redis.call("HEXISTS", key, "sharing_uid") == 1 then
-		sharingUid = tonumber(redis.call("HGET", key, "sharing_uid"))
+		sharingUid = redis.call("HGET", key, "sharing_uid")
 	end
 
 	if sharingUid == oldVal then 
@@ -97,12 +97,12 @@ func SetSharingUid(ctx context.Context, roomId string, oldVal, newVal int64) (bo
 func SetTeacherUid(ctx context.Context, roomId string, oldVal, newVal int64) (bool, error) {
 	script := `
     local key = KEYS[1]
-    local oldVal = tonumber(ARGV[1])
-	local newVal = tonumber(ARGV[2])
+    local oldVal = ARGV[1]
+	local newVal = ARGV[2]
 
-	local sharingUid = 0
+	local sharingUid = "0"
 	if redis.call("HEXISTS", key, "teacher_uid") == 1 then
-		sharingUid = tonumber(redis.call("HGET", key, "teacher_uid"))
+		sharingUid = redis.call("HGET", key, "teacher_uid")
 	end
 
 	if sharingUid == oldVal then 

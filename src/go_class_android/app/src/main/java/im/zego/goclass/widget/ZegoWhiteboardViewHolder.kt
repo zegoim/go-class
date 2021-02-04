@@ -16,18 +16,18 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.easypermission.Permission
 import im.zego.goclass.CONFERENCE_ID
+import im.zego.goclass.R
+import im.zego.goclass.classroom.ClassRoomManager
 import im.zego.goclass.sdk.ZegoSDKManager
 import im.zego.goclass.tool.PermissionHelper
 import im.zego.goclass.tool.ToastUtils
 import im.zego.goclass.upload.FileUtil
 import im.zego.zegodocs.*
+import im.zego.zegowhiteboard.ZegoWhiteboardConstants
 import im.zego.zegowhiteboard.ZegoWhiteboardManager
 import im.zego.zegowhiteboard.ZegoWhiteboardView
 import im.zego.zegowhiteboard.callback.IZegoWhiteboardViewScaleListener
 import im.zego.zegowhiteboard.callback.IZegoWhiteboardViewScrollListener
-import im.zego.goclass.R
-import im.zego.goclass.classroom.ClassRoomManager
-import im.zego.zegowhiteboard.ZegoWhiteboardConstants
 import im.zego.zegowhiteboard.model.ZegoWhiteboardViewModel
 import kotlin.math.round
 
@@ -559,7 +559,7 @@ class ZegoWhiteboardViewHolder : FrameLayout {
             if (errorCode == 0 && zegoWhiteboardView != null) {
                 onReceivePureWhiteboardView(zegoWhiteboardView)
             } else {
-                Toast.makeText(context, context.getString(R.string.wb_tip_failed_create_whiteboard, errorCode), Toast.LENGTH_LONG).show()
+                ToastUtils.showCenterToast(context.getString(R.string.wb_tip_failed_create_whiteboard, errorCode))
             }
             requestResult.invoke(errorCode)
         }
@@ -582,8 +582,7 @@ class ZegoWhiteboardViewHolder : FrameLayout {
                     }
                     if (count == 0) {
                         if (!success) {
-                            Toast.makeText(context, context.getString(R.string.wb_tip_failed_delete_whiteboard, code), Toast.LENGTH_LONG)
-                                .show()
+                            ToastUtils.showCenterToast(context.getString(R.string.wb_tip_failed_delete_whiteboard, code))
                         } else {
                             zegoDocsView?.unloadFile()
                             fileLoadSuccessed = false
@@ -596,7 +595,7 @@ class ZegoWhiteboardViewHolder : FrameLayout {
             ZegoWhiteboardManager.getInstance().destroyWhiteboardView(currentWhiteboardID)
             { errorCode, _ ->
                 if (errorCode != 0) {
-                    Toast.makeText(context, context.getString(R.string.wb_tip_failed_delete_whiteboard, errorCode), Toast.LENGTH_LONG).show()
+                    ToastUtils.showCenterToast(context.getString(R.string.wb_tip_failed_delete_whiteboard, errorCode))
                 } else {
                     zegoDocsView?.unloadFile()
                     fileLoadSuccessed = false
@@ -637,7 +636,7 @@ class ZegoWhiteboardViewHolder : FrameLayout {
                     }
                     processResult.invoke(errorCode, this)
                 } else {
-                    Toast.makeText(context, context.getString(R.string.wb_tip_failed_load_file, errorCode), Toast.LENGTH_LONG).show()
+                    ToastUtils.showCenterToast(context.getString(R.string.wb_tip_failed_load_file, errorCode))
                     processResult.invoke(errorCode, this)
                     // 可以考虑给个界面按钮点击重试
                 }
@@ -692,7 +691,7 @@ class ZegoWhiteboardViewHolder : FrameLayout {
                 }
             } else {
                 createResult(errorCode)
-                Toast.makeText(context, context.getString(R.string.wb_tip_failed_load_file, errorCode), Toast.LENGTH_LONG).show()
+                ToastUtils.showCenterToast(context.getString(R.string.wb_tip_failed_load_file, errorCode))
             }
         }
     }
@@ -762,11 +761,7 @@ class ZegoWhiteboardViewHolder : FrameLayout {
                     whiteboardViewAddFinished = errorCode == 0
                 }
             } else {
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.wb_tip_failed_create_whiteboard, errorCode),
-                    Toast.LENGTH_LONG
-                ).show()
+                ToastUtils.showCenterToast(context.getString(R.string.wb_tip_failed_create_whiteboard, errorCode))
             }
             requestResult.invoke(errorCode)
         }

@@ -67,11 +67,7 @@ android {
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
-            if (variant.buildType.name == "debug") {
-                output.outputFileName = "goclass_v${android.defaultConfig.versionName}_${appBuildType}.apk"
-            } else if (variant.buildType.name == "release") {
-                output.outputFileName = "goclass_v${android.defaultConfig.versionName}.apk"
-            }
+            output.outputFileName = "goclass.apk"
         }
     }
 }

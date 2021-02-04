@@ -87,6 +87,7 @@ static ZegoLiveRoomLiveCenter *sharedInstance = nil;
      [api setPlayerDelegate:center];
      [api setIMDelegate:center];
      [api setRoomExtraInfoUpdateDelegate:center];
+    [api setLatencyMode:ZEGOAPI_LATENCY_MODE_LOW3];
  
      //文档初始化
      ZegoDocsViewConfig * docsViewConfig = [ZegoDocsViewConfig new];
@@ -314,7 +315,7 @@ static ZegoLiveRoomLiveCenter *sharedInstance = nil;
 - (void)onRoomExtraInfoUpdated:(NSString *)roomId roomExtraInfoList:(NSArray<ZegoRoomExtraInfo *> *)roomExtraInfoList {
     ZegoRoomExtraInfo *info = roomExtraInfoList.firstObject;
     if ([self.delegate respondsToSelector:@selector(onRecvWhiteboardChange:)] && [info.key isEqualToString:kZegoRoomCurrentWhiteboardKey]) {
-        [self.delegate onRecvWhiteboardChange:info.value];
+        [self.delegate onRecvWhiteboardChange:[info.value longLongValue]];
     }
 }
 
@@ -354,8 +355,14 @@ static ZegoLiveRoomLiveCenter *sharedInstance = nil;
 }
 
 - (void)onReconnect:(int)errorCode roomID:(NSString *)roomID {
-    if ([self.delegate respondsToSelector:@selector(onRecvReliableMessage:room:)]) {
+    if ([self.delegate respondsToSelector:@selector(onReconnect:roomID:)]) {
         [self.delegate onReconnect:errorCode roomID:roomID];
+    }
+}
+
+- (void)onKickOut:(int)reason roomID:(NSString *)roomID customReason:(NSString *)customReason {
+    if ([self.delegate respondsToSelector:@selector(onKickOut:roomID:customReason:)]) {
+        [self.delegate onKickOut:reason roomID:roomID customReason:customReason];
     }
 }
 

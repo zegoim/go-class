@@ -6,6 +6,7 @@
     <slot></slot>
     <room-dialog-loading v-if="loading" />
     <room-dialog-error ref="errorDialog" />
+    <room-dialog-message ref="timeOutDialog" :msg="timeOutMessage"/>
   </div>
 </template>
 
@@ -15,13 +16,15 @@ import { storage } from '@/utils/tool'
 import ErrorHandle from '@/utils/error'
 import RoomDialogLoading from '@/components/room/room-dialog-loading'
 import RoomDialogError from '@/components/room/room-dialog-error'
+import RoomDialogMessage from '@/components/base/base-dialog-message'
 import { postRoomHttp, roomStore, setGoclassEnv } from '@/service/biz/room'
 
 export default {
   name: 'ZegoLiveRoom',
   components: {
     RoomDialogLoading,
-    RoomDialogError
+    RoomDialogError,
+    RoomDialogMessage
   },
   data() {
     return {
@@ -46,7 +49,8 @@ export default {
       roomExtraInfo: null,
       messages: [], // 房间消息
       sendLoadingTimer: null, //发送消息loading
-      sendLoadingInterval: 5 //发送消息loading
+      sendLoadingInterval: 5, //发送消息loading
+      timeOutMessage: ''
     }
   },
   provide() {
@@ -92,6 +96,7 @@ export default {
           nick_name: userName
         }
         this.setRoomMessage(1, data)
+        this.$message(this.$t('room.room_login_time_limit_15'))
         return
       }
       // 非登录页面跳转，直接刷新页面时需要执行业务登录接口
@@ -205,14 +210,16 @@ export default {
         }
       })
       // 监听房间状态
-      this.client.on('roomStateUpdate', (roomID, state) => {
-        console.warn('roomStateUpdate', state)
+      this.client.on('roomStateUpdate', (roomID, state, errorCode, extendedData) => {
+        console.warn('roomStateUpdate:', state)
+        console.warn('errorCode:', errorCode)
+        console.warn('extendedData:', extendedData)
         this.roomState = state
-        if (!this.client.isLogin) return // 对应loginState
+        // if (!this.client.isLogin) return // 对应loginState
         switch (state) {
           // 连接中
           case 'CONNECTING':
-            this.offlineHandle()
+            // this.offlineHandle()
             break
           // 已连接
           case 'CONNECTED':
@@ -220,7 +227,22 @@ export default {
             break
           // 连接失败
           case 'DISCONNECTED':
-            this.disconnectedHandle()
+            if(errorCode === 1002050){
+              this.timeOutMessage = this.$t('room.room_login_time_out')
+              this.$refs.timeOutDialog.show = true
+            }else{
+            // if(extendedData !== null){
+            //   console.warn(this.$t('system.experience_duration_expired'))
+            //   this.$alert(this.$t('system.experience_duration_expired'), '', {
+            //     confirmButtonText: this.$t('room.room_ok'),
+            //     callback: () => {
+            //       window.location.hash = '#/login'
+            //     }
+            //   });
+            // }else{
+              this.disconnectedHandle()
+            }
+            // this.disconnectedHandle()
             break
           default:
             break
@@ -232,6 +254,7 @@ export default {
           type: roomExtraInfoList[0].key,
           data: roomExtraInfoList[0].value
         }
+        console.warn('监听到的roomExtraInfo',roomExtraInfo)
         // tips: 第一次emit组件还没渲染，监听不到
         // this.roomExtraInfo && this.emitRoomExtraInfoUpdate(roomExtraInfo)
         this.$set(this, 'roomExtraInfo', roomExtraInfo)
@@ -466,7 +489,7 @@ export default {
       this.streamList = []
       this.localStream = null
       this.initLoadingTimerHandle()
-      this.$refs.errorDialog.show = true
+      if(this.$refs.errorDialog) this.$refs.errorDialog.show = true
       this.handleDestroyStream()
       roomStore.close()
     },

@@ -15,6 +15,7 @@
     <string name="wb_tip_save_success">保存成功，可在系统相册中查看</string>
     <string name="wb_tool_drag">拖拽</string>
     <string name="wb_tool_format">格式</string>
+    <string name="wb_tool_upload_files">上传</string>
     <string name="wb_tool_clear">清空</string>
     <string name="wb_tool_pen_border_thickness">笔触&amp;边框粗细</string>
     <string name="wb_tool_font">字体</string>
@@ -22,6 +23,10 @@
     <string name="wb_tool_text_color">颜色</string>
     <string name="wb_tool_click">点击</string>
     <string name="wb_tool_shape_selection">形状选择</string>
+    <string name="wb_tool_upload_static_content">支持 PPT(X)、DOC(X)、XLS(X)、PDF、TXT、JPG、JPEG、PNG、BMP、HEIC 格式</string>
+    <string name="wb_tool_upload_static">上传静态文件</string>
+    <string name="wb_tool_upload_dynamic">上传动态文件</string>
+    <string name="wb_tool_upload_dynamic_content">支持 PPTX、PPT 格式</string>
     <string name="wb_cancel">取消</string>
     <string name="wb_determine">确定</string>
     <string name="wb_tip_are_u_sure_close">确定关闭【%s】吗?</string>
@@ -138,22 +143,28 @@
     <string name="wb_tip_fail_save">保存失败，请重试</string>
     <string name="clear_cur_page">清空页</string>
     <string name="wb_tip_unable_save">无法保存白板图片</string>
+    <string name="wb_tip_unable_upload_file">无法上传文件</string>
     <string name="wb_tip_open_permission">请在系统的设置中开启存储权限</string>
     <string name="jump_to_settings">前往设置</string>
     <string name="upload_file_request_access">上传文件需要您允许访问存储权限</string>
     <string name="upload_file">上传文件</string>
+    <string name="upload_convert_fail">格式转换失败，请重新选择</string>
+    <string name="doc_file_empty">文件内容为空，请重新选择</string>
     <string name="upload_file_failed_no_access">上传失败,请允许存储访问权限</string>
     <string name="cancel_upload_file">已经取消上传</string>
     <string name="cancel_upload">取消上传</string>
     <string name="upload_file_dir_error">该文件无法上传</string>
-    <string name="file_not_existed">文件不存在</string>
+    <string name="doc_file_not_found">文件不存在</string>
+    <string name="doc_file_not_supported">文件不符合规范，请重新选择</string>
     <string name="wb_tip_switch_failed">切换失败</string>
     <string name="wb_tip_failed_get_whiteboard">获取当前白板失败，errorCode = %d</string>
     <string name="room_end_teaching_fail">结束教学失败：%d</string>
     <string name="exception_restart_app">%d秒后重启应用</string>
-    <string name="failed_to_upload_file">上传文件失败</string>
-    <string name="upload_progress">上传进度：</string>
-    <string name="upload_complete">上传完成，正在转码文件...</string>
+    <string name="doc_uploading_failed">文件上传失败，请重试</string>
+    <string name="doc_converting_failed">文件转码失败，请重试</string>
+    <string name="doc_uploading">文件上传中 (%1$.2f%&#37;) </string>
+    <string name="doc_converting">文件正在转码</string>
+    <string name="doc_uploading_size_limit">文件大小超过限制，请重新选择</string>
     <string name="transcoding_complete">转码完成，fileID =</string>
     <string name="join_class_failed_try_again">加入课堂失败，请重试</string>
     <string name="exception_exit_app">很抱歉, 程序出现异常, 即将退出</string>
@@ -181,5 +192,8 @@
     <string name="users_do_not_have_to_share">用户没有共享</string>
     <string name="user_is_not_a_teacher">用户不是老师</string>
     <string name="sync_message_error">同步消息错误</string>
+    <string name="room_login_time_limit_15">课堂体验时长为15分钟</string>
+    <string name="room_login_time_out">课堂体验时长已到期</string>
+
 
 </resources>

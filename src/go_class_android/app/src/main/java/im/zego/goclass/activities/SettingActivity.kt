@@ -42,6 +42,11 @@ class SettingActivity : BaseActivity() {
                     .also {
                         it.setOnConfirmClickListener { str ->
                             tv_language.text = str
+                            if (str == "English") {
+                                AppLanguage.setCurrentLanguageLocale(Locale.ENGLISH)
+                            } else {
+                                AppLanguage.setCurrentLanguageLocale(Locale.CHINESE)
+                            }
                         }
                     }
             selectLanguagePopWindow.show(setting_language)
@@ -55,23 +60,10 @@ class SettingActivity : BaseActivity() {
                 (ZegoSDKManager.getInstance().calculateCacheSize() / 1024).toString() + "KB"
         }
         // 设置版本号
-        val lastIndexOf = BuildConfig.VERSION_NAME.lastIndexOf(".")
-        val version = if (lastIndexOf != -1) {
-            BuildConfig.VERSION_NAME.substring(0, lastIndexOf)
-        } else {
-            BuildConfig.VERSION_NAME
-        }
-        app_version.text = "App: $version"
+        val version = BuildConfig.VERSION_NAME
+        app_version.text = "v$version"
+        video_version.text = ZegoSDKManager.getInstance().rtcSDKName()
 
-        abi.text = BuildConfig.abi_Filters
-
-        var roomSDKMessage = ZegoSDKManager.getInstance().roomSDKMessage()
-        roomSDKMessage =
-            if (roomSDKMessage.length > 22) roomSDKMessage.substring(0, 22) else roomSDKMessage
-        video_version.text = "RTC: $roomSDKMessage"
-
-        docs_version.text = "ZegoDocsView SDK: ${ZegoDocsViewManager.getInstance().version}"
-        whiteboard_version.text =
-            "ZegoWhiteboardView SDK: ${ZegoWhiteboardManager.getInstance().version}"
     }
+
 }

@@ -82,7 +82,7 @@ object CrashHandler : Thread.UncaughtExceptionHandler {
         object : Thread() {
             override fun run() {
                 Looper.prepare()
-                Toast.makeText(mContext, mContext?.getString(R.string.exception_exit_app), Toast.LENGTH_LONG).show()
+                ToastUtils.showCenterToast(mContext?.getString(R.string.exception_exit_app))
                 Looper.loop()
             }
         }.start()

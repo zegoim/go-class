@@ -95,6 +95,8 @@ class ZegoLiveRoomWrapper : IZegoVideoSDKProxy {
 
     override fun isLiveRoom() = true
 
+    override fun rtcSDKName() = "LiveRoom"
+
     override fun startPublishing(
         streamID: String,
         userName: String,

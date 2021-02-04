@@ -3,6 +3,7 @@ package im.zego.goclass.activities
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
@@ -10,7 +11,6 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.Window
-import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.core.view.GravityCompat
 import androidx.core.view.children
@@ -23,6 +23,8 @@ import im.zego.goclass.network.ZegoApiErrorCode
 import im.zego.goclass.network.ZegoApiErrorCode.Companion.getPublicMsgFromCode
 import im.zego.goclass.sdk.*
 import im.zego.goclass.tool.*
+import im.zego.goclass.upload.UploadFileHelper
+import im.zego.goclass.upload.UploadFileHelper.Companion.clearUploadingFileSet
 import im.zego.goclass.widget.*
 import im.zego.zegodocs.ZegoDocsViewConstants
 import im.zego.zegowhiteboard.ZegoWhiteboardView
@@ -30,6 +32,7 @@ import im.zego.zegowhiteboard.callback.IZegoWhiteboardManagerListener
 import kotlinx.android.synthetic.main.activity_join.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_main_content.*
+
 
 /**
  * 定制课堂主界面
@@ -42,6 +45,9 @@ class MainActivity : BaseActivity() {
 
     // 摄像头 PopWindow
     private lateinit var cameraPopWindow: CameraPopWindow
+
+    // 文件上传进度 PopWindow
+    private lateinit var loadingPopWindow: LoadingPopWindow
 
     // 加载 Dialog
     private lateinit var loadingDialog: LoadingDialog
@@ -145,6 +151,46 @@ class MainActivity : BaseActivity() {
             chat_window.visibility = View.VISIBLE
             chat_window.initView()
         }
+
+        main_whiteboard_tools_view.onInterceptUploadClicked {
+
+            if (container.getFileWhiteboardHolderCount() >= ZegoSDKManager.MAX_FILE_WB_COUNT) {
+                ToastUtils.showCenterToast(getString(R.string.wb_tip_exceed_max_number_file))
+                return@onInterceptUploadClicked true
+            }
+
+            return@onInterceptUploadClicked false
+
+        }
+
+        main_whiteboard_tools_view.onUploadClicked { errorCode, isDynamic ->
+            if (errorCode != 0) {
+                return@onUploadClicked
+            }
+            // 当文件已打开超过十个时不再进行文件上传
+            if (container.getFileWhiteboardHolderCount() > ZegoSDKManager.MAX_FILE_WB_COUNT) {
+                ToastUtils.showCenterToast(getString(R.string.wb_tip_exceed_max_number_file))
+                return@onUploadClicked
+            }
+
+            if (isDynamic) {
+                UploadFileHelper.uploadFile(
+                    this,
+                    ZegoDocsViewConstants.ZegoDocsViewRenderTypeDynamicPPTH5
+                )
+            } else {
+                UploadFileHelper.uploadFile(
+                    this,
+                    ZegoDocsViewConstants.ZegoDocsViewRenderTypeVectorAndIMG
+                )
+            }
+        }
+
+        // 初始化文件上传进度 PopWindow
+        loadingPopWindow = LoadingPopWindow(this)
+
+        ToastUtils.showCenterToast(getString(R.string.room_login_time_limit_15))
+
     }
 
     /**
@@ -458,7 +504,7 @@ class MainActivity : BaseActivity() {
                     Logger.i(TAG, "createFileWhiteBoardView errorCode:$errorCode")
                     if (errorCode == 0) {
                         // 创建成功，添加白板
-                        drawer_whiteboard_list.addWhiteboard(holder.getCurrentWhiteboardModel())
+                        drawer_whiteboard_list.addWhiteboard(holder!!.getCurrentWhiteboardModel())
                     }
                 }
             }
@@ -545,8 +591,16 @@ class MainActivity : BaseActivity() {
                                     main_bottom_camera.isSelected = on
                                 } else {
                                     // 关掉
-                                    ClassRoomManager.setUserCamera(ClassRoomManager.myUserId, false) { errorCode ->
-                                        ToastUtils.showCenterToast(getPublicMsgFromCode(errorCode, this@MainActivity))
+                                    ClassRoomManager.setUserCamera(
+                                        ClassRoomManager.myUserId,
+                                        false
+                                    ) { errorCode ->
+                                        ToastUtils.showCenterToast(
+                                            getPublicMsgFromCode(
+                                                errorCode,
+                                                this@MainActivity
+                                            )
+                                        )
                                     }
                                 }
                                 seat_video_window.onUserCameraChanged(userId, on, selfChanged)
@@ -584,8 +638,16 @@ class MainActivity : BaseActivity() {
                                     main_bottom_mic.isSelected = on
                                 } else {
                                     // 关掉
-                                    ClassRoomManager.setUserMic(ClassRoomManager.myUserId, false) { errorCode ->
-                                        ToastUtils.showCenterToast(getPublicMsgFromCode(errorCode, this@MainActivity))
+                                    ClassRoomManager.setUserMic(
+                                        ClassRoomManager.myUserId,
+                                        false
+                                    ) { errorCode ->
+                                        ToastUtils.showCenterToast(
+                                            getPublicMsgFromCode(
+                                                errorCode,
+                                                this@MainActivity
+                                            )
+                                        )
                                     }
                                 }
                                 seat_video_window.onUserMicChanged(userId, on, selfChanged)
@@ -639,8 +701,16 @@ class MainActivity : BaseActivity() {
                             main_bottom_camera.isSelected = grant
                         } else {
                             // 关掉
-                            ClassRoomManager.setUserCamera(ClassRoomManager.myUserId, false) { errorCode ->
-                                ToastUtils.showCenterToast(getPublicMsgFromCode(errorCode, this@MainActivity))
+                            ClassRoomManager.setUserCamera(
+                                ClassRoomManager.myUserId,
+                                false
+                            ) { errorCode ->
+                                ToastUtils.showCenterToast(
+                                    getPublicMsgFromCode(
+                                        errorCode,
+                                        this@MainActivity
+                                    )
+                                )
                             }
                         }
                     }
@@ -658,8 +728,16 @@ class MainActivity : BaseActivity() {
                                 main_bottom_mic.isSelected = grant
                             } else {
                                 // 关掉
-                                ClassRoomManager.setUserMic(ClassRoomManager.myUserId, false) { errorCode ->
-                                    ToastUtils.showCenterToast(getPublicMsgFromCode(errorCode, this@MainActivity))
+                                ClassRoomManager.setUserMic(
+                                    ClassRoomManager.myUserId,
+                                    false
+                                ) { errorCode ->
+                                    ToastUtils.showCenterToast(
+                                        getPublicMsgFromCode(
+                                            errorCode,
+                                            this@MainActivity
+                                        )
+                                    )
                                 }
                             }
                         }
@@ -703,6 +781,34 @@ class MainActivity : BaseActivity() {
                 Logger.i(TAG, "onLeaveJoinLive() userId: $userId")
                 drawer_user_list.updateAll()
                 seat_video_window.onLeaveJoinLive(userId)
+            }
+        })
+
+        // 用户在房间超过有效时长，被踢出房间，弹框提示
+        ZegoSDKManager.getInstance().setKickOutListener(object : IKickOutListener {
+            override fun onKickOut(reason: Int, roomID: String, customReason: String) {
+                ZegoDialog
+                    .Builder(this@MainActivity)
+                    .setMessage(R.string.room_login_time_out)
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.login_button_confirm) { dialog, _ ->
+                        dialog.dismiss()
+                        // 学生离开课堂
+                        ClassRoomManager.leaveClass(object : ZegoApiClient.RequestCallback<Any> {
+                            override fun onResult(result: Result, t: Any?) {
+                                if (result.code != 0 && result.code != ZegoApiErrorCode.NEED_LOGIN) {
+                                    ToastUtils.showCenterToast(
+                                        getPublicMsgFromCode(
+                                            result.code,
+                                            this@MainActivity
+                                        )
+                                    )
+                                }
+                            }
+                        })
+                        finish()
+                    }
+                    .show()
             }
         })
     }
@@ -1206,5 +1312,78 @@ class MainActivity : BaseActivity() {
         layout_drawer_right.children.forEach {
             it.visibility = if (it == drawerChild) View.VISIBLE else View.GONE
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        UploadFileHelper.onActivityResult(this, requestCode, resultCode, data) { errorCode, state, fileID, uploadPercent ->
+            Log.d(
+                TAG,
+                "onActivityResult() called with: errorCode = [$errorCode], state = [$state], fileID = [$fileID],percent:$uploadPercent"
+            );
+            if (errorCode != 0) {
+                when (errorCode) {
+                    2010001 -> {
+                        ToastUtils.showCenterToast(getString(R.string.doc_file_not_found))
+                    }
+                    2020002 -> {
+                        ToastUtils.showCenterToast(getString(R.string.doc_uploading_size_limit))
+                    }
+                    2020003 -> {
+                        ToastUtils.showCenterToast(getString(R.string.doc_file_not_supported))
+                    }
+                    2020004 -> {
+                        ToastUtils.showCenterToast(getString(R.string.upload_convert_fail))
+                    }
+                    2020006 -> {
+                        ToastUtils.showCenterToast(getString(R.string.doc_file_empty))
+                    }
+                    else -> {
+                        ToastUtils.showCenterToast(getString(R.string.doc_uploading_failed))
+                    }
+                }
+                loadingPopWindow.dismiss()
+                return@onActivityResult
+            }
+
+            when (state) {
+                ZegoDocsViewConstants.ZegoDocsViewUploadStateUpload -> {
+                    if (uploadPercent == 100f) {
+                        showLoadingPopWindow(getString(R.string.doc_converting));
+                    } else {
+                        showLoadingPopWindow(getString(R.string.doc_uploading, uploadPercent));
+                    }
+                }
+                ZegoDocsViewConstants.ZegoDocsViewUploadStateConvert -> {
+                    if (fileID == null) {
+                        loadingPopWindow.dismiss()
+                    } else {
+                        // 创建文件白板
+                        container.createFileWhiteBoardView(fileID) { errorCode, holder ->
+                            Logger.i(TAG, "createFileWhiteBoardView errorCode:$errorCode")
+                            if (errorCode == 0) {
+                                // 创建成功，添加白板
+                                drawer_whiteboard_list.addWhiteboard(holder!!.getCurrentWhiteboardModel())
+                            }
+                            loadingPopWindow.dismiss()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showLoadingPopWindow(stringRes: String) {
+        if (!loadingPopWindow.isShowing) {
+            loadingPopWindow.updateText(stringRes)
+            loadingPopWindow.show(layout_drawer_content, loadingPopWindow)
+        } else {
+            loadingPopWindow.updateText(stringRes)
+        }
+    }
+
+    override fun onDestroy() {
+        clearUploadingFileSet()
+        super.onDestroy()
     }
 }

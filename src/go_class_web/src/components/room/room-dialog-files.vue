@@ -46,8 +46,7 @@ export default {
   inject: ['zegoWhiteboardArea'],
   data() {
     return {
-      fileList: [],
-      waitting: false
+      fileList: []
     }
   },
   computed: {
@@ -77,16 +76,8 @@ export default {
      * @desc: 创建共享文件
      * @param {id} 文件id
      */
-    async createDocView(id) {
-      const checkResult = this.zegoWhiteboardArea.checkViewFileMaxLength('file')
-      if (checkResult) return this.showToast(checkResult)
-      if (this.waitting) return
-      this.waitting = true
-      // 如果新建文件之前的是动态ppt，需手动停止该文件音视频
-      if (this.activeViewIsPPTH5) this.zegoWhiteboardArea.stopPlay()
-      this.zegoWhiteboardArea.setIsAllowSendRoomExtraInfo(true)
-      await this.zegoWhiteboardArea.createFileView(id)
-      this.waitting = false
+    createDocView(id) {
+      this.zegoWhiteboardArea.createDocView(id)
       this.closeDialog()
     },
     closeDialog() {
@@ -147,8 +138,8 @@ export default {
     }
     .file-item .state {
       display: inline-block;
-      // padding: 0 5px;
-      width: 28px;
+      padding: 0 5px;
+      // width: 28px;
       height: 16px;
       border-radius: 4px;
       background-color: #0045ff;

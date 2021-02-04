@@ -8604,8 +8604,8 @@ vue-hot-reload-api@^2.3.0:
 
 vue-i18n@^8.22.4:
   version "8.22.4"
-  resolved "https://registry.npmjs.org/vue-i18n/-/vue-i18n-8.22.4.tgz#255cbdab4ffa7337c5819b82dd171208af74e385"
-  integrity sha512-XLI5s0AdqMP2Lf4I4CmdmOq8kjb5DDFGR77wAuxCfpEuYSfhTRyyx6MetgZMiL6Lxa0DasjBOiOcciU3NkL3/Q==
+  resolved "https://registry.npm.taobao.org/vue-i18n/download/vue-i18n-8.22.4.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fvue-i18n%2Fdownload%2Fvue-i18n-8.22.4.tgz#255cbdab4ffa7337c5819b82dd171208af74e385"
+  integrity sha1-JVy9q0/6czfFgZuC3RcSCK9044U=
 
 "vue-loader-v16@npm:vue-loader@^16.0.0-beta.3":
   version "16.0.0-beta.5"
@@ -9001,3 +9001,20 @@ yorkie@^2.0.0:
     is-ci "^1.0.10"
     normalize-path "^1.0.0"
     strip-indent "^2.0.0"
+
+zego-express-docsview-web@^1.16.0:
+  version "1.16.0"
+  resolved "https://registry.npmjs.org/zego-express-docsview-web/-/zego-express-docsview-web-1.16.0.tgz#89d7010228a892b71183fd35eaf510a9ce32b70c"
+  integrity sha512-6hQ9G+b+DeuLt5amzXZ+Jt2V2f+5GXF5X57bYPHiSwBZQx93UOD/4iSZ6AVPXUke0Ehe1Mqk6wU/Tp92Kj96NA==
+
+zego-express-engine-webrtc@^1.15.0:
+  version "1.19.0"
+  resolved "https://registry.npmjs.org/zego-express-engine-webrtc/-/zego-express-engine-webrtc-1.19.0.tgz#dbaf8567fc389d256fc4a397272d7cc7e9a4df77"
+  integrity sha512-atrAPRrj7V53VwxWvAaEIqaHD6dsE5S3+GTvC4vARYBrmIPKxB/pxhwO20BDd9qjSGcYQtlXJ6dbbP6b5CEqkQ==
+
+zego-express-whiteboard-web@^1.16.0:
+  version "1.16.0"
+  resolved "https://registry.npmjs.org/zego-express-whiteboard-web/-/zego-express-whiteboard-web-1.16.0.tgz#18bebbe4208389dbc6bc44294be4b7463645a10a"
+  integrity sha512-LBL3qRMOqlwa8R4zgifNN2b+JN/WLGmMdHv5hW7k89G4qX1QtkHEqEqluzrSlYBt/p9TIzpHC2RCMg7wi/oVXA==
+  dependencies:
+    zego-express-engine-webrtc "^1.15.0"

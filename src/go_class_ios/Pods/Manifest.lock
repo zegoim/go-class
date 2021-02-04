@@ -60,6 +60,10 @@ PODS:
   - YYWebImage (1.0.5):
     - YYCache
     - YYImage
+  - ZegoDocsView/Basic_zh (1.16.0)
+  - ZegoLiveRoom/WhiteBoard (1.21.1.22)
+  - ZegoWhiteboardView/LiveRoom (1.16.0):
+    - ZegoLiveRoom/WhiteBoard (= 1.21.1.22)
 
 DEPENDENCIES:
   - AFNetworking (~> 4.0)
@@ -69,6 +73,9 @@ DEPENDENCIES:
   - YYModel
   - YYText
   - YYWebImage
+  - ZegoDocsView/Basic_zh (= 1.16.0)
+  - ZegoLiveRoom/WhiteBoard (= 1.21.1.22)
+  - ZegoWhiteboardView/LiveRoom (= 1.16.0)
 
 SPEC REPOS:
   trunk:
@@ -81,6 +88,9 @@ SPEC REPOS:
     - YYModel
     - YYText
     - YYWebImage
+    - ZegoDocsView
+    - ZegoLiveRoom
+    - ZegoWhiteboardView
 
 SPEC CHECKSUMS:
   AFNetworking: 7864c38297c79aaca1500c33288e429c3451fdce
@@ -92,7 +102,10 @@ SPEC CHECKSUMS:
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
   YYWebImage: 5f7f36aee2ae293f016d418c7d6ba05c4863e928
+  ZegoDocsView: 204e9a6909173564833aaada63d36405a3170a1e
+  ZegoLiveRoom: 778bcae04ea153bf2e7575c5abf275909583b251
+  ZegoWhiteboardView: af961c4622c521250afc74d6b16453d61f621284
 
-PODFILE CHECKSUM: 9791a25666d009bd522c22d908ce5cbbee2c0013
+PODFILE CHECKSUM: d7afe42d57e95d1c5e16e4a84dc134ba6c2fe32d
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.0

@@ -158,7 +158,7 @@ static ZegoAlertView *sharedInstance = nil;
     [noButton addTarget:self action:@selector(onTapNo) forControlEvents:UIControlEventTouchUpInside];
 
     if (self.themeStyle == ZegoAlertViewThemeStyleStudent) {
-        [noButton setTitle:[NSString zego_localizedString:@"setting_cancel"] forState:UIControlStateNormal];
+        [noButton setTitle:[NSString zego_localizedString:@"room_cancel"] forState:UIControlStateNormal];
     }else if (self.themeStyle == ZegoAlertViewThemeStyleGalleryAuth) {
         [noButton setTitle:[NSString zego_localizedString:@"wb_tip_got_it"] forState:UIControlStateNormal];
         noButton.backgroundColor = [UIColor clearColor];
@@ -225,7 +225,7 @@ static ZegoAlertView *sharedInstance = nil;
         [self addSubview:noButton];
         [noButton addTarget:self action:@selector(onTapNo) forControlEvents:UIControlEventTouchUpInside];
         if (self.themeStyle == ZegoAlertViewThemeStyleNormal) {
-            [noButton setTitle:[NSString zego_localizedString:@"wb_cancel"] forState:UIControlStateNormal];
+            [noButton setTitle:[NSString zego_localizedString:@"room_cancel"] forState:UIControlStateNormal];
         } else {
             [noButton setTitle:[NSString zego_localizedString:@"login_retry"] forState:UIControlStateNormal];
         }

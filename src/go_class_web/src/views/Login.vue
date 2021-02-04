@@ -169,7 +169,8 @@ export default {
           label: this.$t('login.login_student')
         },
       ],
-      zego_locale: 'zh'
+      zego_locale: 'zh',
+      isDev: false
     }
   },
   computed: {
@@ -197,6 +198,7 @@ export default {
   mounted() {
     zegoClient.setState({ isInit: false })
     this.initParams()
+    this.isDev = window.location.hostname !== 'goclass.zego.im'
   },
   methods: {
     initParams() {

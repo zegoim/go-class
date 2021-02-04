@@ -24,6 +24,8 @@ interface IZegoVideoSDKProxy {
 
     fun isLiveRoom(): Boolean
 
+    fun rtcSDKName(): String
+
     fun startPublishing(
         streamID: String, userName: String,
         callback: IStreamPublishCallback

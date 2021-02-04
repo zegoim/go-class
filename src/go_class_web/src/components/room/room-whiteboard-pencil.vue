@@ -2,7 +2,8 @@
  * @Description: 白板工具-文字、矩形和画笔等样式设置
 -->
 <template>
-  <div class="pencil-text-setting">
+  <div :class="['pencil-text-setting', activePopperType === 'upload' ? 'upload-setting' : '']">
+    <div ref="trigger" />
     <div class="common-box pencil-box" v-if="activePopperType === 'graph' ">
       <div class="setting-title pencilThickness">{{$t('wb.wb_tool_shape_selection')}}</div>
       <ul class="pencil-style">
@@ -21,7 +22,7 @@
     </div>
 
     <div class="common-box pencil-box" v-if="activePopperType === 'pencil' || activePopperType === 'graph'">
-      <div class="setting-title pencilThickness">{{$t('wb.wb_tool_brush_tickness')}}</div>
+      <div class="setting-title pencilThickness">{{$t('wb.wb_tool_pen_style_thickness')}}</div>
       <ul class="bs-list">
         <li
           v-for="item in brushSizeList"
@@ -64,9 +65,9 @@
         </li>
       </ul>
     </div>
-    <div class="common-box">
+    <div class="common-box" v-if="activePopperType !== 'upload'">
       <div class="setting-title">
-        {{ { text: $t('wb.wb_tool_text_color'), pencil: $t('wb.wb_tool_pen_stroke_color'), graph: $t('wb.wb_tool_brush_stroke_color') }[activePopperType] }}
+        {{ { text: $t('wb.wb_tool_text_color'), pencil: $t('wb.wb_tool_pen_stroke_color'), graph: $t('wb.wb_tool_pen_stroke_color') }[activePopperType] }}
       </div>
       <ul class="color-list">
         <li
@@ -82,6 +83,20 @@
           ></div>
         </li>
       </ul>
+    </div>
+    <div class="common-box upload-box" v-if="activePopperType === 'upload'">
+      <div class="static">
+        <input type="file" class="static-upload-input" @change="uploadStatic" ref="staticRef" accept=".ppt,.pptx,.doc,.docx,.xls,.xlsx,.pdf,.txt,.jpg,.jpeg,.png, .bmp, .heic">
+        <p><span>{{$t('wb.wb_tool_upload_static')}}</span><span style="width:16px;height:16px" v-html="require(`../../assets/icons/room/static_file.svg`).default"></span></p>
+        {{$t('wb.wb_tool_upload_static_content')}}
+      </div>
+      
+      <el-divider></el-divider>
+      <div class="dymic">
+        <input type="file" class="dymic-upload-input" @change="uploadDynamic" ref="dynamicRef" accept=".pptx, .ppt">
+        <p><span>{{$t('wb.wb_tool_upload_dynamic')}}</span><span style="width:16px;height:16px" v-html="require(`../../assets/icons/room/dynamic_file.svg`).default"></span></p>
+        {{$t('wb.wb_tool_upload_dynamic_content')}}
+      </div>
     </div>
   </div>
 </template>
@@ -140,7 +155,8 @@ export default {
       textSizeList: [18, 24, 36, 48],
       colorList,
       textStyleList,
-      graphList
+      graphList,
+      fileList:[]
     }
   },
   inject: ['zegoWhiteboardArea'],
@@ -199,6 +215,26 @@ export default {
       let type = item.type
       this.zegoWhiteboardArea.setGraphType(type)
       this.zegoWhiteboardArea.activeWBView.setToolType(type)
+    },
+    uploadStatic(e){
+      this.$parent.resetUploadIconStatus()
+      try {
+        this.zegoWhiteboardArea.uploadFile(e.target.files[0], 3)
+        this.$refs.staticRef.value = null;
+      } catch (error) {
+        console.warn('uploadStatic',error)
+        this.$refs.staticRef.value = null;
+      }
+    },
+    uploadDynamic(e){
+      this.$parent.resetUploadIconStatus()
+      try {
+        this.zegoWhiteboardArea.uploadFile(e.target.files[0], 6)
+        this.$refs.dynamicRef.value = null;
+      } catch (error) {
+        console.warn('uploadDynamic',error)
+        this.$refs.dynamicRef.value = null;
+      }
     }
   }
 }
@@ -217,6 +253,55 @@ export default {
   box-shadow: 0px 10px 30px 0px rgba(0, 0, 0, 0.05);
   .common-box {
     display: block;
+  }
+  .upload-box {
+    padding: 8px 8px;
+    text-align: left;
+    @include sc(12px, #999999);
+    overflow: hidden;
+    word-break:break-all;
+    .el-divider--horizontal {
+      width: 200px;
+      margin: 8px 0 8px 8px;
+    }
+    .static, .dymic {
+      position: relative;
+      padding: 8px 8px;
+    }
+     :hover.static{
+        background-color: #f3f6ff;
+        border-radius: 4px;
+      }
+      :hover.dymic{
+        background-color: #f3f6ff;
+        border-radius: 4px;
+      }
+    .static-upload-input {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+    
+    .dymic-upload-input {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+    p {
+      display: flex;
+      justify-content: space-between;
+      margin: 0;
+      margin-bottom: 6px;
+      color: #18191a;
+    }
   }
   .bs-list {
     display: flex;
@@ -396,5 +481,13 @@ export default {
   top: 47%;
   right: -12px;
   content: '';
+}
+@media only screen and (max-height: 550px) {
+  .upload-setting {
+    @include abs-pos(-290%, 200%, auto, auto);
+  }
+  .upload-setting::after {
+    top: 85%;
+  }
 }
 </style>

@@ -6,7 +6,7 @@
 
 "setting_private_camera" = "Please allow access to your camera in the settings privacy camera option";
 "setting_private_mic" = "Please allow access to your microphone in the settings privacy microphone option";
-"setting_cancel" = "Cacnel";
+"setting_cancel" = "Cancel";
 "setting_go" = "Setting";
 
 "exception_restart_app" = "Restart the application in %d seconds";
@@ -47,7 +47,6 @@
 "login_setting" = "Setting";
 "login_clear_cache" = "Clear cache";
 "wb_created_by" = "created by";
-"wb_whiteboard_by" = "Whiteboard";
 "wb_preview" = "Preview";
 "wb_file_sheet_list" = "Sheet list";
 "wb_file_ppt_not_support" = "PPT does not support dragging, please click the top page turning button";
@@ -187,3 +186,22 @@
 "room_whiteboard_list" = "Whiteboard List";
 "room_setting_language" = "Language";
 "room_chat_me" = "Me";
+"wb_tool_upload_files" = "Upload";
+"wb_tool_upload_static" = "Upload Static Files";
+"wb_tool_upload_dynamic" = "Upload Dynamic Files";
+"wb_tool_upload_static_content" = "Support PPT(X), DOC(X), XLS(X), PDF, TXT, JPG, JPEG, PNG, BMP, HEIC, format";
+"wb_tool_upload_dynamic_content" = "Support PPTX,PPT format";
+"wb_tip_unable_upload_file" = "Unable to upload the file";
+"wb_tip_open_permission" = "Please enable storage permissions in the system settings";
+"doc_uploading" = "File uploading";
+"doc_converting" = "The file is transcoding";
+"doc_uploading_failed" = "Failed to upload the file,please try again";
+"doc_converting_failed" = "Failed to transcode the file,please try again";
+"doc_uploading_size_limit" = "The file size exceeds the limit, please select again";
+"doc_file_not_supported" = "The file does not conform to the specification, please select again";
+"doc_file_not_found" = "The file does not exist";
+"doc_formating_failed" = "Format conversion failed, please select again";
+"doc_file_empty" = "The file content is empty, please select again";
+"room_login_time_limit_15" = "Class experience is 15 minutes";
+"room_login_time_out" = "Class experience time has expired";
+"room_login_time_confirm" = "Confirm";

@@ -16,6 +16,7 @@ import im.zego.zegowhiteboard.ZegoWhiteboardManager
 import im.zego.zegowhiteboard.ZegoWhiteboardView
 import im.zego.goclass.R
 import im.zego.goclass.classroom.ClassRoomManager
+import im.zego.goclass.upload.UploadFileHelper.Companion.isUploadingFile
 import kotlinx.android.synthetic.main.layout_whiteboard_tools_view.view.*
 
 class WhiteboardToolsView : ScrollView {
@@ -30,6 +31,8 @@ class WhiteboardToolsView : ScrollView {
     private var onLineSelect: () -> Unit = {}
     private var onStyleClick: (PopupWindow) -> Unit = {}
     private var onClearClick: () -> Unit = {}
+    private var onUploadClick: (errorCode: Int, isDynamic: Boolean) -> Unit = { _: Int, _: Boolean -> }
+    private var onInterceptUploadClick: () -> Boolean = { -> false}
     private var onUndoClick: () -> Unit = {}
     private var onRedoClick: () -> Unit = {}
 
@@ -142,6 +145,7 @@ class WhiteboardToolsView : ScrollView {
                 }
                 onStyleClick.invoke(popWindow)
             }
+
             clear.setOnClickListener {
                 onClearClick.invoke()
                 zegoWhiteboardView?.clear()
@@ -160,6 +164,30 @@ class WhiteboardToolsView : ScrollView {
 
             save_image.setOnClickListener {
                 zegoWhiteboardViewHolder?.saveImage()
+            }
+
+            upload_files.setOnClickListener {
+
+                if(onInterceptUploadClick()){
+                    return@setOnClickListener
+                }
+
+
+                // 若当前已有文件正在上传则点击无效
+                if (isUploadingFile()) {
+                    onUploadClick(-1, false)
+                    return@setOnClickListener
+                }
+                var popWindow : ToolUploadPopupWindow? = null
+                popWindow = ToolUploadPopupWindow(context) { isDynamic ->
+                    onUploadClick(0, isDynamic)
+                    popWindow?.dismiss()
+                }
+                it.isActivated = true
+                popWindow.show(this)
+                popWindow.setOnDismissListener{
+                    upload_files.isActivated = false
+                }
             }
 
             if (DemoApplication.isFinal()) {
@@ -323,6 +351,14 @@ class WhiteboardToolsView : ScrollView {
 
     fun onClearClicked(onClearClick: () -> Unit) {
         this.onClearClick = onClearClick
+    }
+
+    fun onUploadClicked(onUploadClick: (errorCode: Int, isDynamic: Boolean) -> Unit) {
+        this.onUploadClick = onUploadClick
+    }
+
+    fun onInterceptUploadClicked(onInterceptUploadClick: () -> Boolean) {
+        this.onInterceptUploadClick = onInterceptUploadClick
     }
 
     fun onUndoClicked(onUndoClick: () -> Unit) {

@@ -22,6 +22,7 @@ typedef NS_ENUM(NSUInteger, ZegoViewAnimatorType) {
 @property (weak, nonatomic) UIView *toggledView;
 @property (strong, nonatomic) UIView *backgroundView;
 
+@property (nonatomic, strong) void (^dismissComplementBlock)(void);
 @end
 
 @implementation ZegoViewAnimator
@@ -274,6 +275,34 @@ static ZegoViewAnimator *sharedInstance = nil;
     
 }
 
++ (void)fadeInView:(UIView *)view onLeftOfView:(UIView *)rightView offset:(CGPoint)offset completion:(void (^ __nullable)(BOOL finished))completion dismissCompletion:(void (^ __nullable)(void))dismissCompletion {
+    ZegoViewAnimator *instance = [self sharedInstance];
+    instance.dismissComplementBlock = dismissCompletion;
+    instance.targetView = view;
+    instance.animatorType = ZegoViewAnimatorTypePop;
+    
+    UIView *container = [UIApplication sharedApplication].keyWindow;
+    __unused UIView *backView = [self getBackViewWithTapTarget:instance container:container];
+    [container addSubview:view];
+    
+    CGRect rightViewRect = [rightView.superview convertRect:rightView.frame toView:container];
+    CGPoint rightViewOrigin = rightViewRect.origin;
+    
+    CGFloat pointX = rightViewOrigin.x - view.bounds.size.width + offset.x;
+    CGFloat pointY = rightViewOrigin.y + offset.y;
+
+    view.frame = CGRectMake(pointX, pointY, view.bounds.size.width, view.bounds.size.height);
+    view.alpha = 1;
+    [UIView animateWithDuration:0.15 animations:^{
+//        backView.backgroundColor = [self defaultBackColor];
+        view.alpha = 1;
+    } completion:^(BOOL finished) {
+        if (completion) {
+            completion(finished);
+        }
+    }];
+}
+
 + (void)hideToRightForView:(nullable UIView *)view {
     ZegoViewAnimator *instance = [self sharedInstance];
     UIView *backView = [instance backgroundView];
@@ -307,9 +336,16 @@ static ZegoViewAnimator *sharedInstance = nil;
 - (void)onTapBack {
     if ([ZegoViewAnimator sharedInstance].animatorType == ZegoViewAnimatorTypeFromRight) {
         [ZegoViewAnimator hideToRight];
+        if (self.dismissComplementBlock) {
+            self.dismissComplementBlock();
+        }
     } else {
+        @weakify(self)
         [ZegoViewAnimator fadeView:nil completion:^(BOOL finished) {
-            
+            @strongify(self)
+            if (self.dismissComplementBlock) {
+                self.dismissComplementBlock();
+            }
         }];
     }
     
