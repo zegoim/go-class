@@ -287,7 +287,7 @@ class ZegoWhiteboardViewHolder : FrameLayout {
         }
 
         Log.i(TAG, "clearCurrentPage: ${curPageRectF.toString()}")
-        currentWhiteboardView?.clear(curPageRectF)
+        currentWhiteboardView?.clear(curPageRectF!!)
     }
 
     fun saveImage() {
@@ -864,7 +864,7 @@ class ZegoWhiteboardViewHolder : FrameLayout {
         fileLoadSuccessed = false
     }
 
-    fun addText(text: String?, positionX: Int, positionY: Int) {
+    fun addText(text: String, positionX: Int, positionY: Int) {
         currentWhiteboardView?.addText(text, positionX, positionY)
     }
 
