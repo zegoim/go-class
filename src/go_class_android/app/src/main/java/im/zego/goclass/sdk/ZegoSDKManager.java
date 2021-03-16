@@ -252,7 +252,7 @@ public class ZegoSDKManager {
      * @param context
      * @param initCallback
      */
-    private void initDocSdk(Context context, InitResult initCallback) {
+    private void initDocSdk(Application application, InitResult initCallback) {
         Log.i(TAG, "initDocSdk.... version:" + ZegoDocsViewManager.getInstance().getVersion());
         boolean docsViewEnvTest = SharedPreferencesUtil.isDocsViewTestEnv();
         Log.i(TAG, "initDocSdk.... isDocsViewEnvTest:" + docsViewEnvTest);
@@ -261,9 +261,9 @@ public class ZegoSDKManager {
         config.setAppSign(getAppSign());
         config.setTestEnv(docsViewEnvTest);
 
-        config.setLogFolder(context.getExternalFilesDir(null).getAbsolutePath() + File.separator + AppConstants.LOG_SUBFOLDER);
-        config.setDataFolder(context.getExternalFilesDir(null).getAbsolutePath() + File.separator + "zegodocs" + File.separator + "data");
-        config.setCacheFolder(context.getExternalFilesDir(null).getAbsolutePath() + File.separator + "zegodocs" + File.separator + "cache");
+        config.setLogFolder(application.getExternalFilesDir(null).getAbsolutePath() + File.separator + AppConstants.LOG_SUBFOLDER);
+        config.setDataFolder(application.getExternalFilesDir(null).getAbsolutePath() + File.separator + "zegodocs" + File.separator + "data");
+        config.setCacheFolder(application.getExternalFilesDir(null).getAbsolutePath() + File.separator + "zegodocs" + File.separator + "cache");
 
         String pptStepMode;
         if (SharedPreferencesUtil.isNextStepFlipPage()) {
@@ -272,7 +272,7 @@ public class ZegoSDKManager {
             pptStepMode = "2";
         }
         ZegoDocsViewManager.getInstance().setCustomizedConfig("pptStepMode", pptStepMode);
-        ZegoDocsViewManager.getInstance().init(config, errorCode -> {
+        ZegoDocsViewManager.getInstance().init(application, config, errorCode -> {
                     Log.i(TAG, "init docsView result:" + errorCode);
                     initDocsResult = errorCode == 0;
                     notifyInitResult(initCallback);
