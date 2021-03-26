@@ -255,7 +255,7 @@ class ZegoWhiteboardViewHolder : FrameLayout {
     }
 
     fun addTextEdit() {
-        currentWhiteboardView?.addTextEdit(context)
+        currentWhiteboardView?.addTextEdit { }
     }
 
     fun undo() {
@@ -287,7 +287,7 @@ class ZegoWhiteboardViewHolder : FrameLayout {
         }
 
         Log.i(TAG, "clearCurrentPage: ${curPageRectF.toString()}")
-        currentWhiteboardView?.clear(curPageRectF!!)
+        currentWhiteboardView?.clear(curPageRectF!!){}
     }
 
     fun saveImage() {
@@ -352,7 +352,6 @@ class ZegoWhiteboardViewHolder : FrameLayout {
                 currentWhiteboardView?.setWhiteboardOperationMode(
                     ZegoWhiteboardConstants.ZegoWhiteboardOperationModeDraw
                             or ZegoWhiteboardConstants.ZegoWhiteboardOperationModeZoom
-                            or ZegoWhiteboardConstants.ZegoWhiteboardOperationModeScroll
                 )
             } else {
                 currentWhiteboardView?.setWhiteboardOperationMode(
@@ -382,7 +381,7 @@ class ZegoWhiteboardViewHolder : FrameLayout {
             TAG,
             "scrollTo() called with: horizontalPercent = $horizontalPercent, verticalPercent = $verticalPercent, currentStep = $currentStep"
         )
-        currentWhiteboardView?.scrollTo(horizontalPercent, verticalPercent, currentStep)
+        currentWhiteboardView?.scrollTo(horizontalPercent, verticalPercent, currentStep){}
     }
 
     fun clear() {
@@ -865,7 +864,7 @@ class ZegoWhiteboardViewHolder : FrameLayout {
     }
 
     fun addText(text: String, positionX: Int, positionY: Int) {
-        currentWhiteboardView?.addText(text, positionX, positionY)
+        currentWhiteboardView?.addText(text, positionX, positionY){}
     }
 
     fun enableUserOperation(enable: Boolean) {
@@ -873,7 +872,6 @@ class ZegoWhiteboardViewHolder : FrameLayout {
             currentWhiteboardView?.setWhiteboardOperationMode(
                 ZegoWhiteboardConstants.ZegoWhiteboardOperationModeDraw
                         or ZegoWhiteboardConstants.ZegoWhiteboardOperationModeZoom
-                        or ZegoWhiteboardConstants.ZegoWhiteboardOperationModeScroll
             )
         } else {
             currentWhiteboardView?.setWhiteboardOperationMode(ZegoWhiteboardConstants.ZegoWhiteboardOperationModeZoom)
@@ -881,7 +879,7 @@ class ZegoWhiteboardViewHolder : FrameLayout {
     }
 
     fun deleteSelectedGraphics() {
-        currentWhiteboardView?.deleteSelectedGraphics()
+        currentWhiteboardView?.deleteSelectedGraphics(){}
     }
 
     /**

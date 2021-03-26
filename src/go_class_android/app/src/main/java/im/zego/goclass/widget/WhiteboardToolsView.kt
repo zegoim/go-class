@@ -113,7 +113,7 @@ class WhiteboardToolsView : ScrollView {
                 val currentTime = System.currentTimeMillis()
                 if (currentTime - lastTextClickedTime > 1000) {
                     onTextClick.invoke()
-                    zegoWhiteboardView?.addTextEdit(context)
+                    zegoWhiteboardView?.addTextEdit { }
                     zegoWhiteboardViewHolder?.addTextEdit()
 
                     unSelectOtherChild(select)
@@ -131,7 +131,7 @@ class WhiteboardToolsView : ScrollView {
                     ZegoWhiteboardManager.getInstance().toolType =
                         ZegoWhiteboardConstants.ZegoWhiteboardViewToolEraser
                 }
-                zegoWhiteboardView?.deleteSelectedGraphics()
+                zegoWhiteboardView?.deleteSelectedGraphics(){}
                 zegoWhiteboardViewHolder?.deleteSelectedGraphics()
 
             }
@@ -294,7 +294,6 @@ class WhiteboardToolsView : ScrollView {
                 zegoWhiteboardViewHolder?.setUserOperationMode(
                     ZegoWhiteboardConstants.ZegoWhiteboardOperationModeDraw
                             or ZegoWhiteboardConstants.ZegoWhiteboardOperationModeZoom
-                            or ZegoWhiteboardConstants.ZegoWhiteboardOperationModeScroll
                 )
             } else {
                 zegoWhiteboardViewHolder?.setUserOperationMode(
