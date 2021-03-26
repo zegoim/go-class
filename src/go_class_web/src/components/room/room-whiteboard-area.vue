@@ -94,7 +94,6 @@ export default {
 
     initCanvasWidthHieght() {
       const $whiteboardDemo = document.getElementById('whiteboardDemo')
-
       if ($whiteboardDemo) {
         const { clientWidth, clientHeight } = $whiteboardDemo
         const ratio = clientWidth / clientHeight
@@ -111,8 +110,7 @@ export default {
       }
 
       const $canvasTools = document.getElementById('canvasTools')
-      if ($canvasTools && $whiteboardDemo)
-        $canvasTools.style.right = $whiteboardDemo.offsetLeft + 10 + 'px'
+      if ($canvasTools && $whiteboardDemo) $canvasTools.style.right = $whiteboardDemo.offsetLeft + 10 + 'px'
     },
 
     initLayoutHeight() {
@@ -133,19 +131,19 @@ export default {
 
     setWBViewEnable(view) {
       if (roomStore.role == ROLE_STUDENT && view) {
-        const val = this.roomAuth.share
-        view.enable(val)
-        view.setToolType(val ? 1 : null)
-        if (val) {
-          // 如果当前文件不是动态ppt但是当前使用工具是点击工具就重置工具
-          if (!this.activeViewIsPPTH5 && this.activeToolType === 256) {
-            view.setToolType(1)
-          } else {
-            view.setToolType(this.activeToolType)
+        // setTimeout(() => {
+          const val = this.roomAuth.share    
+          val ? view.setWhiteboardOperationMode(2 | 4 | 8) : view.setWhiteboardOperationMode(8)
+          view.setToolType(val ? 1 : null)
+          if (val) {
+            // 如果当前文件不是动态ppt但是当前使用工具是点击工具就重置工具
+            if (!this.activeViewIsPPTH5 && this.activeToolType === 256) {
+              view.setToolType(1)
+            } else {
+              view.setToolType(this.activeToolType)
+            }
           }
-        } else {
-          view.setToolType(null)
-        }
+        // }, 10);
       }
     },
 

@@ -334,7 +334,7 @@ export default {
       })
       console.warn('handleWBSelect:',activeItem.whiteboardID)
       this.zegoWhiteboardArea.selectRemoteView(activeItem.whiteboardID)
-      this.zegoWhiteboardArea.notifyAllViewChanged()
+      // this.zegoWhiteboardArea.notifyAllViewChanged()
       console.warn('当前激活工具',this.zegoWhiteboardArea.activeToolType)
     },
     /**

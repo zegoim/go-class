@@ -463,7 +463,7 @@ export default {
      * @param {需要更新页码} page
      */    
     updateCurrPage(page) {
-      this.currPage = page || this.activeWBView?.getPage() || 1
+      this.currPage = page || this.activeWBView?.getCurrentPage() || 1
     },
     
     /**
@@ -549,40 +549,44 @@ export default {
      * @desc: 更新当前激活白板相关参数
      * @param {当前激活白板} activeWBView
      */    
-    updateActiveView(activeWBView) {
-      this.$set(this, 'activeWBId', activeWBView.whiteboardID)
-      this.$set(this, 'activeWBView', activeWBView)
-      console.warn('更新activeWBId',this.activeWBId)
-      // 每次切换文件/白板 关闭缩略图
-      this.isThumbnailsVisible = false
-      // 获取文件相关参数
-      const fileInfo = activeWBView && activeWBView?.getFileInfo()
-      this.activeViewIsPPTH5 = !!(fileInfo && fileInfo.fileType === 512)
-      this.activeViewIsPDF = !!(fileInfo && fileInfo.fileType === 8)
-      this.activeViewIsPPT = !!(fileInfo && fileInfo.fileType === 1)
-      this.activeViewIsExcel = !!(fileInfo && fileInfo.fileType === 4)
+    updateActiveView(activeWBView, flag = 1) {
+      setTimeout(() => {
+        this.$set(this, 'activeWBId', activeWBView.whiteboardID)
+        this.$set(this, 'activeWBView', activeWBView)
+        console.warn('更新activeWBId',this.activeWBId)
+        // 每次切换文件/白板 关闭缩略图
+        this.isThumbnailsVisible = false
+        // 获取文件相关参数
+        const fileInfo = activeWBView && activeWBView?.getFileInfo()
+        this.activeViewIsPPTH5 = !!(fileInfo && fileInfo.fileType === 512)
+        this.activeViewIsPDF = !!(fileInfo && fileInfo.fileType === 8)
+        this.activeViewIsPPT = !!(fileInfo && fileInfo.fileType === 1)
+        this.activeViewIsExcel = !!(fileInfo && fileInfo.fileType === 4)
 
-      if (this.activeViewIsExcel) {
-        this.activeExcelSheets = this.excelSheetsMap[fileInfo.fileID]
-        this.activeExcelSheetNames = this.excelSheetNamesIdMap[fileInfo.fileID]
-      }
+        if (this.activeViewIsExcel) {
+          this.activeExcelSheets = this.excelSheetsMap[fileInfo.fileID]
+          this.activeExcelSheetNames = this.excelSheetNamesIdMap[fileInfo.fileID]
+        }
 
-      if (!fileInfo) {
-        this.zgDocsView = null
-      }
+        if (!fileInfo) {
+          this.zgDocsView = null
+        }
 
-      const zoom = activeWBView.getScaleFactor().scaleFactor
-      this.$set(this, 'zoom', zoom * 100)
-      this.activeToolType = activeWBView.getToolType() || 0
-      
-      if (this.activeToolType === 0) {
-        console.warn('这里执行了setToolType，值为null')
-        activeWBView.setToolType(null)
-      }
+        const zoom = activeWBView.getScaleFactor().scaleFactor
+        this.$set(this, 'zoom', zoom * 100)
+        this.activeToolType = activeWBView.getToolType() || 0
+        
+        if (this.activeToolType === 0) {
+          console.warn('这里执行了setToolType，值为null')
+          activeWBView.setToolType(null)
+        }
 
-      this.updateCurrPage(undefined)
-      this.totalPage = activeWBView?.getPageCount() || 1
-      this.notifyAllViewChanged()
+        this.updateCurrPage(undefined)
+        this.totalPage = activeWBView?.getPageCount() || 1
+        console.log('flag', flag)
+        if(flag === 1) this.notifyAllViewChanged()
+        // this.notifyAllViewChanged()
+      }, 10);
     },
 
     /**
@@ -669,7 +673,8 @@ export default {
         this.$nextTick(() => {
           this.splitExcelSheetSuffixHandle(res)
           this.updateExcelSheetNamesIdMap(res, fileInfo.fileID)
-          this.updateActiveView(this.activeWBView)
+          // this.updateActiveView(this.activeWBView)
+          this.updateActiveView(this.activeWBView, 0)
         })
       } catch (e) {
         console.error(e)
@@ -687,6 +692,7 @@ export default {
       await this.client.attachView(this.activeWBView, this.parentId)
       this.zgDocsView = null
       this.updateActiveView(this.activeWBView)
+      // this.updateActiveView(this.activeWBView, 0)
     },
 
     testPPT(fileID) {
@@ -949,9 +955,11 @@ export default {
      * @desc: 初始化画具面板
      */    
     initWBPencilSetting() {
-      this.activeWBView.setBrushColor(this.activeColor)
-      this.setBrushSize(this.activeBrushSize)
-      this.setTextSize(this.activeTextSize)
+      setTimeout(() => {
+        this.activeWBView.setBrushColor(this.activeColor)
+        this.setBrushSize(this.activeBrushSize)
+        this.setTextSize(this.activeTextSize)
+      }, 10);
     },
 
     /**

@@ -81,11 +81,11 @@ export class ZegoClient {
     console.log('getToken', { appID, userID })
     const { data } = await axios.get(YOUR_SDK_TOKEN_URL, {
       params: {
-        appID,
-        userID
+        app_id: appID,
+        id_name: userID
       }
     })
-    return data.data
+    return data
   }
 
   async createZegoContext(roomEnv) {
