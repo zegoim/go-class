@@ -350,7 +350,7 @@ export default {
      * @param {page} 需要更新页码
      */
     updateCurrPage(page) {
-      this.currPage = page || this.activeWBView?.getPage() || 1
+      this.currPage = page || this.activeWBView?.getCurrentPage() || 1
     },
 
     /**
