@@ -9002,19 +9002,33 @@ yorkie@^2.0.0:
     normalize-path "^1.0.0"
     strip-indent "^2.0.0"
 
-zego-express-docsview-web@^1.16.0:
-  version "1.16.0"
-  resolved "https://registry.npmjs.org/zego-express-docsview-web/-/zego-express-docsview-web-1.16.0.tgz#89d7010228a892b71183fd35eaf510a9ce32b70c"
-  integrity sha512-6hQ9G+b+DeuLt5amzXZ+Jt2V2f+5GXF5X57bYPHiSwBZQx93UOD/4iSZ6AVPXUke0Ehe1Mqk6wU/Tp92Kj96NA==
+zego-express-docsview-web@^1.20.0:
+  version "1.20.0"
+  resolved "https://registry.npmjs.org/zego-express-docsview-web/-/zego-express-docsview-web-1.20.0.tgz#df137c6c803ee383c5b519c587c2fe4a5699515f"
+  integrity sha512-GuN6Z9qaeR0N7Cu6glaWKoreWR/6TMTmkfa8DIAiRhTqUc0vhkLUVinkmgJZw2nvQJAPQ2j2i+LMNrwlUVqleg==
 
-zego-express-engine-webrtc@^1.15.0:
-  version "1.19.0"
-  resolved "https://registry.npmjs.org/zego-express-engine-webrtc/-/zego-express-engine-webrtc-1.19.0.tgz#dbaf8567fc389d256fc4a397272d7cc7e9a4df77"
-  integrity sha512-atrAPRrj7V53VwxWvAaEIqaHD6dsE5S3+GTvC4vARYBrmIPKxB/pxhwO20BDd9qjSGcYQtlXJ6dbbP6b5CEqkQ==
-
-zego-express-whiteboard-web@^1.16.0:
-  version "1.16.0"
-  resolved "https://registry.npmjs.org/zego-express-whiteboard-web/-/zego-express-whiteboard-web-1.16.0.tgz#18bebbe4208389dbc6bc44294be4b7463645a10a"
-  integrity sha512-LBL3qRMOqlwa8R4zgifNN2b+JN/WLGmMdHv5hW7k89G4qX1QtkHEqEqluzrSlYBt/p9TIzpHC2RCMg7wi/oVXA==
+zego-express-engine-webrtc@^2.5.0:
+  version "2.6.0"
+  resolved "https://registry.npmjs.org/zego-express-engine-webrtc/-/zego-express-engine-webrtc-2.6.0.tgz#934549d40845002d431c8eb6661fdfe3eec2f788"
+  integrity sha512-7ySMbjECE/ZzZCjfs293K9sKoFqdLghhgYs+UA+cIl35SXDXmaV9FBU3RBve5YdpniPsot+hnkJvs7dvsXnVfA==
   dependencies:
-    zego-express-engine-webrtc "^1.15.0"
+    zego-express-engine-webrtm "1.6.0"
+
+zego-express-engine-webrtm@1.6.0:
+  version "1.6.0"
+  resolved "https://registry.npmjs.org/zego-express-engine-webrtm/-/zego-express-engine-webrtm-1.6.0.tgz#88fa4797da6ae16f57f27f59c7bf0c20749d56c5"
+  integrity sha512-oVw/ZzYP6pc305OuZMo6UejtGEZqTcidw7cJ2yIRIEQFxnPmIuEPTHvzln+SGfT+OeOn+D8IKppkU0/Cnogztg==
+  dependencies:
+    zego-express-logger "1.1.0"
+
+zego-express-logger@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npm.taobao.org/zego-express-logger/download/zego-express-logger-1.1.0.tgz#42c75fbb7f891f87ea3354086dcd52963b75e365"
+  integrity sha1-Qsdfu3+JH4fqM1QIbc1Sljt142U=
+
+zego-express-whiteboard-web@^1.20.0:
+  version "1.20.0"
+  resolved "https://registry.npmjs.org/zego-express-whiteboard-web/-/zego-express-whiteboard-web-1.20.0.tgz#3d3f97254fa0985012f296a93e798d68d1b83508"
+  integrity sha512-0RLHspjyMEChqZLYFHnqeN6JdPBFppvFxRORryIXQdwLSG8i0AQMyQmFV8cN0y+HS4TER2Xl+sg5Ccv7dniMCw==
+  dependencies:
+    zego-express-engine-webrtc "^2.5.0"

@@ -1,3 +1,5 @@
+import { ZegoExpressEngine } from 'zego-express-whiteboard-web'
+import { ZegoExpressDocs } from 'zego-express-docsview-web'
 import { ZegoClient } from './base'
 import config from '../config/web'
 
@@ -12,8 +14,8 @@ class WebZegoClient extends ZegoClient {
     const { userID } = user
     const { env = 'home' } = this.state
     const { appID, logURL, server, isTestEnv, docsviewAppID } = await this.Config.getParams(env)
-    const zg = new window.ZegoExpressEngine(appID, server)
-    const zgDocsClient = new window.ZegoExpressDocs({
+    const zg = new ZegoExpressEngine(appID, server)
+    const zgDocsClient = new ZegoExpressDocs({
       appID: docsviewAppID,
       token: this.state.tokenInfo.token2,
       userID,

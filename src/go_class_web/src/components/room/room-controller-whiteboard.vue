@@ -7,11 +7,11 @@
       v-if="noList"
       :class="['no-canvas-bar', classScene === 2 && role === 2 ? 'large-class' : '']"
     >
-      {{$t("room.room_class_id")}}: {{ roomID }}
+      {{ $t('room.room_class_id') }}: {{ roomID }}
     </div>
     <div v-else class="room-controller-whiteboard">
       <div class="whiteboard-bar-classid">
-        <span>{{$t("room.room_class_id")}}：{{ roomID }}</span>
+        <span>{{ $t('room.room_class_id') }}：{{ roomID }}</span>
       </div>
       <div class="controller" v-if="role === 1 || classScene !== 2">
         <el-select
@@ -49,7 +49,7 @@
               :value="item.whiteboardID"
               :label="item.fileName"
             >
-              <div class="label">{{ item.fileName }} </div>
+              <div class="label">{{ item.fileName }}</div>
             </el-option>
           </el-select>
         </div>
@@ -77,7 +77,7 @@
               'zoom-bar-operation',
               'zoom-add',
               zoomIndex === 0 && 'disabled',
-              activeToolType === 256 && activeViewIsPPTH5 && 'disabled',
+              activeToolType === 256 && (activeViewIsPPTH5 || activeViewIsH5) && 'disabled'
             ]"
             v-html="require('../../assets/icons/room/top_down.svg').default"
           ></div>
@@ -86,7 +86,7 @@
               v-model="zoom"
               :placeholder="$t('room.room_select')"
               popper-class="whiteboard-zoom-select-list"
-              :disabled="activeViewIsPPTH5 && activeToolType === 256"
+              :disabled="(activeViewIsPPTH5 || activeViewIsH5) && activeToolType === 256"
               @change="handleWBZoom"
             >
               <el-option
@@ -103,14 +103,17 @@
               'zoom-bar-operation',
               'zoom-cut',
               zoomIndex === zoomList.length - 1 && 'disabled',
-              activeToolType === 256 && activeViewIsPPTH5 && 'disabled',
+              activeToolType === 256 && (activeViewIsPPTH5 || activeViewIsH5) && 'disabled'
             ]"
             v-html="require('../../assets/icons/room/top_add.svg').default"
           ></div>
         </div>
         <!-- 略缩图 -->
         <div
-          v-if="roomAuth.share && (activeViewIsPDF || activeViewIsPPTH5 || activeViewIsPPT)"
+          v-if="
+            roomAuth.share &&
+              (activeViewIsPDF || activeViewIsPPTH5 || activeViewIsPPT || activeViewIsH5)
+          "
           @click="handleThumbnailsShow(thumbnailsVisible)"
           :class="['thumb-button', thumbnailsVisible && 'active']"
         >
@@ -118,7 +121,7 @@
             class="button-icon"
             v-html="require('../../assets/icons/room/preview.svg').default"
           ></span>
-          <span>{{$t('wb.wb_priview')}}</span>
+          <span>{{ $t('wb.wb_priview') }}</span>
         </div>
       </div>
       <div class="controller" v-else-if="role === 2 && classScene === 2">
@@ -130,7 +133,7 @@
               'zoom-bar-operation',
               'zoom-add',
               zoomIndex === 0 && 'disabled',
-              activeToolType === 256 && activeViewIsPPTH5 && 'disabled',
+              activeToolType === 256 && activeViewIsPPTH5 && 'disabled'
             ]"
             v-html="require('../../assets/icons/room/top_down.svg').default"
           ></div>
@@ -156,7 +159,7 @@
               'zoom-bar-operation',
               'zoom-cut',
               zoomIndex === zoomList.length - 1 && 'disabled',
-              activeToolType === 256 && activeViewIsPPTH5 && 'disabled',
+              activeToolType === 256 && activeViewIsPPTH5 && 'disabled'
             ]"
             v-html="require('../../assets/icons/room/top_add.svg').default"
           ></div>
@@ -182,7 +185,7 @@ export default {
       roomAuth: roomStore.auth, // 权限
       noList: false, // 是否列表为空，默认false
       classScene: storage.get('loginInfo').classScene || 1, // 当前课堂场景
-      role: storage.get('loginInfo').role || 1, // 当前用户角色
+      role: storage.get('loginInfo').role || 1 // 当前用户角色
     }
   },
   inject: ['zegoLiveRoom', 'zegoWhiteboardArea'],
@@ -212,6 +215,12 @@ export default {
      */
     activeViewIsPPTH5() {
       return this.zegoWhiteboardArea.activeViewIsPPTH5
+    },
+    /**
+     * @desc: 当前激活是否H5
+     */
+    activeViewIsH5() {
+      return this.zegoWhiteboardArea.activeViewIsH5
     },
     /**
      * @desc: 当前激活是否ppt
@@ -249,7 +258,7 @@ export default {
     activeSelfWBID() {
       const activeItem =
         this.zegoWhiteboardArea.originWBViewList.find(
-          (item) => item.whiteboardID === this.zegoWhiteboardArea.activeWBId
+          item => item.whiteboardID === this.zegoWhiteboardArea.activeWBId
         ) || {}
       const fileInfo = (activeItem.getFileInfo && activeItem.getFileInfo()) || {}
       return fileInfo.fileID || activeItem.whiteboardID
@@ -258,13 +267,11 @@ export default {
      * @desc: 处理展示白板名
      */
     computedViewList() {
-      return this.zegoWhiteboardArea.WBViewList.map((item) => {
+      return this.zegoWhiteboardArea.WBViewList.map(item => {
         const fileInfo = item.getFileInfo() || {}
         const res = Object.assign(item, {
-          name: fileInfo.fileType
-            ? this.hideTitle(item.name)
-            : this.hideWBTitle(item.name),
-          selfWBID: fileInfo.fileID || item.whiteboardID,
+          name: fileInfo.fileType ? this.hideTitle(item.name) : this.hideWBTitle(item.name),
+          selfWBID: fileInfo.fileID || item.whiteboardID
         })
         return res
       })
@@ -273,10 +280,13 @@ export default {
      * @desc: 处理展示Excel sheet名
      */
     computedExcelSheets() {
-      console.warn('this.zegoWhiteboardArea.activeExcelSheetNames',this.zegoWhiteboardArea.activeExcelSheetNames)
-      const res = this.zegoWhiteboardArea.activeExcelSheetNames.map((name) => {
+      console.warn(
+        'this.zegoWhiteboardArea.activeExcelSheetNames',
+        this.zegoWhiteboardArea.activeExcelSheetNames
+      )
+      const res = this.zegoWhiteboardArea.activeExcelSheetNames.map(name => {
         const item =
-          this.zegoWhiteboardArea.activeExcelSheets.find((x) => {
+          this.zegoWhiteboardArea.activeExcelSheets.find(x => {
             const fileInfo = x.getFileInfo()
             return fileInfo.fileName === name
           }) || {}
@@ -290,10 +300,10 @@ export default {
       },
       set(val) {
         this.zegoWhiteboardArea.zoom = val
-      },
+      }
     },
     computedWBZoom() {
-      const index = this.zoomList.findIndex((i) => i === this.zoom)
+      const index = this.zoomList.findIndex(i => i === this.zoom)
       return index
     },
     /**
@@ -301,19 +311,19 @@ export default {
      */
     activeToolType() {
       return this.zegoWhiteboardArea.activeToolType
-    },
+    }
   },
   watch: {
-    'zegoWhiteboardArea.WBViewList': function () {
+    'zegoWhiteboardArea.WBViewList': function() {
       this.noList = !this.zegoWhiteboardArea.WBViewList.length
     },
     activeWBId(newId) {
       if (newId) {
         const _zoom = this.zegoWhiteboardArea.activeWBView.getScaleFactor().scaleFactor
-        this.zoomIndex = this.zoomList.findIndex((i) => i === this.zoom)
+        this.zoomIndex = this.zoomList.findIndex(i => i === this.zoom)
         this.zegoWhiteboardArea.setZoom(_zoom)
       }
-    },
+    }
   },
   mounted() {
     this.handlePageChange_ = debounce(this.handlePageChange, 500, true)
@@ -327,29 +337,30 @@ export default {
     handleWBSelect(id) {
       // 如果切换文件白板是动态ppt，需手动停止该文件音视频
       if (this.activeViewIsPPTH5) this.zegoWhiteboardArea.stopPlay()
+      if (this.activeViewIsH5) this.zegoWhiteboardArea.stopPlay()
       // 切换文件/白板需通过房间附加信息通知对端
       this.zegoWhiteboardArea.setIsAllowSendRoomExtraInfo(true)
-      const activeItem = this.computedViewList.find((item) => {
+      const activeItem = this.computedViewList.find(item => {
         return item.selfWBID === id
       })
-      console.warn('handleWBSelect:',activeItem.whiteboardID)
+      console.warn('handleWBSelect:', activeItem.whiteboardID)
       this.zegoWhiteboardArea.selectRemoteView(activeItem.whiteboardID)
       // this.zegoWhiteboardArea.notifyAllViewChanged()
-      console.warn('当前激活工具',this.zegoWhiteboardArea.activeToolType)
+      console.warn('当前激活工具', this.zegoWhiteboardArea.activeToolType)
     },
     /**
      * @desc: 删除白板
      * @param {item} 目标文件
      */
-     handleWBDelete(item) {
-      this.$confirm(this.$t('wb.wb_tip_are_u_sure_close',{ wbname : item.getName() }), '', {
+    handleWBDelete(item) {
+      this.$confirm(this.$t('wb.wb_tip_are_u_sure_close', { wbname: item.getName() }), '', {
         confirmButtonText: this.$t('wb.wb_determine'),
         cancelButtonText: this.$t('wb.wb_cancel'),
         showClose: false,
         customClass: 'delete-wb-view-dialog',
-        type: 'warning',
+        type: 'warning'
       })
-        .then(async() => {
+        .then(async () => {
           this.zegoWhiteboardArea.setIsAllowSendRoomExtraInfo(true)
           this.zegoWhiteboardArea.destroyView(item)
         })
@@ -374,17 +385,21 @@ export default {
       }
     },
 
-    hideWBTitle(name){
-      let zego_locale  = sessionStorage.getItem('zego_locale')
+    hideWBTitle(name) {
+      let zego_locale = sessionStorage.getItem('zego_locale')
       let wbnameArr = name.split('创建的白板')
-      let wbName;
+      let wbName
 
-      if(!zego_locale) zego_locale = 'zh'
+      if (!zego_locale) zego_locale = 'zh'
 
       if (zego_locale === 'zh') {
         wbName = name.replace(/^(.{3}).*?(创建的白板\d+)$/, '$1...$2')
       } else {
-        wbName = this.$t('wb.wb_created_by',{name: wbnameArr[0],index: wbnameArr[1]}).substring(0, 17) + '...'
+        wbName =
+          this.$t('wb.wb_created_by', { name: wbnameArr[0], index: wbnameArr[1] }).substring(
+            0,
+            17
+          ) + '...'
       }
       return wbName
     },
@@ -421,7 +436,7 @@ export default {
       const _zoom = this.zoom / 100
       this.zegoWhiteboardArea.setZoom(_zoom)
       this.setScaleFactor(_zoom)
-      this.zoomIndex = this.zoomList.findIndex((i) => i === this.zoom)
+      this.zoomIndex = this.zoomList.findIndex(i => i === this.zoom)
     },
 
     /**
@@ -429,7 +444,7 @@ export default {
      * @param {type} 放大/缩小
      */
     handleZoomChange(type) {
-      if (this.activeToolType === 256 && this.activeViewIsPPTH5) return
+      if (this.activeToolType === 256 && (this.activeViewIsPPTH5 || this.activeViewIsH5)) return
       let zoom
       if (type === 1 && this.zoomIndex <= this.zoomList.length - 1) {
         this.zoomIndex === this.zoomList.length - 1
@@ -466,8 +481,8 @@ export default {
      */
     wbItemClick() {
       this.zegoWhiteboardArea.setThumbnailsVisible(false)
-    },
-  },
+    }
+  }
 }
 </script>
 <style lang="scss">
@@ -687,14 +702,14 @@ export default {
 
   .excel-sheets {
     margin-left: 30px;
-    input{
-      overflow: hidden;    
-      text-overflow:ellipsis;    
+    input {
+      overflow: hidden;
+      text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .label{
-      overflow: hidden;    
-      text-overflow:ellipsis;    
+    .label {
+      overflow: hidden;
+      text-overflow: ellipsis;
       white-space: nowrap;
     }
   }

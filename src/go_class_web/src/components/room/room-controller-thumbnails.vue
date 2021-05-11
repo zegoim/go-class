@@ -67,7 +67,7 @@ export default {
       this.elementScrollTo(this.activeIndex)
     }
   },
-  mounted(){
+  mounted() {
     this.handlePageChange_ = debounce(this.handlePageChange, 500, true)
   },
   methods: {
@@ -82,7 +82,7 @@ export default {
       const el = document.getElementById('swiper')
       if (!el) return
 
-      const elClientHeight = document.querySelectorAll('#swiper li')[0].clientHeight
+      const elClientHeight = document.querySelectorAll('#swiper li')[0]?.clientHeight
       const scrollToNum = elClientHeight * (index - 1)
       el.scrollTo({
         top: scrollToNum,

@@ -1,12 +1,12 @@
 export const en = {
-    "system":{
-        "exception_server_error":"Request server error",
-        "timeout_exceeded":"The request timed out and the server did not respond",
-        "internal_serve_error":" Internal Server Error",
-        "request_failed_code_502":"Request failed with status code 502",
-        "user_no_permission":"User does not have permission to modify",
-        "target_user_not_in_room":"The target user is not in the classroom",
-        "need_login":"Need to log in to the room first"
+    "system": {
+        "exception_server_error": "Request server error",
+        "timeout_exceeded": "The request timed out and the server did not respond",
+        "internal_serve_error": " Internal Server Error",
+        "request_failed_code_502": "Request failed with status code 502",
+        "user_no_permission": "User does not have permission to modify",
+        "target_user_not_in_room": "The target user is not in the classroom",
+        "need_login": "Need to log in to the room first"
     },
     "login": {
         "login_welcome": "Welcome",
@@ -32,7 +32,7 @@ export const en = {
         "login_interconnected": "Mainland China and other regions are not connected, please ensure that all participants are in the same environment",
         "login_setting": "Setting",
         "login_clear_cache": "Clear cache",
-        "login_room_not_exist":"The room doesn't exist"
+        "login_room_not_exist": "The room doesn't exist"
     },
     "wb": {
         "wb_created_by": "Whiteboard {index} created by {name} ",
@@ -74,27 +74,27 @@ export const en = {
         "wb_tip_allow_access_photo": "Please allow the application to access your device‘s photos in the option of \"Settings-GOClass-Photos\" ",
         "wb_tip_got_it": "Got it",
         "wb_tip_go_to_set": "Go to set",
-        "wb_priview":"priview",
-        "wb_tool_upload_files":"Upload",
-        "wb_tool_upload_static":"Upload Static Files",
-        "wb_tool_upload_dynamic":"Upload Dynamic Files",
-        "wb_tool_upload_static_content":"Support PPT(X),DOC(X),XLS(X),PDF,TXT,JPG,JPEG,PNG,BMP,HEIC format",
-        "wb_tool_upload_dynamic_content":"Support PPTX,PPT format"
+        "wb_priview": "priview",
+        "wb_tool_upload_files": "Upload",
+        "wb_tool_upload_static": "Upload Static Files",
+        "wb_tool_upload_dynamic": "Upload Dynamic Files",
+        "wb_tool_upload_static_content": "Support PPT(X),DOC(X),XLS(X),PDF,TXT,JPG,JPEG,PNG,BMP,HEIC format",
+        "wb_tool_upload_dynamic_content": "Support PPTX,PPT format"
     },
-    "doc":{
-        "doc_uploading":"File uploading({n}%)",
-        "doc_converting":"The file is transcoding",
-        "doc_uploading_failed":"Failed to upload the file,please try again ",
-        "doc_converting_failed":"Failed to transcode the file,please try again ",
-        "doc_uploading_size_limit":"The file size exceeds the limit, please select again",
-        "doc_file_not_supported":"The file does not conform to the specification, please select again",
-        "doc_file_not_found":"The file does not exist",
-        "doc_formating_failed":"Format conversion failed, please select again",
-        "doc_file_empty":"The file content is empty, please select again "
+    "doc": {
+        "doc_uploading": "File uploading({n}%)",
+        "doc_converting": "The file is transcoding",
+        "doc_uploading_failed": "Failed to upload the file,please try again ",
+        "doc_converting_failed": "Failed to transcode the file,please try again ",
+        "doc_uploading_size_limit": "The file size exceeds the limit, please select again",
+        "doc_file_not_supported": "The file does not conform to the specification, please select again",
+        "doc_file_not_found": "The file does not exist",
+        "doc_formating_failed": "Format conversion failed, please select again",
+        "doc_file_empty": "The file content is empty, please select again "
     },
-    "room":{
+    "room": {
         "room_I": "I",
-        "room_select":"Please select",
+        "room_select": "Please select",
         "room_class_id": "Class ID",
         "room_teacher": "Teacher",
         "room_tip_wait_for_teacher": "Waiting for teacher to join",
@@ -114,7 +114,7 @@ export const en = {
         "room_end_teaching": "End Teaching",
         "room_tip_fail_quit_try_again": "Failed to quit class, please try again",
         "room_tip_teacher_finished_teaching": "The teacher has finished Teaching",
-        "room_tip_determine":"ok",
+        "room_tip_determine": "ok",
         "room_network_exception": "Network exception, rejoining...",
         "room_rejoin_fail": "Rejoin failed, check network settings",
         "room_retry": "retry",
@@ -132,6 +132,7 @@ export const en = {
         "room_file_dynamic": "Dynamic",
         "room_file_static_animation_displayed": "Static: PPT animation cannot be displayed",
         "room_file_dynamic_animation_show": "Dynamic: PPT animation can be displayed",
+        "room_file_h5_show": "H5: Display H5 files",
         "room_dialog_invite_member": "Invite members",
         "room_dialog_classroom_link": "Class links",
         "room_dialog_class_id": "Class ID",
@@ -141,7 +142,7 @@ export const en = {
         "room_dialog_copy_link": "Copy Invitation Link",
         "room_dialog_": "Copy invitation information successfully",
         "room_dialog_copy_suc": "Copy successfully",
-        "room_member_join":"Joined members({number})",
+        "room_member_join": "Joined members({number})",
         "room_member_turn_off_camera": "Turn off camera",
         "room_member_teacher": "Teacher",
         "room_member_tip_turn_off_mic": "Turn off the microphone",
@@ -156,15 +157,15 @@ export const en = {
         "room_student_tip_turned_on_camera": "The teacher has turned on your camera",
         "room_student_tip_turned_on_mic": "The teacher has turned on your microphone",
         "room_im_discuss": "Discuss",
-        "room_im_I":"I",
+        "room_im_I": "I",
         "room_im_say_something": "Say something~",
         "room_im_send": "Send",
         "room_im_join_class": " Join Class",
         "room_im_exit_class": " Quit Class",
         "room_im_max_characters": "Support up to 100 characters",
         "room_im_message_send_fail": "Message sending failed",
-        "room_im_messasge_sent_frequently":"Messages are sent too frequently",
-        "room_im_message_cannot_empty":"Message cannot be empty",
+        "room_im_messasge_sent_frequently": "Messages are sent too frequently",
+        "room_im_message_cannot_empty": "Message cannot be empty",
         "room_end_sign_out": "Sign out",
         "room_end_exit_class": "Quit Class",
         "room_end_tip_are_u_sure_quit": "Are you sure to quit the current class?",
@@ -175,11 +176,11 @@ export const en = {
         "room_end_fail_quit_class": "Failed to quit class, please try again",
         "room_end_tip_teacher_finished_teaching": "The teacher has finished Teaching",
         "room_tip_channels": "Up to 3 channels of students audio and video",
-        "room_enable_setting":"Please enable",
-        "room_permissions":"permission in settings",
-        "room_permissions_obtained":"permission obtained successfully",
-        "room_login_time_limit_15":"Class experience is 15 minutes",
-        "room_login_time_out":"Class experience time has expired",
-        "room_login_time_confirm":"Confirm"
+        "room_enable_setting": "Please enable",
+        "room_permissions": "permission in settings",
+        "room_permissions_obtained": "permission obtained successfully",
+        "room_login_time_limit_15": "Class experience is 15 minutes",
+        "room_login_time_out": "Class experience time has expired",
+        "room_login_time_confirm": "Confirm"
     }
-  }
+}

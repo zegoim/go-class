@@ -12,25 +12,24 @@
     >
       <div class="dialog-content">
         <ul class="file-list">
-          <li
-            class="file-item"
-            v-for="item in fileList"
-            :key="item.name + item.id"
-            @click="createDocView(item.id)"
-          >
-            <div :class="['state', item.isDynamic && 'dynamic']">
-              {{ item.isDynamic ? $t("room.room_file_dynamic") : $t("room.room_file_static_file") }}
+          <li class="file-item" v-for="item in fileList" :key="item.name + item.id" @click="createDocView(item.id)">
+            <div :class="['state', item.isDynamic && 'dynamic', item.isH5 && 'h5']">
+              {{
+                item.isH5
+                  ? 'H5'
+                  : item.isDynamic && !item.isH5
+                  ? $t('room.room_file_dynamic')
+                  : $t('room.room_file_static_file')
+              }}
             </div>
-            <!-- <span :class="['state', item.isDynamic && 'dynamic']">
-              {{ item.isDynamic ? $t("room.room_file_dynamic") : $t("room.room_file_static_file") }}
-            </span> -->
             {{ item.name }}
           </li>
         </ul>
         <div class="tips">
-          <div style="width:400px;border-top:1px solid #f4f5f8">
-            <span class="static">{{$t('room.room_file_static_animation_displayed')}}</span>
-            <span class="dynamic">{{$t('room.room_file_dynamic_animation_show')}}</span>
+          <div style="width: 400px; border-top: 1px solid #f4f5f8">
+            <span class="static">{{ $t('room.room_file_static_animation_displayed') }}</span>
+            <span class="static">{{ $t('room.room_file_dynamic_animation_show') }}</span>
+            <span class="dynamic">{{ $t('room.room_file_h5_show') }}</span>
           </div>
         </div>
       </div>
@@ -151,6 +150,10 @@ export default {
 
       &.dynamic {
         background-color: #ffa402;
+      }
+      &.h5 {
+        width: 23px;
+        background-color: #00baff;
       }
     }
     .el-dialog__header {

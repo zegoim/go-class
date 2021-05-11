@@ -1,12 +1,12 @@
 export const zh = {
-    "system":{
-        "exception_server_error":"请求服务器错误",
-        "timeout_exceeded":"请求超时，服务器未响应",
-        "internal_serve_error":"请求服务器错误",
-        "request_failed_code_502":"请求服务器错误",
-        "user_no_permission":"用户没有权限修改",
-        "target_user_not_in_room":"目标用户不在教室",
-        "need_login":"需要先登录房间"
+    "system": {
+        "exception_server_error": "请求服务器错误",
+        "timeout_exceeded": "请求超时，服务器未响应",
+        "internal_serve_error": "请求服务器错误",
+        "request_failed_code_502": "请求服务器错误",
+        "user_no_permission": "用户没有权限修改",
+        "target_user_not_in_room": "目标用户不在教室",
+        "need_login": "需要先登录房间"
     },
     "login": {
         "login_welcome": "欢迎加入",
@@ -74,26 +74,26 @@ export const zh = {
         "wb_tip_allow_access_photo": "请在“设置-GO课堂-照片”选项中，允许应用访问您的设备照片",
         "wb_tip_got_it": "知道了",
         "wb_tip_go_to_set": "去设置",
-        "wb_priview":"预览",
-        "wb_tool_upload_files":"上传",
-        "wb_tool_upload_static":"上传静态文件",
-        "wb_tool_upload_dynamic":"上传动态文件",
-        "wb_tool_upload_static_content":"支持 PPT(X)、DOC(X)、XLS(X)、PDF、TXT、JPG、JPEG、PNG、BMP、HEIC 格式",
-        "wb_tool_upload_dynamic_content":"支持 PPTX、PPT 格式"
+        "wb_priview": "预览",
+        "wb_tool_upload_files": "上传",
+        "wb_tool_upload_static": "上传静态文件",
+        "wb_tool_upload_dynamic": "上传动态文件",
+        "wb_tool_upload_static_content": "支持 PPT(X)、DOC(X)、XLS(X)、PDF、TXT、JPG、JPEG、PNG、BMP、HEIC 格式",
+        "wb_tool_upload_dynamic_content": "支持 PPTX、PPT 格式"
     },
-    "doc":{
-        "doc_uploading":"文件上传中（{n}%)",
-        "doc_converting":"文件正在转码 ",
-        "doc_uploading_failed":"文件上传失败，请重试 ",
-        "doc_converting_failed":"文件转码失败，请重试 ",
-        "doc_uploading_size_limit":"文件大小超过限制，请重新选择 ",
-        "doc_file_not_supported":"文件不符合规范，请重新选择 ",
-        "doc_file_not_found":"文件不存在 ",
-        "doc_formating_failed":"格式转换失败，请重新选择 ",
-        "doc_file_empty":"文件内容为空，请重新选择 "
+    "doc": {
+        "doc_uploading": "文件上传中（{n}%)",
+        "doc_converting": "文件正在转码 ",
+        "doc_uploading_failed": "文件上传失败，请重试 ",
+        "doc_converting_failed": "文件转码失败，请重试 ",
+        "doc_uploading_size_limit": "文件大小超过限制，请重新选择 ",
+        "doc_file_not_supported": "文件不符合规范，请重新选择 ",
+        "doc_file_not_found": "文件不存在 ",
+        "doc_formating_failed": "格式转换失败，请重新选择 ",
+        "doc_file_empty": "文件内容为空，请重新选择 "
     },
     "room": {
-        "room_select":"请选择",
+        "room_select": "请选择",
         "room_class_id": "课堂ID",
         "room_teacher": "老师",
         "room_tip_wait_for_teacher": "等待老师加入",
@@ -116,8 +116,8 @@ export const zh = {
         "room_tip_determine": "确定",
         "room_network_exception": "网络异常，正在重新加入...",
         "room_rejoin_fail": "重新加入失败，请检查网络设置",
-        "room_retry":"重试",
-        "room_ok":"确定",
+        "room_retry": "重试",
+        "room_ok": "确定",
         "room_controller_camera": "摄像头",
         "room_controller_mic": "麦克风",
         "room_controller_speaker": "扬声器",
@@ -131,6 +131,7 @@ export const zh = {
         "room_file_dynamic": "动态",
         "room_file_static_animation_displayed": "静态：无法展示PPT动画",
         "room_file_dynamic_animation_show": "动态：可展示PPT动画",
+        "room_file_h5_show": "H5：展示H5文件",
         "room_dialog_invite_member": "邀请人员",
         "room_dialog_classroom_link": "课堂链接",
         "room_dialog_class_id": "课堂ID",
@@ -140,7 +141,7 @@ export const zh = {
         "room_dialog_copy_link": "复制邀请链接",
         "room_dialog_": "邀请信息复制成功",
         "room_dialog_copy_suc": "复制成功",
-        "room_member_join":"已加入成员({number})",
+        "room_member_join": "已加入成员({number})",
         "room_member_turn_off_camera": "关闭摄像头",
         "room_member_teacher": "老师",
         "room_member_tip_turn_off_mic": "关闭麦克风",
@@ -162,8 +163,8 @@ export const zh = {
         "room_im_exit_class": "退出课堂",
         "room_im_max_characters": "最多支持输入100个字符",
         "room_im_message_send_fail": "消息发送失败",
-        "room_im_messasge_sent_frequently":"消息发送过于频繁",
-        "room_im_message_cannot_empty":"消息不能为空",
+        "room_im_messasge_sent_frequently": "消息发送过于频繁",
+        "room_im_message_cannot_empty": "消息不能为空",
         "room_end_sign_out": "退出",
         "room_end_exit_class": "退出课堂",
         "room_end_tip_are_u_sure_quit": "确定要退出当前课堂？",
@@ -174,11 +175,11 @@ export const zh = {
         "room_end_fail_quit_class": "退出课堂失败，请重试",
         "room_end_tip_teacher_finished_teaching": "老师已结束教学",
         "room_tip_channels": "演示课堂最多开启3路学生音视频",
-        "room_enable_setting":"请在设置中开启",
-        "room_permissions":"权限",
-        "room_permissions_obtained":"权限获取成功",
-        "room_login_time_limit_15":"课堂体验时长为15分钟",
-        "room_login_time_out":"课堂体验时长已到期",
-        "room_login_time_confirm":"确定"
-    }  
+        "room_enable_setting": "请在设置中开启",
+        "room_permissions": "权限",
+        "room_permissions_obtained": "权限获取成功",
+        "room_login_time_limit_15": "课堂体验时长为15分钟",
+        "room_login_time_out": "课堂体验时长已到期",
+        "room_login_time_confirm": "确定"
+    }
 }
