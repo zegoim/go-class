@@ -2,7 +2,6 @@ package im.zego.goclass.sdk;
 
 import android.app.Application;
 import android.content.Context;
-import android.os.Environment;
 import android.util.Log;
 
 import org.jetbrains.annotations.NotNull;
@@ -249,21 +248,18 @@ public class ZegoSDKManager {
     /**
      * 初始化文档服务
      *
-     * @param context
+     * @param application
      * @param initCallback
      */
     private void initDocSdk(Application application, InitResult initCallback) {
-        Log.i(TAG, "initDocSdk.... version:" + ZegoDocsViewManager.getInstance().getVersion());
         boolean docsViewEnvTest = SharedPreferencesUtil.isDocsViewTestEnv();
-        Log.i(TAG, "initDocSdk.... isDocsViewEnvTest:" + docsViewEnvTest);
+        Log.i(TAG, "initDocSdk.... isDocsViewEnvTest:" + docsViewEnvTest + "，version：" + ZegoDocsViewManager.getInstance().getVersion());
         ZegoDocsViewConfig config = new ZegoDocsViewConfig();
         config.setAppID(getAppID());
         config.setAppSign(getAppSign());
         config.setTestEnv(docsViewEnvTest);
 
         config.setLogFolder(application.getExternalFilesDir(null).getAbsolutePath() + File.separator + AppConstants.LOG_SUBFOLDER);
-        config.setDataFolder(application.getExternalFilesDir(null).getAbsolutePath() + File.separator + "zegodocs" + File.separator + "data");
-        config.setCacheFolder(application.getExternalFilesDir(null).getAbsolutePath() + File.separator + "zegodocs" + File.separator + "cache");
 
         String pptStepMode;
         if (SharedPreferencesUtil.isNextStepFlipPage()) {
@@ -291,7 +287,7 @@ public class ZegoSDKManager {
     private void initWhiteboardSDK(Context context, InitResult initCallback) {
         Log.i(TAG, "initWhiteboardSDK....,version:" + ZegoWhiteboardManager.getInstance().getVersion());
         ZegoWhiteboardConfig config = new ZegoWhiteboardConfig();
-        config.setLogPath(context.getExternalFilesDir(null).getAbsolutePath() + File.separator+ AppConstants.LOG_SUBFOLDER);
+        config.setLogPath(context.getExternalFilesDir(null).getAbsolutePath() + File.separator + AppConstants.LOG_SUBFOLDER);
         ZegoWhiteboardManager.getInstance().setConfig(config);
         ZegoWhiteboardManager.getInstance().init(context, errorCode -> {
             Log.i(TAG, "init Whiteboard  errorCode:" + errorCode);

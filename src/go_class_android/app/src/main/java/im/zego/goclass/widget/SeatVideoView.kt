@@ -16,6 +16,7 @@ import im.zego.goclass.R
 import kotlinx.android.synthetic.main.layout_seat_video_view.view.*
 
 /**
+ * 坐席区的视频窗口
  * 1、分为老师和学生两种视图
  * 2、user为空和user不为空
  * 3、根据user去查找Stream，如果有Stream进行推拉流

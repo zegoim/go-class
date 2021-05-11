@@ -893,7 +893,7 @@ class MainActivity : BaseActivity() {
         if (ClassRoomManager.me().sharable) {
             main_top_layout.visibility = View.VISIBLE
             main_step_layout.visibility =
-                if (currentHolder != null && currentHolder!!.isDynamicPPT()) View.VISIBLE else View.GONE
+                if (currentHolder != null && currentHolder!!.isDisplayedByWebView()) View.VISIBLE else View.GONE
         } else {
             main_top_layout.visibility = View.INVISIBLE
             main_step_layout.visibility = View.GONE
@@ -1199,7 +1199,7 @@ class MainActivity : BaseActivity() {
         main_top_sheet_name.visibility = if (holder.isExcel()) View.VISIBLE else View.GONE
         main_top_page_layout.visibility = if (holder.isExcel()) View.GONE else View.VISIBLE
         main_step_layout.visibility =
-            if (holder.isDynamicPPT() && ClassRoomManager.me().sharable) View.VISIBLE else View.GONE
+            if (holder.isDisplayedByWebView() && ClassRoomManager.me().sharable) View.VISIBLE else View.GONE
 
         main_whiteboard_tools_view.onWhiteboardChanged()
     }
@@ -1211,7 +1211,7 @@ class MainActivity : BaseActivity() {
      * 3、删除白板
      */
     private fun updatePreviewRelations() {
-        if (currentHolder != null && currentHolder!!.hasThumbUrl() && ClassRoomManager.me().sharable) {
+        if (currentHolder != null && currentHolder!!.getThumbnailUrlList().size!= 0 && ClassRoomManager.me().sharable) {
             // 有缩略图，显示预览按钮
             main_top_preview.visibility = View.VISIBLE
             main_top_preview.isSelected = false

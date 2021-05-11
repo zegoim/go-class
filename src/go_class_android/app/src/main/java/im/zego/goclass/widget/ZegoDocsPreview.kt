@@ -16,6 +16,9 @@ import im.zego.goclass.tool.Logger
 import im.zego.goclass.R
 import kotlinx.android.synthetic.main.item_preview_list.view.*
 
+/**
+ * 预览页面
+ */
 class ZegoDocsPreview : LinearLayout {
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)

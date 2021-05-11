@@ -1,11 +1,12 @@
 package im.zego.goclass.upload
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import androidx.core.app.ActivityCompat
-import com.easypermission.Permission
+import androidx.fragment.app.FragmentActivity
 import im.zego.goclass.R
 import im.zego.goclass.tool.PermissionHelper
 import im.zego.goclass.widget.ZegoDialog
@@ -48,7 +49,7 @@ class UploadFileHelper {
 
         private val mimeTypesDynamicPPTH5 = arrayOf(MimeType.PPT,MimeType.PPTX)
 
-        fun uploadFile(activity: Activity, renderType: Int) {
+        fun uploadFile(activity: FragmentActivity, renderType: Int) {
             PermissionHelper.onReadSDCardPermissionGranted(activity) { grant ->
                 if (grant) {
                     val uploadIntent = Intent().also {
@@ -68,7 +69,7 @@ class UploadFileHelper {
                 } else {
                     if (!ActivityCompat.shouldShowRequestPermissionRationale(
                             activity,
-                            Permission.READ_EXTERNAL_STORAGE
+                            Manifest.permission.READ_EXTERNAL_STORAGE
                         )
                     ) {
                         ZegoDialog.Builder(activity)

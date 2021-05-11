@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:background="@drawable/drawable_send_msg_item_bg"
+        android:background="@drawable/bg_msg_self"
         android:maxWidth="125dp"
         android:padding="8dp"
         android:includeFontPadding="false"

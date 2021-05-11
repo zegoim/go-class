@@ -18,6 +18,16 @@
         <item name="android:textAllCaps">false</item>
     </style>
 
+    <style name="DialogFragmentStyle" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowTitleStyle">@null</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowSoftInputMode">stateAlwaysVisible|adjustNothing</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
     <style name="DialogStyle" parent="AppDialogTheme">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowFrame">@null</item>
@@ -53,15 +63,5 @@
     <style name="popupWindow_anim_style">
         <item name="android:windowEnterAnimation">@anim/slide_in_right</item>
         <item name="android:windowExitAnimation">@anim/slide_out_right</item>
-    </style>
-
-    <style name="DialogFragmentStyle" parent="Theme.AppCompat.Light.Dialog">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowTitleStyle">@null</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:windowSoftInputMode">stateAlwaysVisible|adjustNothing</item>
-        <item name="android:backgroundDimEnabled">true</item>
-        <item name="android:textAllCaps">false</item>
     </style>
 </resources>

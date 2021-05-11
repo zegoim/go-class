@@ -21,6 +21,9 @@ import im.zego.goclass.network.ZegoApiErrorCode
 import im.zego.goclass.tool.ToastUtils
 import kotlinx.android.synthetic.main.layout_drawer_right.view.*
 
+/**
+ * 成员列表
+ */
 class ClassUserListView : RelativeLayout {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)

@@ -9,6 +9,9 @@ import im.zego.goclass.classroom.ClassRoomManager
 import im.zego.goclass.R
 import kotlinx.android.synthetic.main.layout_room_center_background.view.*
 
+/**
+ * 没有白板和文件的时候展示的界面
+ */
 class CenterBackgroundView : ConstraintLayout {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)

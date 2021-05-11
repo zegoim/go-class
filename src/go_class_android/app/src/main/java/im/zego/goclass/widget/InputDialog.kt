@@ -16,7 +16,7 @@ import im.zego.goclass.tool.ToastUtils
 import im.zego.goclass.R
 
 /**
- * 用于讨论列表的输入对话框
+ * 用于大班课讨论列表的输入对话框
  */
 const val MAX_LENGTH = 100
 class InputDialog : DialogFragment() {

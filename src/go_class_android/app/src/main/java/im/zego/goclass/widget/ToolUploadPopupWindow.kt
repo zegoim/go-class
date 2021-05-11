@@ -8,6 +8,9 @@ import im.zego.goclass.dp2px
 import im.zego.goclass.R
 import kotlinx.android.synthetic.main.popwindow_upload_file.view.*
 
+/**
+ * 点击工具栏上传按钮后的弹出框
+ */
 class ToolUploadPopupWindow(context: Context, onSelect: (isDynamic: Boolean) -> Unit) :
     BasePopWindow(
         context,

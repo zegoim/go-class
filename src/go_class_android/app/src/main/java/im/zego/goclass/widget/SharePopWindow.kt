@@ -8,7 +8,9 @@ import android.widget.TextView
 import im.zego.goclass.R
 import im.zego.goclass.dp2px
 
-
+/**
+ * 课堂内，点击共享按钮后的弹出框
+ */
 class SharePopWindow(context: Context) : BasePopWindow(
     context,
     contentView = LayoutInflater.from(context).inflate(R.layout.popwindow_share, null, false)

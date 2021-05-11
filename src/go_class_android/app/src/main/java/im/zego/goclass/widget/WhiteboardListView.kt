@@ -19,6 +19,9 @@ import im.zego.goclass.dp2px
 import im.zego.zegowhiteboard.model.ZegoWhiteboardViewModel
 import kotlinx.android.synthetic.main.layout_drawer_right.view.*
 
+/**
+ * 点击顶部白板名字后弹出的 白板和文件列表 页面
+ */
 class WhiteboardListView : RelativeLayout {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)

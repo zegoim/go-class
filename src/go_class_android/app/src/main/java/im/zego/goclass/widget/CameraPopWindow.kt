@@ -8,6 +8,9 @@ import android.widget.TextView
 import im.zego.goclass.R
 import im.zego.goclass.dp2px
 
+/**
+ * 课堂内点击相机按钮后弹出框
+ */
 class CameraPopWindow(context: Context) : BasePopWindow(
     context,
     contentView = LayoutInflater.from(context).inflate(R.layout.popwindow_camera, null, false)

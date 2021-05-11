@@ -78,9 +78,10 @@
     <string name="room_tip_exit_class">你可以暂时离开课堂，课堂不会立即结束。结束教学后，学生将被移出课堂。</string>
     <string name="room_end_teaching">结束教学</string>
     <string name="room_leave_class">离开课堂</string>
-    <string name="room_file_animation_displayed">静态：无法展示ppt动画；动态：可展示ppt动画</string>
+    <string name="room_file_animation_displayed">静态：无法展示ppt动画；动态：可展示ppt动画 H5:展示H5文件</string>
     <string name="room_file_dynamic">动态</string>
     <string name="room_file_static_file">静态</string>
+    <string name="room_file_h5_file">H5</string>
     <string name="room_im_discuss">讨论</string>
     <string name="room_im_say_something">说点什么吧~</string>
     <string name="room_im_send">发送</string>

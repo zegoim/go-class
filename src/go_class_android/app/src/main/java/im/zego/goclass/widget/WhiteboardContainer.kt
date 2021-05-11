@@ -9,7 +9,6 @@ import android.util.Log
 import android.util.Size
 import android.view.*
 import android.widget.FrameLayout
-import android.widget.Toast
 import androidx.core.view.children
 import im.zego.goclass.R
 import im.zego.goclass.classroom.ClassRoomManager
@@ -25,6 +24,7 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 /**
+ * 课堂白板区域显示的控件，用来 显示/隐藏 白板
  * WhiteboardContainer 包含一个或多个显示白板（纯白板或白板+文件）的 ZegoWhiteboardViewHolder 和工具栏 WhiteboardToolsView
  * 多个ViewHolder 共用一个 WhiteboardToolsView。
  * 当 ZegoWhiteboardViewHolder 个数为0的时候，显示 backgroundView。
@@ -183,8 +183,8 @@ class WhiteboardContainer : FrameLayout {
         result?.let {
             toolsView?.attachZegoWhiteboardHolderView(result)
             it.setWhiteboardScrollChangeListener(IZegoWhiteboardViewScrollListener { _, vertical ->
-                val currentPage = if (it.isDynamicPPT()) {
-                    it.calcDynamicPPTPage(vertical)
+                val currentPage = if (it.isDisplayedByWebView()) {
+                    it.calcWebViewPage(vertical)
                 } else {
                     it.getCurrentPage()
                 }
@@ -508,7 +508,7 @@ class WhiteboardContainer : FrameLayout {
                         var isShowDynamicPpt = false
                         children.forEach {
                             val holder = it as ZegoWhiteboardViewHolder
-                            isShowDynamicPpt = holder.visibility == VISIBLE && holder.isDynamicPPT()
+                            isShowDynamicPpt = holder.visibility == VISIBLE && holder.isDisplayedByWebView()
                         }
                         val hasChild = childCount > 0
                         val isAuthorized = ClassRoomManager.me().sharable

@@ -17,6 +17,9 @@ import im.zego.goclass.dp2px
 import im.zego.goclass.tool.OnRecyclerViewItemTouchListener
 import im.zego.goclass.tool.ZegoUtil.*
 
+/**
+ * 点击工具栏格式按钮后的弹出框
+ */
 class ToolStylePopWindow(context: Context) : BasePopWindow(
     context,
     contentView = LayoutInflater.from(context).inflate(R.layout.popwindow_style, null, false)

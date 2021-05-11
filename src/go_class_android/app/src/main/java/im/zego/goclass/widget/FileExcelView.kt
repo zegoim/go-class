@@ -16,6 +16,9 @@ import im.zego.goclass.dp2px
 import im.zego.goclass.tool.OnRecyclerViewItemTouchListener
 import kotlinx.android.synthetic.main.layout_drawer_right.view.*
 
+/**
+ * excel文件的sheet列表
+ */
 class FileExcelView : RelativeLayout {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)

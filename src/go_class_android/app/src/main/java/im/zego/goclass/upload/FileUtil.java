@@ -120,6 +120,10 @@ public class FileUtil {
                 } else if ("audio".equals(type)) {
                     contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
                 }
+                // 一加手机上是 "content://xxxxx"
+                if(contentUri == null){
+                    return null;
+                }
 
                 final String selection = "_id=?";
                 final String[] selectionArgs = new String[]{

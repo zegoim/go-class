@@ -27,6 +27,9 @@ import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import java.io.IOException
 
+/**
+ * 点击底部'共享-文件'后弹出的文件列表
+ */
 class FileListView : RelativeLayout {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
@@ -79,7 +82,7 @@ class FileListView : RelativeLayout {
             it.addOnItemTouchListener(touchListener)
         }
 
-        val url = "https://storage.zego.im/goclass/config_demo.json"
+        val url = "https://storage.zego.im/goclass/config.json"
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
             .build()
@@ -141,6 +144,9 @@ class FileListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         if (getFileList()[position].isDynamic) {
             dynamicTextView.text = nameTextView.context.getString(R.string.room_file_dynamic)
             dynamicTextView.setBackgroundResource(R.drawable.drawable_file_type_dyn)
+        }else if(getFileList()[position].isH5){
+            dynamicTextView.text = nameTextView.context.getString(R.string.room_file_h5_file)
+            dynamicTextView.setBackgroundResource(R.drawable.drawable_file_type_h5)
         } else {
             dynamicTextView.text = nameTextView.context.getString(R.string.room_file_static_file)
             dynamicTextView.setBackgroundResource(R.drawable.drawable_file_type_sta)

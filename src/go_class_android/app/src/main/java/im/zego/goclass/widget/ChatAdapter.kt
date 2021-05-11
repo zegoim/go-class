@@ -12,6 +12,9 @@ import im.zego.goclass.entity.SystemMsg
 import im.zego.goclass.entity.ChatMsg
 import im.zego.goclass.R
 
+/**
+ * 大班课的讨论界面
+ */
 class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var msgList = mutableListOf<IMsg>()

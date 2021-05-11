@@ -8,6 +8,9 @@ import android.widget.ImageView
 import im.zego.goclass.dp2px
 import im.zego.goclass.R
 
+/**
+ * 点击工具栏图形按钮后的弹出框
+ */
 class ToolShapePopupWindow(context: Context) : BasePopWindow(
     context,
     contentView = LayoutInflater.from(context).inflate(R.layout.popwindow_shape, null)

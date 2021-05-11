@@ -19,8 +19,7 @@ import im.zego.goclass.classroom.ClassUserListener
 import im.zego.goclass.tool.Logger
 
 /**
- * Created by yuxing_zhong on 2020/9/21
- * GoClassUserListener/JoinLiveUserListener: MainActivity先处理完，再分发到该window
+ * 坐席区的视频窗口列表
  */
 class SeatVideoWindow : LinearLayout, ClassUserListener, JoinLiveUserListener {
 

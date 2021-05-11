@@ -19,6 +19,9 @@ import im.zego.goclass.classroom.ClassRoomManager
 import im.zego.goclass.upload.UploadFileHelper.Companion.isUploadingFile
 import kotlinx.android.synthetic.main.layout_whiteboard_tools_view.view.*
 
+/**
+ * 白板工具栏
+ */
 class WhiteboardToolsView : ScrollView {
     private var onClickSelect: (selected: Boolean) -> Unit = {}
     private var onSelectSelect: () -> Unit = {}
@@ -51,11 +54,6 @@ class WhiteboardToolsView : ScrollView {
 
     init {
         LayoutInflater.from(context).inflate(R.layout.layout_whiteboard_tools_view, this).apply {
-
-            click.setOnTouchListener { v, event ->
-                // 如果当前展示为非动态 PPT 则该工具无法点击
-                !zegoWhiteboardViewHolder!!.isDynamicPPT()
-            }
 
             click.setOnClickListener {
 
@@ -396,7 +394,7 @@ class WhiteboardToolsView : ScrollView {
 
     fun onWhiteboardChanged() {
         zegoWhiteboardViewHolder?.let {
-            if (!it.isDynamicPPT() && isClickSelected()) {
+            if (!it.isDisplayedByWebView() && isClickSelected()) {
                 selectDefaultChild()
             }
         }

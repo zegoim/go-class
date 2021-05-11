@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory
 import android.provider.MediaStore
 import android.util.Log
 import android.webkit.MimeTypeMap
+import androidx.fragment.app.FragmentActivity
 import im.zego.goclass.R
 import im.zego.goclass.tool.PermissionHelper
 import im.zego.goclass.tool.ToastUtils
@@ -18,7 +19,7 @@ class UploadPicHelper {
         var supportedImageExtension = arrayOf("jpeg", "jpg", "png", "svg")
         val REQUEST_CODE_FOR_CHOOSE_PICTURE = 123
 
-        fun startChoosePicture(activity: Activity) {
+        fun startChoosePicture(activity: FragmentActivity) {
             PermissionHelper.onReadSDCardPermissionGranted(activity) {
                 val intent =
                     Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
