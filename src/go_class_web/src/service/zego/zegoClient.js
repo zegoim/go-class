@@ -69,6 +69,7 @@ class ZegoClient {
   async initConfig(env) {
     console.warn('sdk init')
     const tokenInfo = storage.get('tokenInfo')
+
     env = env || storage.get('loginInfo')?.env
     if (!tokenInfo) {
       await this.createZegoContext(env)
@@ -213,6 +214,7 @@ class ZegoClient {
       log_dir: LIVEROOM_LOGDIR,
       log_level: 4
     })
+    console.warn('zegoLiveRoom wb sdk version:',zegoLiveRoom.getVersion())
     console.warn(`设置日志缓存路径${setLogRes ? '成功' : '失败'}！`)
     return new Promise(resolve => {
       zegoLiveRoom.initSDK(config, async rs => {
@@ -248,6 +250,7 @@ class ZegoClient {
       zegoWhiteBoard: zegoWhiteBoard
     }
     await this.originInitElectronDocSDK()
+    console.warn('Express wb sdk version:',zegoWhiteBoard.getVersion())
     return Promise.resolve(true)
   }
 
@@ -276,6 +279,7 @@ class ZegoClient {
         ...docConf
       })
     this.docsClient = zgDocsViewClient
+    console.warn('docs sdk version:', zgDocsViewClient.getVersion())
   }
 
   lockProperty() {

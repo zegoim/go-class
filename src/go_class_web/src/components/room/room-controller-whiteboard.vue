@@ -64,7 +64,12 @@
       <div class="zoom-bar" v-if="computedViewList && computedViewList.length > 0">
         <div
           @click="handleZoomChange_(-1)"
-          :class="['zoom-bar-operation', 'zoom-add', zoomIndex === 0 && 'disabled',activeToolType === 256 && activeViewIsPPTH5 && 'disabled']"
+          :class="[
+            'zoom-bar-operation',
+            'zoom-add',
+            zoomIndex === 0 && 'disabled',
+            activeToolType === 256 && activeViewIsPPTH5 && 'disabled'
+          ]"
           v-html="require('../../assets/icons/room/top_down.svg').default"
         ></div>
         <div class="zoombar-center">
@@ -72,15 +77,10 @@
             v-model="zoom"
             placeholder="请选择"
             popper-class="whiteboard-zoom-select-list"
-            :disabled="activeViewIsPPTH5&&activeToolType===256"
+            :disabled="activeViewIsPPTH5 && activeToolType === 256"
             @change="handleWBZoom"
           >
-            <el-option
-              v-for="item in zoomList"
-              :key="item"
-              :value="item"
-              :label="item + '%'"
-            ></el-option>
+            <el-option v-for="item in zoomList" :key="item" :value="item" :label="item + '%'"></el-option>
           </el-select>
         </div>
         <div
@@ -100,10 +100,7 @@
         @click="handleThumbnailsShow(thumbnailsVisible)"
         :class="['thumb-button', thumbnailsVisible && 'active']"
       >
-        <span
-          class="button-icon"
-          v-html="require('../../assets/icons/room/preview.svg').default"
-        ></span>
+        <span class="button-icon" v-html="require('../../assets/icons/room/preview.svg').default"></span>
         <span>预览</span>
       </div>
     </div>
@@ -202,8 +199,8 @@ export default {
         const fileInfo = cur.getFileInfo() || {}
         const res = Object.assign(cur, {
           name: fileInfo.fileType
-              ? this.hideTitle(cur.name)
-              : (cur.name || '').replace(/^(.{3}).*?(创建的白板\d+)$/, '$1...$2'),
+            ? this.hideTitle(cur.name)
+            : (cur.name || '').replace(/^(.{3}).*?(创建的白板\d+)$/, '$1...$2'),
           selfWBID: fileInfo.fileID || cur.whiteboardID
         })
         if (!acc.find(item => item.name === res.name)) {
@@ -244,7 +241,7 @@ export default {
      */
     activeToolType() {
       return this.zegoWhiteboardArea.activeToolType
-    },
+    }
   },
   watch: {
     'zegoWhiteboardArea.WBViewList': function() {
@@ -351,8 +348,8 @@ export default {
     },
 
     handleZoomChange_(type) {
-      console.warn(this.activeViewIsPPTH5,this.activeToolType)
-      if(this.activeToolType === 256 && this.activeViewIsPPTH5) return;
+      console.warn(this.activeViewIsPPTH5, this.activeToolType)
+      if (this.activeToolType === 256 && this.activeViewIsPPTH5) return
       debounce(this.handleZoomChange(type), 500, true)
     },
 
@@ -363,9 +360,7 @@ export default {
     handleZoomChange(type) {
       let zoom
       if (type === 1 && this.zoomIndex <= this.zoomList.length - 1) {
-        this.zoomIndex === this.zoomList.length - 1
-          ? (this.zoomIndex = this.zoomList.length - 1)
-          : this.zoomIndex++
+        this.zoomIndex === this.zoomList.length - 1 ? (this.zoomIndex = this.zoomList.length - 1) : this.zoomIndex++
       } else if (type === -1 && this.zoomIndex >= 0) {
         this.zoomIndex === 0 ? 0 : this.zoomIndex--
       }
@@ -415,7 +410,10 @@ export default {
     background-color: #f4f5f8;
   }
 
-  .el-select, .thumb-button, .zoom-bar, .page-bar {
+  .el-select,
+  .thumb-button,
+  .zoom-bar,
+  .page-bar {
     -webkit-app-region: no-drag;
   }
 }
@@ -563,7 +561,7 @@ export default {
         border: none;
         overflow: hidden;
       }
-      .is-disabled .el-input__inner{
+      .is-disabled .el-input__inner {
         background-color: #fff;
       }
       // /deep/ {

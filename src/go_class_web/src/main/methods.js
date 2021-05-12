@@ -1,8 +1,15 @@
-import { app, BrowserWindow } from 'electron'
-import { wins } from './windowInstance'
-import { handleContextMenu } from './menu'
+import {
+  app,
+  BrowserWindow
+} from 'electron'
+import {
+  wins
+} from './windowInstance'
+import {
+  handleContextMenu
+} from './menu'
 
-export function createWindow (options, onComplete) {
+export function createWindow(options, onComplete) {
   const win = new BrowserWindow(options.setup)
   win.on('show', () => {
     win.webContents.send('window-show')
@@ -40,7 +47,7 @@ export function createWindow (options, onComplete) {
   win.loadURL(options.url)
   win.webContents.on('context-menu', handleContextMenu)
   if (process.env.NODE_ENV !== 'production') {
-    win.webContents.openDevTools()
+    // win.webContents.openDevTools()
   }
   if (options.setup.webPreferences.webviewTag) {
     win.webContents.on('did-attach-webview', (event, webContents) => {

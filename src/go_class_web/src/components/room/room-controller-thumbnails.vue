@@ -1,12 +1,5 @@
 <template>
-  <el-drawer
-    title="预览"
-    :modal="false"
-    :visible="visible"
-    direction="rtl"
-    size="100%"
-    :show-close="false"
-  >
+  <el-drawer title="预览" :modal="false" :visible="visible" direction="rtl" size="100%" :show-close="false">
     <ul class="swiper-ul" ref="swiper" id="swiper">
       <li
         v-for="(i, index) in thumbnailsImg"
@@ -50,6 +43,7 @@ export default {
   },
   watch: {
     visible(val) {
+      console.log('缩略图，', val)
       if (val) {
         this.zegoWhiteboardArea.getThumbnailUrlList()
         this.activeIndex = this.currPage - 1
@@ -79,7 +73,7 @@ export default {
       const el = document.getElementById('swiper')
       if (!el) return
 
-      const elClientHeight = document.querySelectorAll('#swiper li')[0].clientHeight
+      const elClientHeight = document.querySelectorAll('#swiper li')[0]?.clientHeight
       const scrollToNum = elClientHeight * (index - 1)
       el.scrollTo({
         top: scrollToNum,

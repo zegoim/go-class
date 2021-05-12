@@ -1,22 +1,14 @@
 <template>
   <div class="file-list-dialog">
-    <el-dialog
-      title="选择文件"
-      :visible.sync="filesListDialogShow"
-      width="460px"
-      height="314px"
-      @close="closeDialog"
-    >
+    <el-dialog title="选择文件" :visible.sync="filesListDialogShow" width="460px" height="314px" @close="closeDialog">
       <div class="dialog-content">
         <ul class="file-list">
-          <li
-            class="file-item"
-            v-for="item in fileList"
-            :key="item.name + item.id"
-            @click="createDocView(item.id)"
-          >
-            <div :class="['state', item.isDynamic && 'dynamic']">
+          <li class="file-item" v-for="item in fileList" :key="item.name + item.id" @click="createDocView(item.id)">
+            <!-- <div :class="['state', item.isDynamic && 'dynamic']">
               {{ item.isDynamic ? '动态' : '静态' }}
+            </div> -->
+            <div :class="['state', item.isDynamic && 'dynamic', item.isH5 && 'h5']">
+              {{ item.isH5 ? 'H5' : item.isDynamic && !item.isH5 ? '动态' : '静态' }}
             </div>
             {{ item.name }}
           </li>
@@ -24,7 +16,8 @@
         <div class="tips">
           <div style="width:400px;border-top:1px solid #f4f5f8">
             <span class="static">静态：无法展示PPT动画</span>
-            <span class="dynamic">动态：可展示PPT动画</span>
+            <span class="static">动态：可展示PPT动画</span>
+            <span class="dynamic">H5：展示H5文件</span>
           </div>
         </div>
       </div>
@@ -152,6 +145,10 @@ export default {
 
       &.dynamic {
         background-color: #ffa402;
+      }
+      &.h5 {
+        width: 23px;
+        background-color: #00baff;
       }
     }
     .el-dialog__header {

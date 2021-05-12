@@ -6,7 +6,7 @@
 <script>
 import zegoClient from '@/service/zego/zegoClient'
 import ErrorHandle from '@/utils/error'
-import {roomStore} from '@/service/biz/room'
+import { roomStore } from '@/service/biz/room'
 let extraTask = null
 let allowSetExtra = false
 
@@ -59,7 +59,7 @@ export default {
       thumbnailsImg: [], // 缩略图列表
       filesListDialogShow: false, // 文件列表弹窗
       isAllowSendRoomExtraInfo: true, // 是否发送房间附加信息
-      isInitGetList: false,
+      isInitGetList: false
     }
   },
   inject: ['zegoLiveRoom'],
@@ -148,7 +148,6 @@ export default {
         })
       }
     }
-
   },
   methods: {
     /**
@@ -157,17 +156,18 @@ export default {
      */
     handleRemoteWhiteboardChange(res) {
       if (!res) return
-      const {type, data} = res
+      const { type, data } = res
       if (type === '1001' && data !== this.activeWBId && data) {
-        console.warn('handleRemoteWhiteboardChange', {res})
+        console.warn('handleRemoteWhiteboardChange', { res })
         if (!this.originWBViewList.length) {
-          !extraTask && (extraTask = setInterval(() => {
-            if (this.originWBViewList.length) {
-              this.checkRemoteView(data)
-              clearInterval(extraTask)
-              extraTask = null
-            }
-          }, 10))
+          !extraTask &&
+            (extraTask = setInterval(() => {
+              if (this.originWBViewList.length) {
+                this.checkRemoteView(data)
+                clearInterval(extraTask)
+                extraTask = null
+              }
+            }, 10))
         } else {
           this.checkRemoteView(data)
         }
@@ -214,7 +214,7 @@ export default {
        * @return {id, page, step } 返回白板ID，翻页模式时当前页码，动态PPT当前动画步数
        * 更多参数请见官网2.4滚动白板view部分 https://doc-zh.zego.im/zh/4327.html
        */
-      this.client.on('viewScroll', ({id, page, step}) => {
+      this.client.on('viewScroll', ({ id, page, step }) => {
         console.warn('viewScroll', id, page, step)
         this.updateCurrPage(page)
       })
@@ -223,7 +223,7 @@ export default {
        * @return {res} 文档相关信息
        */
       this.docsClient.on('onLoadFile', async res => {
-        console.log('docsClient.onLoadFile---', {res})
+        console.log('docsClient.onLoadFile---', { res })
         try {
           await this.createFileWBView(res)
           if (this.activeViewIsPPTH5) this.stopPlay()
@@ -262,9 +262,7 @@ export default {
         if (ids.includes(viewID)) needRemoveExcelSheets = ids
       }
       if (needRemoveExcelSheets.length) {
-        this.originWBViewList = this.originWBViewList.filter(
-            item => !needRemoveExcelSheets.includes(item.whiteboardID)
-        )
+        this.originWBViewList = this.originWBViewList.filter(item => !needRemoveExcelSheets.includes(item.whiteboardID))
       } else {
         this.originWBViewList = this.originWBViewList.filter(x => x.whiteboardID !== viewID)
       }
@@ -278,7 +276,7 @@ export default {
       let viewList = []
       // 如果是true 则从服务器拉取白板列表
       if (isPullNew) {
-        console.warn('getViewList', {isPullNew})
+        console.warn('getViewList', { isPullNew })
         viewList = await this.client.getViewList()
         this.originWBViewList = viewList
       } else {
@@ -286,25 +284,25 @@ export default {
       }
       const excelSheetsMap = {}
       viewList = viewList
-          .map(view => {
-            const fileInfo = view.getFileInfo && view.getFileInfo()
-            // 如果是Excel文件，将每个sheet的id存入excelSheetsMap
-            if (fileInfo && fileInfo.fileType === 4) {
-              const {fileID} = fileInfo
-              if (!excelSheetsMap[fileID]) {
-                excelSheetsMap[fileID] = []
-              }
-              excelSheetsMap[fileID].push(view)
-              const lastMatched = this.getLastMatchedViewByFileID(fileID)
-              if (view && lastMatched && view.whiteboardID === lastMatched.whiteboardID) {
-                return this.addAttrToView(view)
-              }
-              return null
+        .map(view => {
+          const fileInfo = view.getFileInfo && view.getFileInfo()
+          // 如果是Excel文件，将每个sheet的id存入excelSheetsMap
+          if (fileInfo && fileInfo.fileType === 4) {
+            const { fileID } = fileInfo
+            if (!excelSheetsMap[fileID]) {
+              excelSheetsMap[fileID] = []
             }
+            excelSheetsMap[fileID].push(view)
+            const lastMatched = this.getLastMatchedViewByFileID(fileID)
+            if (view && lastMatched && view.whiteboardID === lastMatched.whiteboardID) {
+              return this.addAttrToView(view)
+            }
+            return null
+          }
 
-            return this.addAttrToView(view)
-          })
-          .filter(x => x)
+          return this.addAttrToView(view)
+        })
+        .filter(x => x)
 
       this.excelSheetsMap = excelSheetsMap
       this.WBViewList = viewList
@@ -401,16 +399,16 @@ export default {
         await this.client.attachView(activeWBView, this.parentId)
         if (!this.originWBViewList.find(item => item.whiteboardID === activeWBView.whiteboardID)) {
           this.originWBViewList.unshift(
-              Object.assign(activeWBView, {
-                name: this.getViewName(activeWBView)
-              })
+            Object.assign(activeWBView, {
+              name: this.getViewName(activeWBView)
+            })
           )
         }
         await this.getViewList(false)
         await this.updateActiveView(activeWBView)
       } catch (error) {
         console.log(error)
-        const {code} = error
+        const { code } = error
         if (code === ErrorHandle.timeout) {
           this.showToast('请求超时')
         } else {
@@ -455,7 +453,7 @@ export default {
       this.isThumbnailsVisible = false
       // 获取文件相关参数
       const fileInfo = activeWBView && activeWBView?.getFileInfo()
-      this.activeViewIsPPTH5 = !!(fileInfo && fileInfo.fileType === 512)
+      this.activeViewIsPPTH5 = !!(fileInfo && (fileInfo.fileType === 512 || fileInfo.fileType === 4096))
       this.activeViewIsPDF = !!(fileInfo && fileInfo.fileType === 8)
       this.activeViewIsPPT = !!(fileInfo && fileInfo.fileType === 1)
       this.activeViewIsExcel = !!(fileInfo && fileInfo.fileType === 4)
@@ -503,7 +501,7 @@ export default {
      */
     async selectRemoteView(id, setSheetID = false) {
       if (this.isCreating || !id) return
-      console.warn('selectRemoteView', {originWBViewList: this.originWBViewList})
+      console.warn('selectRemoteView', { originWBViewList: this.originWBViewList })
       const view = this.originWBViewList.find(v => id == v.whiteboardID)
       if (!view) {
         this.showToast('远端白板不存在，请尝试刷新重试')
@@ -547,10 +545,9 @@ export default {
       this.isRemote = true
       // 创建文件
       const zgDocsView = this.docsClient.createView(this.parentId, id, fileInfo.fileName)
+      this.$set(this, 'zgDocsView', zgDocsView)
       try {
         const res = await zgDocsView.loadFile(fileInfo.fileID, fileInfo.authKey)
-        this.zgDocsView = zgDocsView
-        console.warn({zgDocsView: this.zgDocsView})
         this.$nextTick(() => {
           this.splitExcelSheetSuffixHandle(res)
           this.updateExcelSheetNamesIdMap(res, fileInfo.fileID)
@@ -613,8 +610,7 @@ export default {
       if (this.activeViewIsPPTH5) this.stopPlay()
       console.warn('createFileWBView', { res })
       // 创建Excel文件白板
-      const isRemoteNoHasExcelFile =
-          res.fileType === 4 && !this.originWBViewList.find(x => res.name === x.getName())
+      const isRemoteNoHasExcelFile = res.fileType === 4 && !this.originWBViewList.find(x => res.name === x.getName())
       if (isRemoteNoHasExcelFile) {
         await this.createExcelSheetView(res)
         return
@@ -638,13 +634,13 @@ export default {
             }
           })
           this.originWBViewList.unshift(
-              Object.assign(activeWBView, {
-                name: this.getViewName(activeWBView)
-              })
+            Object.assign(activeWBView, {
+              name: this.getViewName(activeWBView)
+            })
           )
         } catch (error) {
-          console.log('createFileWBView error', {error})
-          const {code} = error
+          console.log('createFileWBView error', { error })
+          const { code } = error
           if (code === ErrorHandle.timeout) {
             this.showToast('请求超时')
           } else {
@@ -669,7 +665,7 @@ export default {
      * @param {res} 创建文件回调返回的相关参数
      */
     async createExcelSheetView(res) {
-      const {sheets} = res
+      const { sheets } = res
       let activeWBView = this.activeWBView
       if (!this.isRemote) {
         try {
@@ -702,7 +698,7 @@ export default {
           activeWBView = views[0]
           this.originWBViewList = [...views, ...this.originWBViewList]
         } catch (error) {
-          const {code} = error
+          const { code } = error
           if (code === ErrorHandle.timeout) {
             this.showToast('请求超时')
           } else {
@@ -722,10 +718,10 @@ export default {
      */
     splitExcelSheetSuffixHandle(res) {
       res.fileType === 4 &&
-      res.file_list &&
-      res.file_list.forEach(item => {
-        item.file_name = item.file_name.replace(/.pdf/, '')
-      })
+        res.file_list &&
+        res.file_list.forEach(item => {
+          item.file_name = item.file_name.replace(/.pdf/, '')
+        })
     },
 
     /**
@@ -749,9 +745,7 @@ export default {
 
       // 缩略图展示的文件
       const isShowThumbnails =
-          activeFileInfo.fileType === 1 ||
-          activeFileInfo.fileType === 8 ||
-          activeFileInfo.fileType === 512
+        activeFileInfo.fileType === 1 || activeFileInfo.fileType === 8 || activeFileInfo.fileType === 512
 
       // 判断销毁的白板是否是当前使用的白板
       const isDestroyActiveView = fileInfo.fileName === activeFileInfo.fileName
@@ -762,9 +756,7 @@ export default {
       }
 
       if (fileInfo && fileInfo.fileType === 4) {
-        this.WBViewList = this.WBViewList.filter(
-            x => x.whiteboardID && x.whiteboardID !== whiteboardView.whiteboardID
-        )
+        this.WBViewList = this.WBViewList.filter(x => x.whiteboardID && x.whiteboardID !== whiteboardView.whiteboardID)
         for (const item of this.originWBViewList) {
           if (item.getFileInfo() && item.getFileInfo().fileID === fileInfo.fileID) {
             try {
@@ -772,7 +764,7 @@ export default {
               item.delete = true
             } catch (error) {
               console.log(error)
-              const {code} = error
+              const { code } = error
               if (code === ErrorHandle.timeout) {
                 this.showToast('请求超时')
               } else {
@@ -786,14 +778,12 @@ export default {
         try {
           await this.client.destroyView(whiteboardView)
           this.WBViewList = this.WBViewList.filter(
-              x => x.whiteboardID && x.whiteboardID !== whiteboardView.whiteboardID
+            x => x.whiteboardID && x.whiteboardID !== whiteboardView.whiteboardID
           )
-          this.originWBViewList = this.originWBViewList.filter(
-              x => x.whiteboardID !== whiteboardView.whiteboardID
-          )
+          this.originWBViewList = this.originWBViewList.filter(x => x.whiteboardID !== whiteboardView.whiteboardID)
         } catch (error) {
           console.log(error)
-          const {code} = error
+          const { code } = error
           if (code === ErrorHandle.timeout) {
             this.showToast('请求超时')
           } else {
@@ -803,9 +793,8 @@ export default {
       }
 
       if (
-          (whiteboardView.whiteboardID === this.activeWBId ||
-              fileInfo.fileID === activeFileInfo.fileID) &&
-          this.WBViewList.length
+        (whiteboardView.whiteboardID === this.activeWBId || fileInfo.fileID === activeFileInfo.fileID) &&
+        this.WBViewList.length
       ) {
         const id = this.WBViewList[0].whiteboardID
         this.selectRemoteView(id)
@@ -905,7 +894,7 @@ export default {
     flipPage(page) {
       if (!this.activeWBView || page < 1 || page > this.totalPage) return
       const percent = (page - 1) / this.totalPage
-      const {direction} = this.activeWBView.getCurrentScrollPercent()
+      const { direction } = this.activeWBView.getCurrentScrollPercent()
       console.warn('percent:', percent)
       if (direction === 1) {
         this.activeWBView.scroll(percent, 0)
@@ -939,6 +928,8 @@ export default {
     getThumbnailUrlList() {
       if (this.zgDocsView) {
         this.thumbnailsImg = this.zgDocsView.getThumbnailUrlList()
+        console.log('this.zgDocsView', this.zgDocsView)
+        console.log('getThumbnailUrlList:', this.thumbnailsImg)
       }
     },
 
@@ -987,12 +978,8 @@ export default {
       const fileInfo = this.activeWBView && this.activeWBView.getFileInfo()
       const isExcelFile = fileInfo.fileType === 4
       this.isRemote = true
-      const zgDocsView = this.docsClient.createView(
-          this.parentId,
-          id,
-          isExcelFile ? fileInfo.fileName : ''
-      )
-      console.warn({zgDocsView, docsClient: this.docsClient})
+      const zgDocsView = this.docsClient.createView(this.parentId, id, isExcelFile ? fileInfo.fileName : '')
+      console.warn({ zgDocsView, docsClient: this.docsClient })
       try {
         const res = await zgDocsView.loadFile(fileInfo.fileID, fileInfo.authKey)
         this.splitExcelSheetSuffixHandle(res)
@@ -1011,7 +998,7 @@ export default {
      */
     stopPlay(num = 0) {
       this.zgDocsView && this.zgDocsView.stopPlay(num)
-    },
+    }
   }
 }
 </script>

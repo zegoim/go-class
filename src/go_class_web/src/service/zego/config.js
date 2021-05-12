@@ -1,4 +1,9 @@
-import { signToArray, createUserId, electron_get_cachePath, storage } from '@/utils/tool'
+import {
+  signToArray,
+  createUserId,
+  electron_get_cachePath,
+  storage
+} from '@/utils/tool'
 
 const cachePath = electron_get_cachePath()
 
@@ -13,19 +18,22 @@ const cachePath = electron_get_cachePath()
  */
 
 const appIDMap = {
-  home1: +process.env.VUE_APP_ZEGO_APPID,       // 国内-小班课
-  overseas1: +process.env.VUE_APP_ZEGO_APPID2,  // 海外-小班课
+  home1: +process.env.VUE_APP_ZEGO_APPID, // 国内-小班课
+  overseas1: +process.env.VUE_APP_ZEGO_APPID2, // 海外-小班课
 }
 
 const appSignMap = {
-  home1: process.env.VUE_APP_ZEGO_APPSIGN,      // 国内-小班课
-  home2: process.env.VUE_APP_ZEGO_APPSIGN2,     // 海外-小班课
+  home1: process.env.VUE_APP_ZEGO_APPSIGN, // 国内-小班课
+  overseas1: process.env.VUE_APP_ZEGO_APPSIGN2, // 海外-小班课
 }
 
 
 class BaseConfig {
   constructor() {
-    const { classScene = 1, env = 'home' } = storage.get('loginInfo') || {}
+    const {
+      classScene = 1, env = 'home'
+    } = storage.get('loginInfo') || {}
+    console.log('---BaseConfig---', env, classScene)
     this.appID = appIDMap[env + classScene]
     this.appSign = appSignMap[env + classScene]
     this.serverEnv = process.env.VUE_APP_WB_ENV
@@ -38,10 +46,14 @@ class BaseConfig {
   async getFileList() {
     // TODO: getFileList-请求文件列表，自行实现
     if (!this.home.fileList.length) {
-      this.home.fileList = [{ fileID: 'your fileID', fileName: 'your fileName' }]
+      this.home.fileList = [{
+        fileID: 'your fileID',
+        fileName: 'your fileName'
+      }]
       this.overseas.fileList = []
     }
   }
+
 
   createConfig(appID, server, logURL, userID, fileList) {
     return {
@@ -83,12 +95,10 @@ class ElectronConfig extends BaseConfig {
       browser: `${cachePath}/docsviewlog/`
     },
     LIVEROOM_LOGDIR: `${cachePath}/zegoLiveroomLog/`,
-    FILE_FILTERS: [
-      {
-        name: 'All',
-        extensions: ['*']
-      }
-    ]
+    FILE_FILTERS: [{
+      name: 'All',
+      extensions: ['*']
+    }]
   }
 
   constructor() {
@@ -99,7 +109,10 @@ class ElectronConfig extends BaseConfig {
   // 绑定electron所需配置，例如appSign
   bindElectronConfig() {
     this.env.map(e => {
-      const signProperty = { appSign: signToArray(this.appSign), signStr: this.appSign }
+      const signProperty = {
+        appSign: signToArray(this.appSign),
+        signStr: this.appSign
+      }
       this[e] = Object.assign(this[e], this.base_electron_config, signProperty)
     })
   }

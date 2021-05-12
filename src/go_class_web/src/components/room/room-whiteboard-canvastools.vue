@@ -6,12 +6,12 @@
           'tool-item',
           item.name === 'undo' && 'divide-line',
           isClickable(item) && 'active',
-          hoverState ? '':'forbid'
+          hoverState ? '' : 'forbid'
         ]"
         v-for="item in canvasToolList"
         :key="item.name"
         @click.prevent.stop="setToolType_(item)"
-        @mouseover.prevent.stop = 'itemHoverState(item.type)'
+        @mouseover.prevent.stop="itemHoverState(item.type)"
       >
         <div v-html="require(`../../assets/icons/room/${item.imgName}.svg`).default"></div>
         <div class="tooltip">{{ item.cnName }}</div>
@@ -141,7 +141,7 @@ export default {
     activeTextPencil() {
       return this.zegoWhiteboardArea.activeTextPencil
     },
-    activeViewIsPPTH5(){
+    activeViewIsPPTH5() {
       return this.zegoWhiteboardArea.activeViewIsPPTH5
     }
   },
@@ -150,10 +150,10 @@ export default {
      * @desc: 判断如果是非动态ppt，则点击工具不可点击
      * @param {item} 点击item
      */
-    isClickable(item){
-      if(item.type === this.activeToolType){
-        if(this.activeViewIsPPTH5 && item.type === 256) return true
-        if(item.type === 256) return false
+    isClickable(item) {
+      if (item.type === this.activeToolType) {
+        if (this.activeViewIsPPTH5 && item.type === 256) return true
+        if (item.type === 256) return false
         return true
       }
     },
@@ -161,8 +161,8 @@ export default {
      * @desc: 鼠标hover图标，判断如果是非动态ppt，则点击工具为禁止点击样式
      * @param {type} hover经过的工具类型
      */
-    itemHoverState(type){
-      if(this.activeViewIsPPTH5){
+    itemHoverState(type) {
+      if (this.activeViewIsPPTH5) {
         this.hoverState = true
       } else {
         this.hoverState = type === 256 ? false : true
@@ -170,7 +170,7 @@ export default {
     },
     setToolType_(item) {
       // 非动态ppt文件不可以选择点击工具
-      if(!this.activeViewIsPPTH5 && item.type === 256) return;
+      if (!this.activeViewIsPPTH5 && item.type === 256) return
       debounce(this.setToolType(item), 500, true)
     },
 
@@ -253,10 +253,10 @@ export default {
     &.disabled {
       pointer-events: none;
     }
-    &.forbid{
+    &.forbid {
       &:hover {
         cursor: not-allowed !important;
-         /deep/ {
+        /deep/ {
           .hover-fill {
             fill: #b0b3ba !important;
           }
@@ -265,7 +265,6 @@ export default {
           }
         }
       }
-
     }
     &:hover {
       /deep/ {
@@ -281,7 +280,6 @@ export default {
         display: block;
         background: rgba(0, 0, 0, 0.7);
       }
-
     }
 
     &.active {
@@ -294,7 +292,6 @@ export default {
         }
       }
     }
-
 
     .tooltip {
       @include sc(12px, #fff);
