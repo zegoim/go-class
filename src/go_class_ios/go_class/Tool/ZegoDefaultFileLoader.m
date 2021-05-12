@@ -35,6 +35,7 @@ static NSString *kZegoFileListServerHost = @"https://storage.zego.im/goclass/con
     dispatch_once(&onceToken, ^{
         _instance = [[ZegoDefaultFileLoader alloc] init];
         _instance.httpManager = [AFHTTPSessionManager manager];
+        _instance.httpManager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"application/jsoncharset=utf-8", @"text/json", @"text/javascript", nil];
     });
     return _instance;
 }
@@ -54,7 +55,8 @@ static NSString *kZegoFileListServerHost = @"https://storage.zego.im/goclass/con
             NSString *fileID = file[@"id"];
             NSString *fileName = file[@"name"];
             BOOL isDynamic = file[@"isDynamic"] ?: NO;
-            ZegoDocsViewFileType fileType = [self fileTypeWithFileName:fileName isDynamic:isDynamic];
+            BOOL isH5 = file[@"isH5"] ?: NO;
+            ZegoDocsViewFileType fileType = [self fileTypeWithFileName:fileName isDynamic:isDynamic isCustomH5:isH5];
             ZegoFileInfoModel *fileModel = [self fileInfoWithID:fileID name:fileName authKey:@"123" fileType:fileType];
             [ret addObject:fileModel];
         }
@@ -68,19 +70,29 @@ static NSString *kZegoFileListServerHost = @"https://storage.zego.im/goclass/con
     }];
 }
 
-- (ZegoDocsViewFileType)fileTypeWithFileName:(NSString *)fileName isDynamic:(BOOL)isDynamic {
+- (ZegoDocsViewFileType)fileTypeWithFileName:(NSString *)fileName
+                                   isDynamic:(BOOL)isDynamic
+                                  isCustomH5:(BOOL)isCustomH5
+
+{
+    ZegoDocsViewFileType type = ZegoDocsViewFileTypeUnknown;
     NSString *fileSuffix = [fileName pathExtension];
     if (!fileSuffix || !self.generalFileMap[fileSuffix]) {
-        return ZegoDocsViewFileTypeUnknown;
+        return type;
     }
     NSDictionary *fileMap = nil;
+  
     if (isDynamic) {
         fileMap = self.dynamicPPTFileMap;
     }else {
         fileMap = self.generalFileMap;
     }
     NSNumber *ret = fileMap[fileSuffix];
-    return (ZegoDocsViewFileType)ret.integerValue;
+    type = (ZegoDocsViewFileType)ret.integerValue;
+    if (isCustomH5) {
+        type = ZegoDocsViewFileTypeCustomH5;
+    }
+    return type;
 }
 
 - (ZegoFileInfoModel *)fileInfoWithID:(NSString *)fileId name:(NSString *)fileName authKey:(NSString *)authKey fileType:(ZegoDocsViewFileType)fileType {
@@ -112,6 +124,7 @@ static NSString *kZegoFileListServerHost = @"https://storage.zego.im/goclass/con
             @"jpeg": @(ZegoDocsViewFileTypeIMG),
             @"png": @(ZegoDocsViewFileTypeIMG),
             @"bmp": @(ZegoDocsViewFileTypeIMG),
+            @"zip": @(ZegoDocsViewFileTypeCustomH5),
         };
     }
     return _generalFileMap;

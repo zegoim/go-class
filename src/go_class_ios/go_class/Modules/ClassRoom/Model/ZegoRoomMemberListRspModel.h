@@ -54,7 +54,17 @@ typedef NS_ENUM(NSUInteger, ZegoClassBusinessType) {
 @property (nonatomic, assign) NSTimeInterval joinLiveTime;      //加入连麦时间
 @property (nonatomic, assign) NSTimeInterval loginTimer;        //进入房间时间
 
+@property (nonatomic, assign) NSInteger allowTurnOnCamera;     //1.不允许2.允许
+@property (nonatomic, assign) NSInteger allowTurnOnMic;        //1.不允许2.允许
+@property (nonatomic, assign) NSInteger defaultCameraState;    //1：关闭  2：打开
+@property (nonatomic, assign) NSInteger defaultMicState;       //1：关闭  2：打开
+
+
 - (instancetype)initWithUid:(NSInteger)uid userName:(NSString *)userName role:(ZegoUserRoleType)role;
+- (BOOL)isCameraOn;
+- (BOOL)isMicOn;
+- (BOOL)isCanShare;
+- (BOOL)isUserAdd;
 @end
 
 @interface ZegoRoomMemberListRspModel : NSObject

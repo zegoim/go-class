@@ -100,7 +100,7 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     UIView *headView = [[UIView alloc]init];
-    headView.backgroundColor = [UIColor whiteColor];
+    headView.backgroundColor = UIColorHex(#fbfcff);
     UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, self.frame.size.width, 25)];
     titleLabel.text = [NSString zego_localizedString:@"room_im_discuss"];
     [titleLabel setTextAlignment:NSTextAlignmentCenter];

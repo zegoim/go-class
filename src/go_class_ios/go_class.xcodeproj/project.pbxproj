@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		5C0B4E5725AD851300A11790 /* NSBundle+ZegoExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0B4E5525AD851300A11790 /* NSBundle+ZegoExtension.m */; };
+		5C179C77255A8CFF00FC138E /* BuildFile in Sources */ = {isa = PBXBuildFile; };
+		5C179C78255A8CFF00FC138E /* BuildFile in Resources */ = {isa = PBXBuildFile; };
 		5C179C7B255A8E7900FC138E /* ZegoClassEnvManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C179C7A255A8E7900FC138E /* ZegoClassEnvManager.m */; };
 		5C3050B225A86B9300AEDE94 /* ZegoClassRoomTopBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C3050B425A86B9300AEDE94 /* ZegoClassRoomTopBar.xib */; };
 		5C3050B925A86BFF00AEDE94 /* ZegoClassRoomSharePopView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C3050BB25A86BFF00AEDE94 /* ZegoClassRoomSharePopView.xib */; };
@@ -855,8 +857,8 @@
 				86165DD5247E71B5007EA3FE /* Frameworks */,
 				86165DD6247E71B5007EA3FE /* Resources */,
 				8684FBDC24908D1B00F79C47 /* ShellScript */,
-				C70A80BF0774F5995E0315CF /* [CP] Embed Pods Frameworks */,
 				5C52FC5F24E156790044B38D /* Embed Frameworks */,
+				79FC0C88EAFCEC743E322A57 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -916,6 +918,7 @@
 				862611AE250A3F4400EA21A6 /* ZegoWhiteBoardListCell.xib in Resources */,
 				5C3D9DB325AEDD34006681CC /* LaunchScreen.storyboard in Resources */,
 				5C3D9DB925AEDDF0006681CC /* ZegoClassViewController.xib in Resources */,
+				5C179C78255A8CFF00FC138E /* BuildFile in Resources */,
 				864A7FC52557A6C3007EF894 /* ZegoClassJustTestViewController.xib in Resources */,
 				5C3050C025A86C1700AEDE94 /* ZegoClassRoomCameraPopView.xib in Resources */,
 				5C3050B225A86B9300AEDE94 /* ZegoClassRoomTopBar.xib in Resources */,
@@ -951,25 +954,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		8684FBDC24908D1B00F79C47 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "
-";
-		};
-		C70A80BF0774F5995E0315CF /* [CP] Embed Pods Frameworks */ = {
+		79FC0C88EAFCEC743E322A57 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -985,6 +970,23 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-go_class/Pods-go_class-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		8684FBDC24908D1B00F79C47 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1018,6 +1020,7 @@
 				8626117E250A3DFD00EA21A6 /* ZFView.m in Sources */,
 				86B288502499C5BA000D5151 /* ZegoClassInviteManager.m in Sources */,
 				86939DC02487A33E00A68E15 /* ZegoClassRoomBottomBar.m in Sources */,
+				5C179C77255A8CFF00FC138E /* BuildFile in Sources */,
 				866C6753251C8F1D00B034B7 /* ZegoDispath.m in Sources */,
 				862611F525136C7E00EA21A6 /* ZegoWhiteBoardService.m in Sources */,
 				8626116F2509C4C000EA21A6 /* ZegoStringPickerView.m in Sources */,
@@ -1249,7 +1252,7 @@
 				);
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = $SRCROOT/$PROJECT_NAME/Constant/Global.pch;
+				GCC_PREFIX_HEADER = "$SRCROOT/$PROJECT_NAME/Constant/Global.pch";
 				INFOPLIST_FILE = go_class/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1292,7 +1295,7 @@
 				);
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = $SRCROOT/$PROJECT_NAME/Constant/Global.pch;
+				GCC_PREFIX_HEADER = "$SRCROOT/$PROJECT_NAME/Constant/Global.pch";
 				INFOPLIST_FILE = go_class/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (

@@ -136,8 +136,10 @@
 "room_file_select_file" = "Select file";
 "room_file_static_file" = "Static";
 "room_file_dynamic" = "Dynamic";
+"room_file_H5" = "H5";
 "room_file_static_animation_displayed" = "Static: PPT animation cannot be displayed";
 "room_file_dynamic_animation_show" = "Dynamic: PPT animation can be displayed";
+"room_file_h5_animation_show" = "H5：H5 display";
 "room_dialog_invite_member" = "Invite members";
 "room_dialog_classroom_link" = "Class links";
 "room_dialog_class_id" = "Class ID";

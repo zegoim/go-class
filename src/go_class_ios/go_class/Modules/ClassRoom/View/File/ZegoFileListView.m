@@ -60,13 +60,19 @@
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass([ZegoFileTableViewCell class]) bundle:nil] forCellReuseIdentifier:NSStringFromClass([ZegoFileTableViewCell class])];
     self.tableView.bounces = NO;
     self.bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, kScreenHeight - 49, self.bounds.size.width, 49)];
+    if (@available(iOS 11.0, *)) {
+        self.bottomLabel.frame = CGRectMake(0, kScreenHeight - 49, self.bounds.size.width - [UIApplication sharedApplication].keyWindow.safeAreaInsets.bottom, 49);
+    }
     [self addSubview:self.bottomLabel];
-    self.bottomLabel.text = [NSString stringWithFormat:@"%@,%@",[NSString zego_localizedString:@"room_file_static_animation_displayed"],[NSString zego_localizedString:@"room_file_dynamic_animation_show"]];
+    
+    self.bottomLabel.text = [NSString stringWithFormat:@"%@\n%@\n%@",[NSString zego_localizedString:@"room_file_static_animation_displayed"],[NSString zego_localizedString:@"room_file_dynamic_animation_show"],[NSString zego_localizedString:@"room_file_h5_animation_show"]];
+    
     self.bottomLabel.backgroundColor = UIColor.whiteColor;
     self.bottomLabel.textAlignment = NSTextAlignmentCenter;
+    self.bottomLabel.numberOfLines = 0;
     self.bottomLabel.textColor = kTextColor1;
     self.bottomLabel.font = [UIFont systemFontOfSize:10 weight:UIFontWeightRegular];
-    
+  
     UIView *lineBottom = [[UIView alloc] initWithFrame:CGRectMake(0, kScreenHeight - 49, self.bounds.size.width, 0.5)];
     lineBottom.backgroundColor = kGrayLineColor;
     [self addSubview:lineBottom];
@@ -88,7 +94,10 @@
     if (fileInfo.fileType == ZegoDocsViewFileTypeDynamicPPTH5) {
         cell.typeLabel.text = [NSString zego_localizedString:@"room_file_dynamic"];
         cell.typeLabel.backgroundColor = [UIColor colorWithRGB:@"#ffae00"];
-    } else {
+    } else if(fileInfo.fileType == ZegoDocsViewFileTypeCustomH5){
+        cell.typeLabel.text = [NSString zego_localizedString:@"room_file_H5"];
+        cell.typeLabel.backgroundColor = [UIColor colorWithRGB:@"#00baff"];
+    }else {
         cell.typeLabel.text = [NSString zego_localizedString:@"room_file_static_file"];
         cell.typeLabel.backgroundColor = [UIColor colorWithRGB:@"#0045ff"];
     }
