@@ -136,8 +136,10 @@
 "room_file_select_file" = "选择文件";
 "room_file_static_file" = "静态";
 "room_file_dynamic" = "动态";
+"room_file_H5" = "H5";
 "room_file_static_animation_displayed" = "静态：无法展示PPT动画";
 "room_file_dynamic_animation_show" = "动态：可展示PPT动画";
+"room_file_h5_animation_show" = "H5：展示H5文件";
 "room_dialog_invite_member" = "邀请人员";
 "room_dialog_classroom_link" = "课堂链接";
 "room_dialog_class_id" = "课堂ID";

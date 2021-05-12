@@ -22,9 +22,29 @@
         _delta = 0;
         _loginTimer = 0;
         _joinLiveTime = 0;
+        _allowTurnOnMic = 1;
+        _allowTurnOnCamera = 1;
+        _defaultMicState = 1;
+        _defaultCameraState = 1;
         
     }
     return self;
+}
+
+- (BOOL)isCameraOn {
+    return self.camera == 2;
+}
+
+- (BOOL)isMicOn {
+    return self.mic == 2;
+}
+
+- (BOOL)isCanShare {
+    return self.canShare == 2;
+}
+
+- (BOOL)isUserAdd {
+    return self.delta == 1;
 }
 
 + (nullable NSDictionary<NSString *, id> *)modelCustomPropertyMapper
@@ -34,7 +54,11 @@
         @"userName"  : @"nick_name",
         @"canShare":@"can_share",
         @"joinLiveTime":@"join_live_time",
-        @"loginTimer":@"login_timer"
+        @"loginTimer":@"login_timer",
+        @"allowTurnOnCamera":@"allow_turn_on_camera",
+        @"allowTurnOnMic":@"allow_turn_on_mic",
+        @"defaultCameraState":@"defalut_camera_state",
+        @"defaultMicState":@"defalut_mic_state"
     };
 }
 

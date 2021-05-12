@@ -54,7 +54,7 @@ static ZegoAlertView *sharedInstance = nil;
     
     UIView *backView = [[UIView alloc] initWithFrame:container.bounds];
     UITapGestureRecognizer *tapG = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismiss)];
-    if (style == ZegoAlertViewThemeStyleTeacher) {
+    if (style == ZegoAlertViewThemeStyleTeacher || style == ZegoAlertViewThemeStyleStudent) {
         [backView addGestureRecognizer:tapG];
     }
     instance.backgroundView = backView;
@@ -122,6 +122,9 @@ static ZegoAlertView *sharedInstance = nil;
 - (void)setupSubTitleUI {
     UIView *view = [UIApplication sharedApplication].keyWindow;
     CGFloat minWidth = 238;
+    if (self.themeStyle == ZegoAlertViewThemeStyleTeacher) {
+        minWidth = 314;
+    }
     CGFloat titleWidth = [self.title boundingRectWithSize:CGSizeMake(MAXFLOAT, 0.0) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName : [UIFont systemFontOfSize:16 weight:UIFontWeightRegular]} context:nil].size.width;
     CGFloat width = MAX(minWidth, titleWidth + 40);
     
@@ -147,7 +150,10 @@ static ZegoAlertView *sharedInstance = nil;
     
     CGFloat midGap = 20;
     CGFloat buttonHeight = 24;
-    CGFloat buttonWidth = 80;
+    CGFloat buttonWidth = 69;
+    if (self.themeStyle == ZegoAlertViewThemeStyleTeacher) {
+        buttonWidth = 80;
+    }
     CGFloat btn1Y = CGRectGetMaxY(subTitleLabel.frame) + 20;
     
     CGFloat btn1X = (width - buttonWidth * 2 - midGap) / 2;
@@ -277,6 +283,6 @@ static ZegoAlertView *sharedInstance = nil;
 }
 
 - (CGSize)calculateRowSize:(NSString *)string {
-    return [string boundingRectWithSize:CGSizeMake(MAXFLOAT, 0.0) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName : [UIFont systemFontOfSize:14 weight:UIFontWeightRegular]} context:nil].size;
+    return [string boundingRectWithSize:CGSizeMake(MAXFLOAT, 0.0) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName : [UIFont systemFontOfSize:16 weight:UIFontWeightRegular]} context:nil].size;
 }
 @end

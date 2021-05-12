@@ -272,17 +272,19 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     for (int i = 0; i < roomMember.count; i++) {
         ZegoRoomMemberInfoModel *model = roomMember[i];
         if (model.uid == self.currentUserModel.uid) {
-            mySelf = model;
+//            mySelf = model;
             if (update) {
                 [self updateLocalDisplayAndDeviceStatus:model operationType:operationType];
                 [self updateUserLocalModel:model];
             }
-            continue;
-        } else if (model.role == ZegoUserRoleTypeTeacher) {
+//            continue;
+        }
+        // 无需把自己的麦位前置
+        if (model.role == ZegoUserRoleTypeTeacher) {
             teacher = model;
             continue;
         }
-        if (model.camera == 2 || model.mic == 2){
+        if ([model isCameraOn] || [model isMicOn]) {
             [joinLiveArray addObject:model];
         } else {
             [notJoinLiveArray addObject: model];
@@ -301,7 +303,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     [resultArray addObjectsFromArray:joinLiveArray];
     [resultArray addObjectsFromArray:notJoinLiveArray];
     self.roomMemberArray = resultArray;
-    self.userTableView.roomMemberArray = self.roomMemberArray;
+    self.userTableView.roomMemberArray = resultArray;
 }
 
 //按照登录时间排序
@@ -401,7 +403,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
             complementBlock(response.code == 0);
         }
     } failure:^(ZegoResponseModel *response) {
-        DLog(@"设置用户状态失败\n%@。",setUserStatusCommand.paramDic);
+        DLog(@"设置用户状态失败\n%@, response: %@。",setUserStatusCommand.paramDic, response);
         
         if (complementBlock) {
             complementBlock(NO);
@@ -614,9 +616,9 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 - (void)handleTopBarDisplayLogic:(BOOL)display
 {
     //缩略图仅支持 （动态/静态）PPT，PDF
-    if ( display && (self.whiteBoardService.currentContainer.fileInfo.fileType == ZegoDocsViewFileTypePDF || self.whiteBoardService.currentContainer.fileInfo.fileType == ZegoDocsViewFileTypePPT || self.whiteBoardService.currentContainer.fileInfo.fileType == ZegoDocsViewFileTypeDynamicPPTH5)) {
+    if ( display && (self.whiteBoardService.currentContainer.fileInfo.fileType == ZegoDocsViewFileTypePDF || self.whiteBoardService.currentContainer.fileInfo.fileType == ZegoDocsViewFileTypePPT || self.whiteBoardService.currentContainer.fileInfo.fileType == ZegoDocsViewFileTypeDynamicPPTH5 || self.whiteBoardService.currentContainer.fileInfo.fileType == ZegoDocsViewFileTypeCustomH5)) {
         self.topBar.canPreview = YES;
-        if (self.whiteBoardService.currentContainer.fileInfo.fileType == ZegoDocsViewFileTypeDynamicPPTH5) {
+        if (self.whiteBoardService.currentContainer.fileInfo.fileType == ZegoDocsViewFileTypeDynamicPPTH5 || self.whiteBoardService.currentContainer.fileInfo.fileType == ZegoDocsViewFileTypeCustomH5 ) {
             self.pageControlCarrierView.hidden = NO;
         }
     } else {
@@ -1099,7 +1101,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     [self.boardListView refreshWithBoardContainerModels:self.whiteBoardService.orderedBoardModelContainers selected:container];
     [self.previewManager hiddenPreview];
     //缩略图仅支持 （动态/静态）PPT，PDF
-    if (container.docsView && self.currentUserModel.canShare == 2 && (container.fileInfo.fileType == ZegoDocsViewFileTypePDF || container.fileInfo.fileType == ZegoDocsViewFileTypePPT || container.fileInfo.fileType == ZegoDocsViewFileTypeDynamicPPTH5)) {
+    if (container.docsView && self.currentUserModel.canShare == 2 && (container.fileInfo.fileType == ZegoDocsViewFileTypePDF || container.fileInfo.fileType == ZegoDocsViewFileTypePPT || container.fileInfo.fileType == ZegoDocsViewFileTypeDynamicPPTH5 || container.fileInfo.fileType == ZegoDocsViewFileTypeCustomH5)) {
         self.topBar.canPreview = YES;
         
     } else {
@@ -1593,7 +1595,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 }
 
 - (void)onReceiveCustomCommand:(NSString *)fromUserID userName:(NSString *)fromUserName content:(NSString *)content roomID:(NSString *)roomID {
-    DLog(@"%@",content);
+    DLog(@"onReceiveCustomCommand %@",content);
     ZegoRoomMessageRspModel *rsp = [ZegoRoomMessageRspModel yy_modelWithJSON:content];
     switch (rsp.cmd) {
         case ZegoClassBusinessTypeRoomMemberStatusChange:

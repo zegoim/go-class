@@ -4,10 +4,6 @@
   "summary": "A short description of ZegoExpressEngineSDK.",
   "description": "TODO: Add long description of the pod here.",
   "homepage": "https://github.com/zego/ZegoExpressEngineSDK",
-  "license": {
-    "type": "MIT",
-    "file": "LICENSE"
-  },
   "authors": {
     "zego": "c"
   },

@@ -20,7 +20,7 @@
 #endif
 
 #define IS_OPENSOURCE
-#define IS_USE_EXPRESS 1
+#define IS_USE_LIVEROOM
 #define ZEGO_TOOL_JUST_TEST_NEEDED 0    //教具栏的'测试'是否可见
 
 #import <libextobjc/EXTScope.h>

@@ -76,7 +76,7 @@ static int nameIndex = 0;
 }
 
 - (BOOL)isDynamicPPT {
-    return self.whiteboardView.whiteboardModel.fileInfo && self.whiteboardView.whiteboardModel.fileInfo.fileType == ZegoDocsViewFileTypeDynamicPPTH5;
+    return self.whiteboardView.whiteboardModel.fileInfo && (self.whiteboardView.whiteboardModel.fileInfo.fileType == ZegoDocsViewFileTypeDynamicPPTH5 || self.whiteboardView.whiteboardModel.fileInfo.fileType == ZegoDocsViewFileTypeCustomH5);
 }
 
 - (ZegoFileInfoModel *)fileInfo {
@@ -471,9 +471,8 @@ static int nameIndex = 0;
     }
     [self addSubview:docsView];
     [self addSubview:whiteboardView];
-    if (self.currentMode > 0) {
-        [whiteboardView setWhiteboardOperationMode:self.currentMode];
-    }
+    ZegoWhiteboardOperationMode mode = ZegoWhiteboardOperationModeScroll | ZegoWhiteboardOperationModeDraw | ZegoWhiteboardOperationModeZoom;;
+    [whiteboardView setWhiteboardOperationMode:mode];
     if (docsView && docsView.pageCount > 0) {
         CGSize visibleSize = docsView.visibleSize;
         CGFloat width = self.frame.size.width;
@@ -531,6 +530,7 @@ static int nameIndex = 0;
     model.fileInfo.fileType = docView.fileType;
     model.fileInfo.fileID = docView.fileID;
     model.fileInfo.fileName = docView.sheetNameList[sheetIndex];
+    model.pageCount = (int)docView.pageCount;
     @weakify(self);
     [[ZegoWhiteboardManager sharedInstance] createWhiteboardView:model
                                                    completeBlock:^(ZegoWhiteboardViewError errorCode, ZegoWhiteboardView *whiteboardView) {
