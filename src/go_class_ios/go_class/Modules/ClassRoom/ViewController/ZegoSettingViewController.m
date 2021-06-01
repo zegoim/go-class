@@ -21,6 +21,7 @@
 #import "ZegoClassEnvManager.h"
 #import "NSBundle+ZegoExtension.h"
 #import "ZegoStringPickerView.h"
+#import "ZegoFeedBackViewController.h"
 @interface ZegoSettingTableViewCell ()
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UILabel *descriptionLable;
@@ -133,6 +134,10 @@
         [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:cellIndex inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
     };
     [temp addObject:clearCacheModel];
+    
+    ZegoSettingCellModel *feedbackModel = [[ZegoSettingCellModel alloc] init];
+    feedbackModel.titleText = @"意见反馈";
+    [temp addObject:feedbackModel];
 
 //#if DEBUG
 //    ZegoSettingCellModel *fontModel = [[ZegoSettingCellModel alloc] init];
@@ -180,11 +185,17 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     ZegoSettingCellModel *model = self.dataArray[indexPath.row];
-    if (model.optionArray.count < 1) {
-        model.optionSelectedBlock(indexPath.row, 0);
+    if (indexPath.row == 2) {
+        ZegoFeedBackViewController *feedBackVC = [[ZegoFeedBackViewController alloc]init];
+        [self.navigationController pushViewController:feedBackVC animated:YES];
     } else {
-        [self showOptionSelectViewWithModel:model cellIndex:indexPath.row];
+        if (model.optionArray.count < 1) {
+            model.optionSelectedBlock(indexPath.row, 0);
+        } else {
+            [self showOptionSelectViewWithModel:model cellIndex:indexPath.row];
+        }
     }
+    
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {

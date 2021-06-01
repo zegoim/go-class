@@ -16,6 +16,10 @@ typedef void(^ZegoRequestBlock)(ZegoResponseModel *response);
 
 + (ZegoNetworkManager *)sharedInstance;
 
+/// 发起网络请求
+/// @param command 请求指令参数
+/// @param success 成功回调
+/// @param failure 失败回调
 + (void)requestWithCommand:(ZegoBaseCommand *)command
                    success:(ZegoRequestBlock)success
                    failure:(ZegoRequestBlock)failure;

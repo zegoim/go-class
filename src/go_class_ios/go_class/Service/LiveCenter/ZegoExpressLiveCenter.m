@@ -152,6 +152,10 @@ static ZegoExpressLiveCenter *sharedInstance = nil;
     [[ZegoExpressEngine sharedEngine] uploadLog];
 }
 
++ (NSString *)getVersion {
+    return [ZegoExpressEngine getVersion];
+}
+
  + (BOOL)setUserId:(NSString *)userId userName:(NSString *)userName {
      return YES;
  }

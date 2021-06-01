@@ -297,7 +297,7 @@
     #ifdef IS_OPENSOURCE
     [[ZegoClassEnvManager shareManager]setNomalEnv];
     #endif
-    [self setupSDK];
+    [self setupSDK];//初始化SDK
 //    [self updateInterfaceWithReachability:self.internetReachability];
     [self.activityIndicator startAnimating];
     @weakify(self);

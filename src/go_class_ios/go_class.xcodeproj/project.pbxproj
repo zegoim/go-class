@@ -89,6 +89,8 @@
 		864A7FC52557A6C3007EF894 /* ZegoClassJustTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 864A7FC32557A6C3007EF894 /* ZegoClassJustTestViewController.xib */; };
 		864C734E2553D95B00258434 /* ZegoChatTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 864C734D2553D95B00258434 /* ZegoChatTableViewCell.m */; };
 		864C73512553DEC500258434 /* ZegoChatModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 864C73502553DEC500258434 /* ZegoChatModel.m */; };
+		8664205B265F49CD00C26174 /* ZegoFeedBackViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 86642059265F49CD00C26174 /* ZegoFeedBackViewController.m */; };
+		8664206A2660E25E00C26174 /* NSString+ZegoDeviceInfoTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 866420692660E25E00C26174 /* NSString+ZegoDeviceInfoTool.m */; };
 		866C6753251C8F1D00B034B7 /* ZegoDispath.m in Sources */ = {isa = PBXBuildFile; fileRef = 866C6752251C8F1D00B034B7 /* ZegoDispath.m */; };
 		86765D8E24B474B000D1FDBC /* ZegoExpressLiveCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 86765D8D24B474B000D1FDBC /* ZegoExpressLiveCenter.m */; };
 		86765D9224B476DB00D1FDBC /* ZegoLiveRoomLiveCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 86765D9124B476DB00D1FDBC /* ZegoLiveRoomLiveCenter.m */; };
@@ -284,6 +286,10 @@
 		864C734D2553D95B00258434 /* ZegoChatTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZegoChatTableViewCell.m; sourceTree = "<group>"; };
 		864C734F2553DEC500258434 /* ZegoChatModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZegoChatModel.h; sourceTree = "<group>"; };
 		864C73502553DEC500258434 /* ZegoChatModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZegoChatModel.m; sourceTree = "<group>"; };
+		86642058265F49CD00C26174 /* ZegoFeedBackViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZegoFeedBackViewController.h; sourceTree = "<group>"; };
+		86642059265F49CD00C26174 /* ZegoFeedBackViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZegoFeedBackViewController.m; sourceTree = "<group>"; };
+		866420682660E25E00C26174 /* NSString+ZegoDeviceInfoTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+ZegoDeviceInfoTool.h"; sourceTree = "<group>"; };
+		866420692660E25E00C26174 /* NSString+ZegoDeviceInfoTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+ZegoDeviceInfoTool.m"; sourceTree = "<group>"; };
 		866C6751251C8F1D00B034B7 /* ZegoDispath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZegoDispath.h; sourceTree = "<group>"; };
 		866C6752251C8F1D00B034B7 /* ZegoDispath.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZegoDispath.m; sourceTree = "<group>"; };
 		86765D8C24B474B000D1FDBC /* ZegoExpressLiveCenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZegoExpressLiveCenter.h; sourceTree = "<group>"; };
@@ -451,6 +457,8 @@
 				8627AD57256CA5370060853E /* ZegoViewCaptor.m */,
 				8602934B2578B0F700850D3F /* UIButton+Delay.h */,
 				8602934A2578B0F700850D3F /* UIButton+Delay.m */,
+				866420682660E25E00C26174 /* NSString+ZegoDeviceInfoTool.h */,
+				866420692660E25E00C26174 /* NSString+ZegoDeviceInfoTool.m */,
 			);
 			path = Tool;
 			sourceTree = "<group>";
@@ -467,6 +475,8 @@
 				864A7FC12557A6C3007EF894 /* ZegoClassJustTestViewController.h */,
 				864A7FC22557A6C3007EF894 /* ZegoClassJustTestViewController.m */,
 				864A7FC32557A6C3007EF894 /* ZegoClassJustTestViewController.xib */,
+				86642058265F49CD00C26174 /* ZegoFeedBackViewController.h */,
+				86642059265F49CD00C26174 /* ZegoFeedBackViewController.m */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -858,7 +868,6 @@
 				86165DD6247E71B5007EA3FE /* Resources */,
 				8684FBDC24908D1B00F79C47 /* ShellScript */,
 				5C52FC5F24E156790044B38D /* Embed Frameworks */,
-				79FC0C88EAFCEC743E322A57 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -954,23 +963,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		79FC0C88EAFCEC743E322A57 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-go_class/Pods-go_class-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-go_class/Pods-go_class-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-go_class/Pods-go_class-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		8684FBDC24908D1B00F79C47 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
@@ -1003,6 +995,7 @@
 				8626116E2509C4C000EA21A6 /* ZegoPickerUIBaseView.m in Sources */,
 				868567EB25529262008E2541 /* ZegoChatTable.m in Sources */,
 				862611AC250A3F4400EA21A6 /* ZegoWhiteBoardListCell.m in Sources */,
+				8664206A2660E25E00C26174 /* NSString+ZegoDeviceInfoTool.m in Sources */,
 				862611CD250A449400EA21A6 /* ZegoStreamTableView.m in Sources */,
 				5C179C7B255A8E7900FC138E /* ZegoClassEnvManager.m in Sources */,
 				8684FBC4248DDF5B00F79C47 /* ZegoClassRoomCoverView.m in Sources */,
@@ -1035,6 +1028,7 @@
 				86FDF939256B6624000727D5 /* ZegoDrawingToolModel.m in Sources */,
 				8626115D25087EC500EA21A6 /* ZegoHttpHeartbeat.m in Sources */,
 				862611DD250F41EE00EA21A6 /* ZegoHUD.m in Sources */,
+				8664205B265F49CD00C26174 /* ZegoFeedBackViewController.m in Sources */,
 				862611AB250A3F4400EA21A6 /* ZegoBoardContainer.m in Sources */,
 				86261150250767AE00EA21A6 /* ZegoBaseCommand.m in Sources */,
 				862611A1250A3F4400EA21A6 /* ZegoDrawToolFormatView.m in Sources */,

@@ -133,6 +133,10 @@ static ZegoLiveRoomLiveCenter *sharedInstance = nil;
 + (void)uploadLog {
     [ZegoLiveRoomApi uploadLog];
 }
+
++ (NSString *)getVersion {
+    return [ZegoLiveRoomApi version];
+}
  
  + (BOOL)setUserId:(NSString *)userId userName:(NSString *)userName {
      return [ZegoLiveRoomApi setUserID:userId userName:userName];
