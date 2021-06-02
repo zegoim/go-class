@@ -110,7 +110,3 @@ dependencies {
 }
 
 
-task updateLibrary(type: Exec) {
-    workingDir './../builds/'
-    commandLine "python3","switch_rtc_library.py", "$library"
-}

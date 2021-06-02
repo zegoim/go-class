@@ -52,6 +52,7 @@
             android:configChanges="locale|keyboardHidden|fontScale|orientation|screenSize|screenLayout|layoutDirection|density|uiMode"
             android:screenOrientation="landscape" />
         <activity android:name=".activities.SettingActivity" />
+        <activity android:name=".activities.WebViewActivity" />
         <activity
             android:name=".activities.JoinActivity"
             android:configChanges="locale|keyboardHidden|fontScale|orientation|screenSize|screenLayout|layoutDirection|density|uiMode"

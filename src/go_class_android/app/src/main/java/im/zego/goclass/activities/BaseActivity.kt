@@ -12,7 +12,9 @@ import im.zego.goclass.tool.SharedPreferencesUtil
 import im.zego.goclass.tool.ZegoUtil
 import java.util.*
 
-
+/**
+ * base类，主要是处理 语言动态切换相关的事情
+ */
 open class BaseActivity : AppCompatActivity() {
 
     private var mLocale: Locale? = null

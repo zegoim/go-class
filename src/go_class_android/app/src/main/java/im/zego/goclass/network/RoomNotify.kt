@@ -2,7 +2,9 @@ package im.zego.goclass.network
 
 import com.google.gson.annotations.SerializedName
 
-
+/**
+ * 房间内 CustomCommandNotify 的通信协议定义
+ */
 data class RoomNotify(
     @SerializedName("cmd")
     val cmd: Int,

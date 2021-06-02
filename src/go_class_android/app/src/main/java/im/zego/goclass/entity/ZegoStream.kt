@@ -5,7 +5,9 @@ import im.zego.goclass.sdk.DeviceStatus
 import im.zego.goclass.sdk.IStreamActiveCallback
 import im.zego.goclass.sdk.ZegoSDKManager
 
-
+/**
+ * 音视频流信息的简单封装
+ */
 abstract class ZegoStream(var userID: String, var userName: String, var streamID: String) {
     val TAG = "ZegoStream"
     val STREAM_INIT = 1

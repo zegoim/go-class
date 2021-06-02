@@ -21,6 +21,9 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.util.concurrent.TimeUnit
 
+/**
+ * 业务后台请求的封装
+ */
 object ZegoApiClient {
     private val TAG = "ZegoApiClient"
     private val gson = Gson()

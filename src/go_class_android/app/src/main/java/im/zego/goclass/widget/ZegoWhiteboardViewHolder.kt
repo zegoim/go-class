@@ -34,7 +34,7 @@ import kotlin.math.round
 /**
  * 白板和文件展示的容器,封装了一些常用的方法
  * 如果是excel，包含一个docsView和多个whiteboardView(每一个sheet创建一个白板)
- * 如果是纯白板，那就只有一个白板，没有docsView
+ * 如果是纯白板，那就只有一个whiteboardView，没有docsView
  * 其他类型的文件，包含一个docsView和一个whiteboardView
  */
 class ZegoWhiteboardViewHolder : FrameLayout {
@@ -48,9 +48,26 @@ class ZegoWhiteboardViewHolder : FrameLayout {
         defStyleAttr
     )
 
+    /**
+     * 如果是excel，包含多个whiteboardView(每一个sheet创建一个白板)
+     * 如果是纯白板，那就只有一个whiteboardView
+     * 其他类型的文件，包含一个whiteboardView
+     *
+     * 如果有docsvidw, 需要关注文件加载的结果
+     */
     private var whiteboardViewList: MutableList<ZegoWhiteboardView> = mutableListOf()
+
+    /**
+     * 如果是纯白板，那就没有 zegoDocsView
+     * 否则就会有一个 docsview ,
+     * 如果有docsvidw, 需要关注文件加载的结果
+     */
     private var zegoDocsView: ZegoDocsView? = null
     private var fileLoadSuccessed = false
+
+    /**
+     * 主要是针对excel使用的
+     */
     private var whiteboardViewAddFinished = false
 
     private var internalScrollListener: IZegoWhiteboardViewScrollListener =

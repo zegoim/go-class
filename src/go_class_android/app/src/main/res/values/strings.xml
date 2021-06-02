@@ -42,6 +42,7 @@
     <!-- 登陆 -->
     <string name="login_setting">设置</string>
     <string name="login_clear_cache">清除缓存</string>
+    <string name="login_feedback">意见反馈</string>
     <string name="login_other_teacher_in_the_class">课堂已有其他老师，不能加入</string>
     <string name="login_class_is_full">课堂人数已满，不能加入</string>
     <string name="login_interconnected">国内和海外不互通，请确保体验者均连接相同环境</string>

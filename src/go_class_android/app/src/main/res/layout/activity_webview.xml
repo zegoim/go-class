@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/title_layout"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/mBackIv"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:scaleType="center"
+            android:src="@drawable/fanhui" />
+
+        <TextView
+            android:id="@+id/mTitleTv"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:textColor="@color/text_black"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
+    <im.zego.goclass.widget.CommonWebView
+        android:id="@+id/mWebView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_layout"
+        app:layout_constraintVertical_chainStyle="spread" />
+
+    <ProgressBar
+        android:id="@+id/mProgressBar"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:progressDrawable="@drawable/webview_progressbar_drawable"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="@id/mWebView"
+        app:layout_constraintRight_toRightOf="@id/mWebView"
+        app:layout_constraintTop_toTopOf="@id/mWebView" />
+</androidx.constraintlayout.widget.ConstraintLayout>

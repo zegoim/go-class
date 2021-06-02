@@ -56,6 +56,7 @@
     <!-- 登陆 -->
     <string name="login_setting">Setting</string>
     <string name="login_clear_cache">Clear cache</string>
+    <string name="login_feedback">Feedback</string>
     <string name="login_other_teacher_in_the_class">There are already other teachers in the class，cannot join</string>
     <string name="login_class_is_full">The class is full, cannot join</string>
     <string name="login_interconnected">Mainland China and other regions are not connected, please ensure that all participants are in the same environment</string>

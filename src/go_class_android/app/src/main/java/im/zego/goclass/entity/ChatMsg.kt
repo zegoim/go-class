@@ -1,7 +1,7 @@
 package im.zego.goclass.entity
 
 /**
- * 讨论聊天消息
+ * 大班课讨论聊天消息
  */
 class ChatMsg(
     var id: String,

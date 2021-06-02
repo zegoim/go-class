@@ -6,7 +6,7 @@ import im.zego.goclass.network.UserCountChange
 import im.zego.goclass.network.ZegoApiConstants
 
 /**
- * Created by yuxing_zhong on 2020/9/15
+ * 业务后台的user类定义
  */
 data class ClassUser(
     var userId: Long,
