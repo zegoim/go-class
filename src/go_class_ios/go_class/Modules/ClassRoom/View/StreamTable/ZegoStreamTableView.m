@@ -193,6 +193,9 @@
              }
              
          } else {
+             if (wrapper.stream.streamID.length < 1) {
+                 return;
+             }
              if (wrapper.streamStatusType == ZegoStreamStatusTypeIdle) {
                  //当数据流不是自己且没有拉流时，开始拉流
                  wrapper.streamStatusType = ZegoStreamStatusTypePlaying;

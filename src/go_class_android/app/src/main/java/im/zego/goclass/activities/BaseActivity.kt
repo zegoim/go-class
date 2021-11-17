@@ -64,4 +64,15 @@ open class BaseActivity : AppCompatActivity() {
             configuration.locale
         }
     }
+
+    protected fun isChinese():Boolean
+    {
+        mLocale?.let {
+            if(it != Locale.CHINA && it != Locale.CHINESE)
+            {
+                return false
+            }
+        }
+        return true
+    }
 }

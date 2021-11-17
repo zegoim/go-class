@@ -55,6 +55,8 @@
 #import "ZegoClassEnvManager.h"
 #import <Masonry/Masonry.h>
 #import "ZegoViewCaptor.h"
+#import <ZegoQualitySDK/ZegoQuality.h>
+#import "ZegoPortraitNavigationController.h"
 #ifdef IS_USE_LIVEROOM
 #import <ZegoLiveRoom/ZegoLiveRoomApi.h>
 #else
@@ -63,7 +65,7 @@
 #import "NSString+ZegoExtension.h"
 typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 
-@interface ZegoClassViewController ()<ZegoWhiteboardListViewDelegate, ZegoFileListViewDelegate, ZegoExcelSheetListViewDelegate, ZegoWhiteboardManagerDelegate, ZegoLiveCenterDelegate, ZegoClassRoomBottomBarDelegate, ZegoClassRoomTopBarDelegate,ZegoPageControlViewDelegate, ZegoWhiteboardViewDelegate, ZegoHttpHeartbeatDelegate,ZegoWhiteBoardServiceDelegate, ZegoDocsViewDelegate, ZegoDrawingToolViewDelegate, ZegoClassJustTestViewControllerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate,UIDocumentPickerDelegate>
+@interface ZegoClassViewController ()<ZegoWhiteboardListViewDelegate, ZegoFileListViewDelegate, ZegoExcelSheetListViewDelegate, ZegoWhiteboardManagerDelegate, ZegoLiveCenterDelegate, ZegoClassRoomBottomBarDelegate, ZegoClassRoomTopBarDelegate,ZegoPageControlViewDelegate, ZegoWhiteboardViewDelegate, ZegoHttpHeartbeatDelegate,ZegoWhiteBoardServiceDelegate, ZegoDocsViewDelegate, ZegoDrawingToolViewDelegate, ZegoClassJustTestViewControllerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate,UIDocumentPickerDelegate, ZegoQualityViewControllerProtocol>
 
 @property (weak, nonatomic) IBOutlet ZegoClassDefaultNoteView *defaultNoteView;
 @property (nonatomic, assign) BOOL isFrontCamera;
@@ -107,6 +109,8 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 @property (nonatomic, strong) NSMutableArray <ZegoStreamWrapper *> *joinLiveMemberArray;
 @property (nonatomic, assign) BOOL uploadDynamicFile;
 
+@property (nonatomic, strong) ZegoPortraitNavigationController *qualityNavVc;
+
 @end
 
 @implementation ZegoClassViewController
@@ -136,7 +140,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     [self setupUI];
     [self loadInitRoomMemberInfo];
     [self startHeartbeat];
-    [self forceOrientationLandscape];
+//    [self forceOrientationLandscape];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [ZegoToast showStickyWithMessage:[NSString zego_localizedString:@"room_login_time_limit_15"] Indicator:NO];
     });
@@ -631,6 +635,25 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     }
 }
 
+#pragma mark - Quality
+- (void)presentQualityVC {
+  UIViewController *vc = [ZegoQualityFactory qualityViewControllerWithDelegate:self];
+  ZegoPortraitNavigationController *nav = [[ZegoPortraitNavigationController alloc] initWithRootViewController:vc];
+  self.qualityNavVc = nav;
+  nav.modalPresentationStyle = UIModalPresentationFullScreen;
+  [self presentViewController:nav animated:YES completion:nil];
+}
+
+- (void)viewForQualityViewControllerWillDisappear:(UIViewController *)qualityViewController {
+  [self dismissViewControllerAnimated:YES completion:nil];
+  self.qualityNavVc = nil;
+  [ZegoQualityManager unInit];
+}
+
+- (void)viewControllerShouldDismiss:(UIViewController *)qualityViewController {
+  [qualityViewController dismissViewControllerAnimated:YES completion:nil];
+}
+
 #pragma mark - Action
 
 - (void)logoutRoomEndClass:(BOOL)endClass {
@@ -667,7 +690,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     [ZegoLiveCenter setFrontCam:YES];
     [[ZegoDocsViewManager sharedInstance] uninit];
     [[ZegoWhiteboardManager sharedInstance] uninit];
-    [self dismissViewControllerAnimated:YES completion:nil];
+  [self presentQualityVC];
 }
 
 - (void)openCamera:(void(^)(BOOL success))complementBlock {
@@ -865,9 +888,8 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 
 - (void)showFileList {
     [ZegoViewAnimator showView:self.fileListView fromRightSideInView:self.view];
-    BOOL isDocTest = [ZegoClassEnvManager shareManager].docsSeviceTestEnv;
     @weakify(self);
-    [[ZegoDefaultFileLoader defaultLoader] loadFileListWithEnv:isDocTest complete:^(NSArray<ZegoFileInfoModel *> * _Nonnull fileModels, NSError * _Nonnull error) {
+    [[ZegoDefaultFileLoader defaultLoader] loadFileListWithEnv:NO complete:^(NSArray<ZegoFileInfoModel *> * _Nonnull fileModels, NSError * _Nonnull error) {
         @strongify(self);
         if (fileModels) {
             [self.fileListView updateWithFiles:fileModels];
@@ -1092,7 +1114,13 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     [self handleDynamicPPTClickLogicIfNeededWithContainer:container];
     container.whiteboardViewUIDelegate = self;
     container.docsViewUIDelegate = self;
-    [container setupWhiteboardOperationMode:(_drawingToolView.isDragEnable?ZegoWhiteboardOperationModeScroll : ZegoWhiteboardOperationModeDraw) |ZegoWhiteboardOperationModeZoom];
+    
+    if(self.currentUserModel.canShare == 2 ){
+        [container setupWhiteboardOperationMode:(_drawingToolView.isDragEnable?ZegoWhiteboardOperationModeScroll : ZegoWhiteboardOperationModeDraw) |ZegoWhiteboardOperationModeZoom];
+    }else{
+        [container setupWhiteboardOperationMode:ZegoWhiteboardOperationModeNone];
+    }
+
     [self.drawingToolViewService refreshBoardContainer:container];
         
     self.defaultNoteView.hidden = container != nil;
@@ -1797,6 +1825,17 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     }
 }
 
+- (BOOL)shouldAutorotate {
+  return NO;
+}
+
+- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation {
+  return UIInterfaceOrientationLandscapeRight;
+}
+
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
+  return UIInterfaceOrientationMaskLandscape;
+}
 
 
 @end

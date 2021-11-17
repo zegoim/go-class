@@ -33,11 +33,7 @@ class SettingActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_setting)
 
-        FEEDBACK_ROOT_URL = if (SharedPreferencesUtil.isVideoSDKTestEnv()) {
-            "http://192.168.100.62:4001/$FEEDBACK_PATH"
-        } else {
-            "https://demo-operation.zego.im/$FEEDBACK_PATH"
-        }
+        FEEDBACK_ROOT_URL = "https://demo-operation.zego.im/$FEEDBACK_PATH"
 
         initView()
     }

@@ -4,8 +4,9 @@ platform :ios, '9.0'
 target 'go_class' do
   # Comment the next line if you don't want to use dynamic frameworks use_frameworks!
 
-  pod 'ZegoWhiteboardView/Express'
-  pod 'ZegoDocsView/Basic_zh'
+  pod 'ZegoWhiteboardView/Express','2.1.5'
+  pod 'ZegoExpressVideoWhiteBoard','2.14.0.5559'
+  pod 'ZegoDocsView/Basic_zh','2.1.5'
   pod 'YYWebImage'
   pod 'AFNetworking', '~> 4.0'
   pod 'YYModel'

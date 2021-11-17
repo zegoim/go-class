@@ -471,8 +471,8 @@ static int nameIndex = 0;
     }
     [self addSubview:docsView];
     [self addSubview:whiteboardView];
-    ZegoWhiteboardOperationMode mode = ZegoWhiteboardOperationModeScroll | ZegoWhiteboardOperationModeDraw | ZegoWhiteboardOperationModeZoom;;
-    [whiteboardView setWhiteboardOperationMode:mode];
+    ZegoWhiteboardOperationMode mode = ZegoWhiteboardOperationModeDraw | ZegoWhiteboardOperationModeZoom;;
+    [whiteboardView setWhiteboardOperationMode:_currentMode];
     if (docsView && docsView.pageCount > 0) {
         CGSize visibleSize = docsView.visibleSize;
         CGFloat width = self.frame.size.width;

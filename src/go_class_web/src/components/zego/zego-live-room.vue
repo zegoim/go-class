@@ -6,7 +6,7 @@
     <slot></slot>
     <room-dialog-loading v-if="loading" />
     <room-dialog-error ref="errorDialog" />
-    <room-dialog-message ref="timeOutDialog" :msg="timeOutMessage"/>
+    <room-dialog-message ref="timeOutDialog" :msg="timeOutMessage" />
   </div>
 </template>
 
@@ -108,7 +108,11 @@ export default {
         room_type: classScene
       }
       try {
-        await postRoomHttp('login_room', loginParams)
+        const result = await postRoomHttp('login_room', loginParams)
+        // 存储 token
+        zegoClient.setState({
+          tokenInfo: { token: result.data.app_token }
+        })
       } catch (e) {
         // 已有老师 或者 人数已满
         const code = e && e.ret && e.ret.code
@@ -227,19 +231,19 @@ export default {
             break
           // 连接失败
           case 'DISCONNECTED':
-            if(errorCode === 1002050){
+            if (errorCode === 1002050) {
               this.timeOutMessage = this.$t('room.room_login_time_out')
               this.$refs.timeOutDialog.show = true
-            }else{
-            // if(extendedData !== null){
-            //   console.warn(this.$t('system.experience_duration_expired'))
-            //   this.$alert(this.$t('system.experience_duration_expired'), '', {
-            //     confirmButtonText: this.$t('room.room_ok'),
-            //     callback: () => {
-            //       window.location.hash = '#/login'
-            //     }
-            //   });
-            // }else{
+            } else {
+              // if(extendedData !== null){
+              //   console.warn(this.$t('system.experience_duration_expired'))
+              //   this.$alert(this.$t('system.experience_duration_expired'), '', {
+              //     confirmButtonText: this.$t('room.room_ok'),
+              //     callback: () => {
+              //       window.location.hash = '#/login'
+              //     }
+              //   });
+              // }else{
               this.disconnectedHandle()
             }
             // this.disconnectedHandle()
@@ -254,7 +258,7 @@ export default {
           type: roomExtraInfoList[0].key,
           data: roomExtraInfoList[0].value
         }
-        console.warn('监听到的roomExtraInfo',roomExtraInfo)
+        console.warn('监听到的roomExtraInfo', roomExtraInfo)
         // tips: 第一次emit组件还没渲染，监听不到
         // this.roomExtraInfo && this.emitRoomExtraInfoUpdate(roomExtraInfo)
         this.$set(this, 'roomExtraInfo', roomExtraInfo)
@@ -297,10 +301,10 @@ export default {
       const { localStream } = this.client
       switch (type) {
         case 'camera':
-          localStream && await this.client.express('useVideoDevice', value)
+          localStream && (await this.client.express('useVideoDevice', value))
           break
         case 'mic':
-          localStream && await this.client.express('useAudioDevice', value)
+          localStream && (await this.client.express('useAudioDevice', value))
           break
         case 'speak':
           this.$set(this.activeDevice, 'speaker', value)
@@ -369,7 +373,7 @@ export default {
     async handleDeviceStateChange(flag, isVideoOpen, isAudioOpen) {
       const [isSendVideoStream, isSendAudioStream] = [!isVideoOpen, !isAudioOpen]
       console.warn({ localStream: this.client.localStream })
-      console.warn('flag, isVideoOpen, isAudioOpen',flag, isVideoOpen, isAudioOpen)
+      console.warn('flag, isVideoOpen, isAudioOpen', flag, isVideoOpen, isAudioOpen)
       // 摄像头/麦克风 二者之一的状态是开 则推送一条流
       if (isVideoOpen || isAudioOpen) {
         if (!this.client.localStream) {
@@ -489,7 +493,7 @@ export default {
       this.streamList = []
       this.localStream = null
       this.initLoadingTimerHandle()
-      if(this.$refs.errorDialog) this.$refs.errorDialog.show = true
+      if (this.$refs.errorDialog) this.$refs.errorDialog.show = true
       this.handleDestroyStream()
       roomStore.close()
     },
@@ -512,19 +516,26 @@ export default {
      * @return {*}
      */
     setRoomMessage(type, data, targetMessageID, res) {
-      let lastMessage = this.messages[this.messages.length - 1]
-      let lastUserID = this.messages[this.messages.length - 1]?.userID
-      let lastMessageCategory = this.messages[this.messages.length - 1]?.messageCategory
+      const lastMessage = this.messages[this.messages.length - 1]
       if (type === 1) {
-        // 判断信息数组里面最新到一条信息是否是系统信息并且是否是同一个用户发送的，如果不是系统信息且是同一个用户发送则是该用户连续发送消息。
-        if (lastMessage && data.userID == lastUserID && lastMessageCategory !== 2) {
-          this.messages[this.messages.length - 1].messageContent.push({
-            messageID: new Date().getTime(),
-            messageState: 1,
-            content: data.messageContent[0].content
-          })
-        } else{
+        if (!lastMessage) {
           this.messages.push(data)
+        } else {
+          const { userID: lastUserID, messageCategory: lastMessageCategory } = lastMessage
+          // 判断信息数组里面最新到一条信息是否是系统信息并且是否是同一个用户发送的，如果不是系统信息且是同一个用户发送则是该用户连续发送消息。
+          if (
+            lastMessageCategory === 1 &&
+            lastUserID === data.userID &&
+            data.messageCategory === 1
+          ) {
+            lastMessage.messageContent.push({
+              messageID: new Date().getTime(),
+              messageState: 1,
+              content: data.messageContent[0].content
+            })
+          } else {
+            this.messages.push(data)
+          }
         }
       } else if (type === 2) {
         /**
@@ -533,9 +544,9 @@ export default {
          * 2 发送失败
          * 3 发送成功
          */
-        this.messages[this.messages.length - 1].messageContent.find(item => {
-          if(item.messageID === targetMessageID){
-            if(res.errorCode === 0){
+        lastMessage.messageContent.find(item => {
+          if (item.messageID === targetMessageID) {
+            if (res.errorCode === 0) {
               item.messageState = 3
               item.messageID = res.messageID
             } else {
@@ -556,7 +567,7 @@ export default {
         userID: this.user.userID,
         messageCategory: 1,
         messageTimestamp: new Date().getTime(),
-        messageContent: [{ messageState: 1, content: message, messageID: new Date().getTime()}],
+        messageContent: [{ messageState: 1, content: message, messageID: new Date().getTime() }],
         nick_name: this.user.userName
       }
       // 需要更新的目标消息id
@@ -565,32 +576,31 @@ export default {
       this.setRoomMessage(1, data)
       try {
         let res = await this.client.express('sendBarrageMessage', message)
-         var num = 0,
+        var num = 0,
           max = 5,
-          intervalId = null;
-        intervalId = setInterval(()=>{
-          num++;
-          console.warn('倒计时：',num)
-          if(res){
+          intervalId = null
+        intervalId = setInterval(() => {
+          num++
+          console.warn('倒计时：', num)
+          if (res) {
             console.warn('发送成功')
-            clearInterval(intervalId);
+            clearInterval(intervalId)
             // 消息发送成功，更新该消息状态
             if (res.errorCode === 0) this.setRoomMessage(2, data, targetMessageID, res)
             // 消息发送不成功，更新该消息状态
-            if(res.errorCode !== 0) this.setRoomMessage(2, data, targetMessageID, res)
+            if (res.errorCode !== 0) this.setRoomMessage(2, data, targetMessageID, res)
           }
-          if(num === max){
+          if (num === max) {
             clearInterval(intervalId)
             // 超过60s接收不到状态回调，消息发送不成功，更新该消息状态
-            this.setRoomMessage(2, data,targetMessageID, res)
+            this.setRoomMessage(2, data, targetMessageID, res)
           }
-        },1000);
+        }, 1000)
       } catch (error) {
-        console.warn('------error----',error)
-        this.setRoomMessage(2, data, targetMessageID, {errorCode: error})
+        console.warn('------error----', error)
+        this.setRoomMessage(2, data, targetMessageID, { errorCode: error })
       }
-     
-    },
+    }
   },
   destroyed() {
     this.$off(['muteSpeaker', 'roomExtraInfoUpdate'])

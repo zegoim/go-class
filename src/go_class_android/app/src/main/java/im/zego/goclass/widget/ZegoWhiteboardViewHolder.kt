@@ -63,13 +63,14 @@ class ZegoWhiteboardViewHolder : FrameLayout {
      * 如果有docsvidw, 需要关注文件加载的结果
      */
     private var zegoDocsView: ZegoDocsView? = null
+
     private var fileLoadSuccessed = false
 
     /**
-     * 主要是针对excel使用的
+     * 为了避免动态ppt文件滚动后调用白板滚动->触发文件对白板滚动对监听->再次滚动文件这样的循环，
+     * 我们对动态ppt白板的滚动方法，成功则不再触发滚动回调，失败了才触发，然后调用文件接口进行回滚
+     *
      */
-    private var whiteboardViewAddFinished = false
-
     private var internalScrollListener: IZegoWhiteboardViewScrollListener =
         IZegoWhiteboardViewScrollListener { horizontalPercent, verticalPercent ->
             outScrollListener?.onScroll(horizontalPercent, verticalPercent)
@@ -84,6 +85,7 @@ class ZegoWhiteboardViewHolder : FrameLayout {
         set(value) {
             field = value
             Log.d(TAG, "set currentWhiteboardID:${value}")
+            // 根据白板ID找到当前显示是哪个白板，列表是针对excel的情况
             var selectedView: ZegoWhiteboardView? = null
             whiteboardViewList.forEach {
                 val viewModel = it.getWhiteboardViewModel()
@@ -101,6 +103,7 @@ class ZegoWhiteboardViewHolder : FrameLayout {
             selectedView?.let {
                 Log.d(TAG, "selectedView:${it.getWhiteboardViewModel().fileInfo.fileName}")
                 val viewModel = it.getWhiteboardViewModel()
+                // 假如是excel的一个白板，那么找出来是哪个sheet，找到后文件也要切换到对应的表格
                 if (zegoDocsView != null && isExcel()) {
                     val fileName = viewModel.fileInfo.fileName
                     val sheetIndex = getExcelSheetNameList().indexOf(fileName)
@@ -112,11 +115,12 @@ class ZegoWhiteboardViewHolder : FrameLayout {
                                         "visibleSize:${zegoDocsView!!.getVisibleSize()}" +
                                         "contentSize:${zegoDocsView!!.getContentSize()}"
                             )
+                            // 每个表格大小不一样，需要更新白板的宽高比
                             viewModel.aspectWidth = zegoDocsView!!.getContentSize().width
                             viewModel.aspectHeight = zegoDocsView!!.getContentSize().height
-
+                            // 绑定一下
                             connectDocsViewAndWhiteboardView(it)
-
+                            // 把白板的缩放系数也同步给文件
                             zegoDocsView!!.scaleDocsView(
                                 it.getScaleFactor(),
                                 it.getScaleOffsetX(),
@@ -133,9 +137,8 @@ class ZegoWhiteboardViewHolder : FrameLayout {
             }
         }
 
-    fun setDocsScaleEnable(selected: Boolean) {
-        zegoDocsView?.setScaleEnable(!selected)
-//        zegoDocsView?.scaleEnable = (!selected)
+    fun setDocsScaleEnable(enable: Boolean) {
+        zegoDocsView?.setScaleEnable(enable)
     }
 
     private var currentWhiteboardView: ZegoWhiteboardView?
@@ -180,6 +183,9 @@ class ZegoWhiteboardViewHolder : FrameLayout {
         }
     }
 
+    /**
+     * 获取excle文件的sheet表名字
+     */
     fun getExcelSheetNameList(): MutableList<String> {
         return if (isExcel() && isDocsViewLoadSuccessed()) {
             zegoDocsView!!.getSheetNameList()
@@ -439,9 +445,11 @@ class ZegoWhiteboardViewHolder : FrameLayout {
     private fun connectDocsViewAndWhiteboardView(zegoWhiteboardView: ZegoWhiteboardView) {
         Log.i(TAG, "connectDocsViewAndWhiteboardView...")
         zegoDocsView?.let { docsview ->
+            // 同步docsview 的展示区域大小给白板
             if (docsview.getVisibleSize().height != 0 || docsview.getVisibleSize().width != 0) {
                 zegoWhiteboardView.setVisibleRegion(zegoDocsView!!.getVisibleSize())
             }
+            // docsview 监听白板的滚动
             zegoWhiteboardView.setScrollListener { horizontalPercent, verticalPercent ->
                 Log.d(
                     TAG,
@@ -469,14 +477,13 @@ class ZegoWhiteboardViewHolder : FrameLayout {
             }
 
             if (isDisplayedByWebView()) {
-                // 这些需要在第一页加载出来才能
-                // 对于动态PPT，H5可以自行播放动画，需要同步给白板，再同步给其他端的用户
+                // 对于动态PPT和H5，白板监听docsview的动画回调，用来同步给房间里面的其他用户
                 docsview.setAnimationListener(IZegoDocsViewAnimationListener {
                     if (windowVisibility == View.VISIBLE) {
                         zegoWhiteboardView.playAnimation(it)
                     }
                 })
-
+                // 对于动态PPT和H5，白板监听docsview的步骤回调，用来同步给房间里面的其他用户
                 docsview.setStepChangeListener(object : IZegoDocsViewCurrentStepChangeListener {
                     override fun onChanged() {
                     }
@@ -488,17 +495,19 @@ class ZegoWhiteboardViewHolder : FrameLayout {
                     }
                 })
             }
-            // 对于动态PPT，其他端有播放动画，需要同步给docsView进行播放动画
+            // 白板监听其他用户的动画回调，用来同步给自己的白板
             zegoWhiteboardView.setAnimationListener { animation ->
                 Log.d(TAG, "setAnimationListener() called")
                 docsview.playAnimation(animation)
             }
+            // docsview监听白板的缩放回调，同步缩放
             zegoWhiteboardView.setScaleListener(IZegoWhiteboardViewScaleListener { scaleFactor, transX, transY ->
 //            Log.d(TAG,"scaleFactor:$scaleFactor,transX:$transX,transY:$transY")
                 docsview.scaleDocsView(scaleFactor, transX, transY)
             })
         }
 
+        // 加载完后，根据model里面的数据更新docsview和whiteboardview
         post {
             val model = zegoWhiteboardView.whiteboardViewModel
             val horPercent = model.horizontalScrollPercent
@@ -538,6 +547,9 @@ class ZegoWhiteboardViewHolder : FrameLayout {
         }
     }
 
+    /**
+     * 收到其他用户的创建纯白板消息
+     */
     private fun onPureWhiteboardViewAdded(zegoWhiteboardView: ZegoWhiteboardView) {
         val model = zegoWhiteboardView.getWhiteboardViewModel()
         currentWhiteboardID = model.whiteboardID
@@ -553,11 +565,10 @@ class ZegoWhiteboardViewHolder : FrameLayout {
         zegoWhiteboardView.setBackgroundColor(Color.parseColor("#f4f5f8"))
         addWhiteboardView(zegoWhiteboardView)
         onPureWhiteboardViewAdded(zegoWhiteboardView)
-        whiteboardViewAddFinished = true
     }
 
     /**
-     * 创建纯白板，aspectWidth，aspectHeight:宽高比
+     * 创建纯白板并且同步给房间里其他用户，aspectWidth，aspectHeight:宽高比
      */
     fun createPureWhiteboardView(
         aspectWidth: Int, aspectHeight: Int, pageCount: Int,
@@ -584,6 +595,9 @@ class ZegoWhiteboardViewHolder : FrameLayout {
         }
     }
 
+    /**
+     * 删除白板并且同步给房间里其他用户
+     */
     fun destroyWhiteboardView(requestResult: (Int) -> Unit) {
         if (isExcel()) {
             var count = whiteboardViewList.size
@@ -625,7 +639,7 @@ class ZegoWhiteboardViewHolder : FrameLayout {
     }
 
     /**
-     * 收到文件白板
+     * 收到房间里其他用户创建的文件白板
      */
     fun onReceiveFileWhiteboard(
         estimatedSize: Size,
@@ -697,6 +711,9 @@ class ZegoWhiteboardViewHolder : FrameLayout {
         }
     }
 
+    /**
+     * 创建文件白板并且同步给房间里的其他用户
+     */
     fun createDocsAndWhiteBoardView(
         fileID: String, estimatedSize: Size, createResult: (Int) -> Unit
     ) {
@@ -719,10 +736,6 @@ class ZegoWhiteboardViewHolder : FrameLayout {
         return fileLoadSuccessed
     }
 
-    fun isWhiteboardViewAddFinished(): Boolean {
-        return whiteboardViewAddFinished
-    }
-
     private fun createExcelWhiteboardViewList(
         docsView: ZegoDocsView,
         requestResult: (Int) -> Unit
@@ -738,7 +751,6 @@ class ZegoWhiteboardViewHolder : FrameLayout {
                 processCount++
                 if (processCount == sheetCount) {
                     selectExcelSheet(0) { errorCode, _ ->
-                        whiteboardViewAddFinished = errorCode == 0
                         if (errorCode == 0) {
                             requestResult.invoke(resultCode)
                         } else {
@@ -778,7 +790,6 @@ class ZegoWhiteboardViewHolder : FrameLayout {
                     currentWhiteboardID =
                         zegoWhiteboardView.getWhiteboardViewModel().whiteboardID
                     connectDocsViewAndWhiteboardView(zegoWhiteboardView)
-                    whiteboardViewAddFinished = errorCode == 0
                 }
             } else {
                 ToastUtils.showCenterToast(context.getString(R.string.wb_tip_failed_create_whiteboard, errorCode))
@@ -787,6 +798,9 @@ class ZegoWhiteboardViewHolder : FrameLayout {
         }
     }
 
+    /**
+     * 跳转到某一页，从1开始
+     */
     fun flipToPage(targetPage: Int) {
         Log.i(TAG, "targetPage:${targetPage}")
         if (zegoDocsView != null && getFileID() != null && isDocsViewLoadSuccessed()) {
@@ -802,7 +816,7 @@ class ZegoWhiteboardViewHolder : FrameLayout {
     }
 
     /**
-     * 此处的page是从1开始的
+     * 上一页
      */
     fun flipToPrevPage(): Int {
         val currentPage = getCurrentPage()
@@ -813,6 +827,9 @@ class ZegoWhiteboardViewHolder : FrameLayout {
         return targetPage
     }
 
+    /**
+     * 下一页
+     */
     fun flipToNextPage(): Int {
         val currentPage = getCurrentPage()
         val targetPage =
@@ -823,6 +840,9 @@ class ZegoWhiteboardViewHolder : FrameLayout {
         return targetPage
     }
 
+    /**
+     * 上一步
+     */
     fun previousStep() {
         Log.d(TAG, "previousStep() called,fileLoadSuccessed:${isDocsViewLoadSuccessed()}")
         if (getFileID() != null && isDisplayedByWebView() && isDocsViewLoadSuccessed()) {
@@ -837,6 +857,9 @@ class ZegoWhiteboardViewHolder : FrameLayout {
         }
     }
 
+    /**
+     * 下一步
+     */
     fun nextStep() {
         Log.i(TAG, "nextStep() called,fileLoadSuccessed:${isDocsViewLoadSuccessed()}")
         if (getFileID() != null && isDisplayedByWebView() && isDocsViewLoadSuccessed()) {
@@ -914,6 +937,9 @@ class ZegoWhiteboardViewHolder : FrameLayout {
         }
     }
 
+    /**
+     * size变化的时候调用一下更新白板的 VisibleRegion
+     */
     fun reload() {
         if (zegoDocsView != null) {
             zegoDocsView?.reloadFile(IZegoDocsViewLoadListener { loadCode ->

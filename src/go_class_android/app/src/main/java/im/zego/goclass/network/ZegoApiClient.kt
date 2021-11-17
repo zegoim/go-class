@@ -35,7 +35,7 @@ object ZegoApiClient {
     private var context: Context? = null
 
     @JvmStatic
-    fun setAppContext(context: Context?, isTestEnv: Boolean, isMainLandEnv: Boolean) {
+    fun setAppContext(context: Context?, isMainLandEnv: Boolean) {
         // 仅仅在测试 http 接口的时候才会传一个空值
         if (context != null) {
             this.context = context.applicationContext
@@ -48,19 +48,11 @@ object ZegoApiClient {
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
             .build()
 
-        val baseUrl = if (isTestEnv) {
-            if (isMainLandEnv) {
-                BackendApiConstants.BACKEND_API_URL_TEST
-            } else {
-                BackendApiConstants.BACKEND_API_URL_TEST_OVERSEAS
-            }
-        } else {
-            if (isMainLandEnv) {
+        val baseUrl = if (isMainLandEnv) {
                 BackendApiConstants.BACKEND_API_URL
             } else {
                 BackendApiConstants.BACKEND_API_URL_OVERSEAS
             }
-        }
         retrofit = Retrofit.Builder()
             .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())

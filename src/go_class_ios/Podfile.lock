@@ -60,6 +60,12 @@ PODS:
   - YYWebImage (1.0.5):
     - YYCache
     - YYImage
+  - ZegoDocsView/Basic_zh (2.1.5)
+  - ZegoExpressVideoWhiteBoard (2.14.0.5559):
+    - ZegoExpressVideoWhiteBoard/Default (= 2.14.0.5559)
+  - ZegoExpressVideoWhiteBoard/Default (2.14.0.5559)
+  - ZegoWhiteboardView/Express (2.1.5):
+    - ZegoExpressVideoWhiteBoard (= 2.14.0.5559)
 
 DEPENDENCIES:
   - AFNetworking (~> 4.0)
@@ -69,6 +75,9 @@ DEPENDENCIES:
   - YYModel
   - YYText
   - YYWebImage
+  - ZegoDocsView/Basic_zh (= 2.1.5)
+  - ZegoExpressVideoWhiteBoard (= 2.14.0.5559)
+  - ZegoWhiteboardView/Express (= 2.1.5)
 
 SPEC REPOS:
   trunk:
@@ -81,6 +90,9 @@ SPEC REPOS:
     - YYModel
     - YYText
     - YYWebImage
+    - ZegoDocsView
+    - ZegoExpressVideoWhiteBoard
+    - ZegoWhiteboardView
 
 SPEC CHECKSUMS:
   AFNetworking: 7864c38297c79aaca1500c33288e429c3451fdce
@@ -92,7 +104,10 @@ SPEC CHECKSUMS:
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
   YYWebImage: 5f7f36aee2ae293f016d418c7d6ba05c4863e928
+  ZegoDocsView: 5060f7b05c00409e7c67bc15e96118dbff99b812
+  ZegoExpressVideoWhiteBoard: dfb8fde9b3e04991f08c4cba03c8e6115448f914
+  ZegoWhiteboardView: 90ed3f28ab2f79692f7a3c4de769e18305c87442
 
-PODFILE CHECKSUM: 16c019bc458a3f75cfaacce54f8caf7abc2d13b8
+PODFILE CHECKSUM: 294b081ca4acd550bca5d063de72047e7615b151
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.2

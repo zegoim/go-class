@@ -78,17 +78,9 @@
 
 + (NSString *)getHostWithEnv{
     if ([ZegoClassEnvManager shareManager].abroadEnv) {
-        if ([ZegoClassEnvManager shareManager].businessTestEnv) {
-            return kZegoGoClassAbroadServerHostTest;
-        } else {
-            return kZegoGoClassAbroadServerHost;
-        }
+        return kZegoGoClassAbroadServerHost;
     } else {
-        if ([ZegoClassEnvManager shareManager].businessTestEnv) {
-            return kZegoGoClassHomeServerHostTest;
-        } else {
-            return kZegoGoClassHomeServerHost;
-        }
+        return kZegoGoClassHomeServerHost;
     }
 }
 

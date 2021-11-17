@@ -14,8 +14,8 @@
       >
         <div class="login-form-container">
           <div class="welcome">
-            <span>{{$t("login.login_welcome")}}</span>
-            <span class="forClass">{{$t("login.login_goclass")}}</span>
+            <span>{{ $t('login.login_welcome') }}</span>
+            <span class="forClass">{{ $t('login.login_goclass') }}</span>
           </div>
           <el-form-item prop="roomId" class="el-form-item__content roomid">
             <el-input
@@ -72,49 +72,58 @@
             @click="handleJoinClassroom"
             class="join-class"
             :disabled="!joinBtnClickable"
-            >{{$t('login.login_join_class')}}</el-button
+            >{{ $t('login.login_join_class') }}</el-button
           >
           <!--接入环境-->
           <div class="env">
-            <el-divider>{{$t('login.login_access_env')}}</el-divider>
+            <el-divider>{{ $t('login.login_access_env') }}</el-divider>
             <el-radio-group v-model="loginForm.env">
-              <el-radio label="home" class="left">{{$t('login.login_mainland_china')}}</el-radio>
-              <el-radio label="overseas">{{$t('login.login_overseas')}}</el-radio>
+              <el-radio label="home" class="left">{{ $t('login.login_mainland_china') }}</el-radio>
+              <el-radio label="overseas">{{ $t('login.login_overseas') }}</el-radio>
             </el-radio-group>
-            <p class="env-tip">{{$t('login.login_interconnected')}}</p>
+            <p class="env-tip">{{ $t('login.login_interconnected') }}</p>
           </div>
         </div>
       </el-form>
     </div>
+    <!-- 意见反馈 -->
+    <span class="zego-feedback" @click="handleRecord" title="意见反馈">
+      <img src="../assets/images/login/feedback.png" alt="意见反馈" />
+    </span>
     <el-select
-        v-model="zego_locale"
-        :placeholder="$t('login.login_select')"
-        popper-class="zego-locale-list"
-        :popper-append-to-body="false"
-        @change="changeLocale"
-        class="zego-locale"
-      >
-        <template slot="prefix">
-          <div
-              class="prefix-icon"
-              v-html="require('../assets/icons/login/language_switch.svg').default"
-            ></div>
-        </template>
-        <el-option label="简体中文" value="zh">
-          <span>简体中文</span>
-          <span class="option-icon" v-html="require('../assets/icons/login/language_check.svg').default"></span>
-        </el-option>
-        <el-option label="English" value="en">
-          <span>English</span>
-          <span class="option-icon" v-html="require('../assets/icons/login/language_check.svg').default"></span>
-        </el-option>
-      </el-select>
+      v-model="zego_locale"
+      :placeholder="$t('login.login_select')"
+      popper-class="zego-locale-list"
+      :popper-append-to-body="false"
+      @change="changeLocale"
+      class="zego-locale"
+    >
+      <template slot="prefix">
+        <div
+          class="prefix-icon"
+          v-html="require('../assets/icons/login/language_switch.svg').default"
+        ></div>
+      </template>
+      <el-option label="简体中文" value="zh">
+        <span>简体中文</span>
+        <span
+          class="option-icon"
+          v-html="require('../assets/icons/login/language_check.svg').default"
+        ></span>
+      </el-option>
+      <el-option label="English" value="en">
+        <span>English</span>
+        <span
+          class="option-icon"
+          v-html="require('../assets/icons/login/language_check.svg').default"
+        ></span>
+      </el-option>
+    </el-select>
   </div>
 </template>
 
 <script>
 import zegoClient from '@/service/zego/zegoClient'
-import { ZEGOENV } from '@/utils/constants'
 import { storage, setLoginInfo } from '@/utils/tool'
 import { postRoomHttp, setGoclassEnv } from '@/service/biz/room'
 
@@ -123,13 +132,12 @@ export default {
   data() {
     return {
       showEnv: false,
-      envForm: ZEGOENV,
       loginForm: {
         roomId: '',
         userName: '',
         env: '',
         classScene: 1,
-        role: 1,
+        role: 1
       },
       rules: {
         roomId: [
@@ -137,17 +145,17 @@ export default {
             required: true,
             pattern: /^[\d]{1,9}$/,
             message: this.$t('login.login_supports_pure_digits'),
-            trigger: 'change',
-          },
+            trigger: 'change'
+          }
         ],
         userName: [
           {
             required: true,
             message: this.$t('login.login_supports_characters_number_uppercase_letter'),
             pattern: /^[\d\w\u4e00-\u9fa5]{1,30}$/,
-            trigger: 'change',
-          },
-        ],
+            trigger: 'change'
+          }
+        ]
       },
       classOptions: [
         {
@@ -167,7 +175,7 @@ export default {
         {
           value: 2,
           label: this.$t('login.login_student')
-        },
+        }
       ],
       zego_locale: 'zh',
       isDev: false
@@ -177,7 +185,7 @@ export default {
     joinBtnClickable() {
       const { roomId, userName } = this.loginForm
       return roomId && userName
-    },
+    }
   },
   beforeRouteEnter(to, from, next) {
     next(() => {
@@ -209,12 +217,11 @@ export default {
       this.loginForm.role = loginInfo?.role || 1
       this.loginForm.classScene = storage.get('zego_room_type') || 1
       const zego_locale = sessionStorage.getItem('zego_locale') || 'zh'
-      console.warn(zego_locale)
       this.zego_locale = zego_locale
     },
     handleJoinClassroom(e) {
       e.preventDefault()
-      this.$refs.loginForm.validate(async (valid) => {
+      this.$refs.loginForm.validate(async valid => {
         if (!valid) return
         const loading = this.$loading()
         const { roomId, userName, env, role, classScene } = this.loginForm
@@ -229,7 +236,10 @@ export default {
         // 设置后台环境
         setGoclassEnv(env)
         try {
-          await postRoomHttp('login_room', loginParams)
+          const result = await postRoomHttp('login_room', loginParams)
+          zegoClient.setState({
+            tokenInfo: { token: result.data.app_token }
+          })
           await zegoClient.init('live', data.env, data.user)
           this.$router.push({ path: 'classroom', query: { roomId, env } })
         } finally {
@@ -243,9 +253,37 @@ export default {
       sessionStorage.setItem('zego_room_type', JSON.stringify(this.loginForm.classScene))
       window.location.reload()
     },
-    changeLocale(){
-      sessionStorage.setItem('zego_locale',this.zego_locale)
+    changeLocale() {
+      sessionStorage.setItem('zego_locale', this.zego_locale)
       window.location.reload()
+    },
+    handleRecord() {
+      // 没有 log_filename、device_id
+      const domain =
+          window.location.hostname.indexOf('goclass.zego.im') > 0
+            ? 'https://demo-operation.zego.im'
+            : 'http://192.168.100.62:4001',
+        device_id = '',
+        system_version = window.navigator.userAgent,
+        app_version = '2.8.0',
+        sdk_version = 'v1.20.0_v1.20.0',
+        log_filename = '',
+        client = ''
+      let url =
+        domain +
+        '/feedback/goclass/index.html?platform=32&system_version=' +
+        system_version +
+        '&app_version=' +
+        app_version +
+        '&sdk_version=' +
+        sdk_version +
+        '&device_id=' +
+        device_id +
+        '&log_filename=' +
+        log_filename +
+        '&client=' +
+        client
+      window.open(url)
     }
   }
 }
@@ -449,41 +487,42 @@ export default {
     float: left;
     color: transparent;
   }
-  .zego-locale{
+  .zego-locale {
     float: right;
-    margin: 24px 42px;
-    .el-input{
-      @include wh(108px,30px);
-      input{
-        @include wh(100%,100%);
+    margin: 24px 16px 24px 42px;
+    .el-input {
+      @include wh(108px, 30px);
+      input {
+        @include wh(100%, 100%);
         background-color: #f4f5f8;
         @include sc(14px, #585c62);
-        border:none
+        border: none;
       }
-      :hover{
+      :hover {
         background-color: #ededed;
       }
     }
-    .el-input__prefix{
+    .el-input__prefix {
       top: 6px;
-      @include wh(18px,18px);
+      @include wh(18px, 18px);
     }
     .el-input--prefix .el-input__inner {
-        padding-right: 32px;
+      padding-right: 32px;
     }
-    .el-input__suffix{
-      @include wh(10px,10px);
+    .el-input__suffix {
+      @include wh(10px, 10px);
       right: 6px;
       top: 10px;
-      i.el-select__caret { 
-        @include wh(100%,100%);
-        appearance:none;
-        -moz-appearance:none;
-        -webkit-appearance:none;
-        background: url("../assets/icons/login/language_drop-down.png") no-repeat scroll right center transparent; 
+      i.el-select__caret {
+        @include wh(100%, 100%);
+        appearance: none;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        background: url('../assets/icons/login/language_drop-down.png') no-repeat scroll right
+          center transparent;
         background-size: 10px 10px;
-      } 
-    .el-icon-arrow-up:before {
+      }
+      .el-icon-arrow-up:before {
         content: '';
       }
     }
@@ -492,22 +531,29 @@ export default {
     }
   }
   .zego-locale-list {
-    .el-select-dropdown__item{
+    .el-select-dropdown__item {
       display: flex;
       justify-content: space-between;
       padding: 0 12px;
       text-align: left;
     }
-    .el-select-dropdown__item.selected{
+    .el-select-dropdown__item.selected {
       color: #0f0f0f;
       font-weight: normal;
     }
   }
   .zego-locale-list .el-select-dropdown__item.selected {
-    .option-icon{
+    .option-icon {
       display: inline-block;
       @include wh(10px, 10px);
     }
+  }
+  .zego-feedback {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    float: right;
+    margin: 30px 48px 0 0;
   }
 }
 </style>

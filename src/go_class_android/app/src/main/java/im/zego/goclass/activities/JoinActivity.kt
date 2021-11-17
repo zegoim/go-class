@@ -15,6 +15,7 @@ import im.zego.goclass.tool.*
 import im.zego.goclass.widget.LoadingDialog
 import im.zego.goclass.widget.SelectRolePopWindow
 import im.zego.goclass.widget.SelectRoomTypePopWindow
+import im.zego.zegoquality.ZegoQualityManager
 import kotlinx.android.synthetic.main.activity_join.*
 import java.util.regex.Pattern
 
@@ -49,7 +50,6 @@ class JoinActivity : BaseActivity() {
         loadingDialog = LoadingDialog(this, 0.1f)
         initView()
     }
-
 
     private fun initView() {
         val radius = dp2px(this, 27.5f)
@@ -92,6 +92,8 @@ class JoinActivity : BaseActivity() {
             } else if (!whiteboardInitSuccess) {
                 ToastUtils.showCenterToast(getString(R.string.join_init_wb_failed))
             } else {
+                ZegoQualityManager.getInstance().init(this);
+                ZegoQualityManager.getInstance().setAppVersion(BuildConfig.VERSION_NAME)
                 login()
             }
         }

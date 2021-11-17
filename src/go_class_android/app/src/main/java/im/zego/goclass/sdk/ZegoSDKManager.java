@@ -63,33 +63,10 @@ public class ZegoSDKManager {
 
 
     public void initSDKEnvironment(Application application, InitResult initCallback) {
-        // 在这里面配置测试环境等开关
-        configTestEnvSwitch();
-
         initVideoSDK(application, initCallback);
         initDocSdk(application, initCallback);
         initZegoApiClient(application, isMainLandEnv());
     }
-
-    /**
-     * 在这里配置测试环境等开关
-     * 其中环境设置时传入 true 表示开启测试环境，传入 false 表示开启正式环境
-     */
-    private void configTestEnvSwitch() {
-        // 是否开启业务后台测试环境
-        SharedPreferencesUtil.setGoClassTestEnv(true);
-
-        // 是否开启房间服务测试环境
-        SharedPreferencesUtil.setVideoSDKTestEnv(true);
-
-        // 是否开启文件服务测试环境
-        SharedPreferencesUtil.setDocsViewTestEnv(true);
-
-        // 是否开启点击触发翻页功能
-        SharedPreferencesUtil.setNextStepFlipPage(true);
-    }
-
-
 
     /**
      * 初始化liveroom/express
@@ -99,10 +76,7 @@ public class ZegoSDKManager {
      */
     private void initVideoSDK(Application application, InitResult initCallback) {
         this.application = application;
-        boolean isVideoSDKTest = SharedPreferencesUtil.isVideoSDKTestEnv();
-        Log.i(TAG, "init initRoomSDK isVideoSDKTest " + isVideoSDKTest + ",version:" + zegoSDKProxy.version());
-
-        zegoSDKProxy.initSDK(application, getAppID(), getAppSign(), isVideoSDKTest, success -> {
+        zegoSDKProxy.initSDK(application, getAppID(), getAppSign(), success -> {
             Log.i(TAG, "init zegoLiveRoomSDK result:" + success);
             initVideoResult = success;
             if (success) {
@@ -173,9 +147,8 @@ public class ZegoSDKManager {
      * @param isMainLandEnv
      */
     private void initZegoApiClient(Application application, boolean isMainLandEnv) {
-        boolean goClassEnvTest = SharedPreferencesUtil.isGoClassTestEnv();
-        Log.i(TAG, "initZegoApiClient()  : application = " + application + ", isMainLandEnv = " + isMainLandEnv + ", isGoClassEnvTest = " + goClassEnvTest);
-        ZegoApiClient.setAppContext(application, goClassEnvTest, isMainLandEnv);
+        Log.i(TAG, "initZegoApiClient()  : application = " + application + ", isMainLandEnv = " + isMainLandEnv);
+        ZegoApiClient.setAppContext(application, isMainLandEnv);
     }
 
     private long getAppID() {
@@ -252,13 +225,10 @@ public class ZegoSDKManager {
      * @param initCallback
      */
     private void initDocSdk(Application application, InitResult initCallback) {
-        boolean docsViewEnvTest = SharedPreferencesUtil.isDocsViewTestEnv();
-        Log.i(TAG, "initDocSdk.... isDocsViewEnvTest:" + docsViewEnvTest + "，version：" + ZegoDocsViewManager.getInstance().getVersion());
+        Log.i(TAG, "initDocSdk...."  + "，version：" + ZegoDocsViewManager.getInstance().getVersion());
         ZegoDocsViewConfig config = new ZegoDocsViewConfig();
         config.setAppID(getAppID());
         config.setAppSign(getAppSign());
-        config.setTestEnv(docsViewEnvTest);
-
         config.setLogFolder(application.getExternalFilesDir(null).getAbsolutePath() + File.separator + AppConstants.LOG_SUBFOLDER);
 
         String pptStepMode;

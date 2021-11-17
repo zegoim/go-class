@@ -14,9 +14,15 @@ NS_ASSUME_NONNULL_BEGIN
 @class ZegoLiveStream;
 @class ZegoRoomMemberInfoModel;
 
+@protocol ZegoClassViewControllerProtocol <NSObject>
+
+- (void)classVCDidDismiss;
+
+@end
 
 @interface ZegoClassViewController : UIViewController
 
+@property (nonatomic, weak) id<ZegoClassViewControllerProtocol> delegate;
 
 /// 根据参数初始化课堂 VC
 /// @param roomID 房间 ID

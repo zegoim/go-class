@@ -10,10 +10,4 @@ public class BackendApiConstants {
 
     // 业务后台地址（正式环境，海外）
     public final static String BACKEND_API_URL_OVERSEAS = YOUR_BACKEND_URL;
-
-    // 业务后台地址（测试环境）
-    public final static String BACKEND_API_URL_TEST = YOUR_BACKEND_URL;
-
-    // 业务后台地址（测试环境，海外）
-    public final static String BACKEND_API_URL_TEST_OVERSEAS = YOUR_BACKEND_URL;
 }

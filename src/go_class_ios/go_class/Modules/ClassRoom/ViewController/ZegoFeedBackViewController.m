@@ -71,14 +71,8 @@
     NSString *rtcVersion = [ZegoLiveCenter getVersion];
     NSString *resultVersion = [NSString stringWithFormat:@"%@_%@_%@",docsVersion,wbVersion,rtcVersion];
     NSString *logFileName = [NSString stringWithFormat:@"%@_iOS_goclass_%@_%@.zip",[self getCurrentTime],appVersion,deviceId];
-    BOOL isRTCTest = [ZegoClassEnvManager shareManager].roomSeviceTestEnv;
     
-    NSString *urlString;
-    if (isRTCTest) {
-        urlString = [NSString stringWithFormat:@"http://192.168.100.62:4001/feedback/goclass/index.html?platform=4&system_version=iOS_%@&app_version=%@&sdk_version=%@&client=%@&device_id=%@&log_filename=%@",system_version,appVersion,resultVersion,client,deviceId,logFileName];
-    } else {
-        urlString = [NSString stringWithFormat:@"https://demo-operation.zego.im/feedback/goclass/index.html?platform=4&system_version=iOS_%@&app_version=%@&sdk_version=%@&client=%@&device_id=%@&log_filename=%@",system_version,appVersion,resultVersion,client,deviceId,logFileName];
-    }
+    NSString * urlString = [NSString stringWithFormat:@"https://demo-operation.zego.im/feedback/goclass/index.html?platform=4&system_version=iOS_%@&app_version=%@&sdk_version=%@&client=%@&device_id=%@&log_filename=%@",system_version,appVersion,resultVersion,client,deviceId,logFileName];;
     
     NSURL *url = [NSURL URLWithString:urlString];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];

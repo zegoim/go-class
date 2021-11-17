@@ -11,12 +11,12 @@ import android.widget.ScrollView
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import im.zego.goclass.DemoApplication
-import im.zego.zegowhiteboard.ZegoWhiteboardConstants
-import im.zego.zegowhiteboard.ZegoWhiteboardManager
-import im.zego.zegowhiteboard.ZegoWhiteboardView
 import im.zego.goclass.R
 import im.zego.goclass.classroom.ClassRoomManager
 import im.zego.goclass.upload.UploadFileHelper.Companion.isUploadingFile
+import im.zego.zegowhiteboard.ZegoWhiteboardConstants
+import im.zego.zegowhiteboard.ZegoWhiteboardManager
+import im.zego.zegowhiteboard.ZegoWhiteboardView
 import kotlinx.android.synthetic.main.layout_whiteboard_tools_view.view.*
 
 /**
@@ -34,8 +34,9 @@ class WhiteboardToolsView : ScrollView {
     private var onLineSelect: () -> Unit = {}
     private var onStyleClick: (PopupWindow) -> Unit = {}
     private var onClearClick: () -> Unit = {}
-    private var onUploadClick: (errorCode: Int, isDynamic: Boolean) -> Unit = { _: Int, _: Boolean -> }
-    private var onInterceptUploadClick: () -> Boolean = { -> false}
+    private var onUploadClick: (errorCode: Int, isDynamic: Boolean) -> Unit =
+        { _: Int, _: Boolean -> }
+    private var onInterceptUploadClick: () -> Boolean = { -> false }
     private var onUndoClick: () -> Unit = {}
     private var onRedoClick: () -> Unit = {}
 
@@ -47,7 +48,7 @@ class WhiteboardToolsView : ScrollView {
 
     var zegoWhiteboardViewHolder: ZegoWhiteboardViewHolder? = null
     var zegoWhiteboardView: ZegoWhiteboardView? = null
-    
+
     private var shapePopupWindow = ToolShapePopupWindow(context)
 
     var lastTextClickedTime: Long = 0
@@ -59,7 +60,6 @@ class WhiteboardToolsView : ScrollView {
 
                 val selected = unSelectOtherChild(it)
                 if (!selected) {
-                    zegoWhiteboardViewHolder?.setDocsScaleEnable(false)
                     ZegoWhiteboardManager.getInstance().toolType =
                         ZegoWhiteboardConstants.ZegoWhiteboardViewToolClick
                     shapePopupWindow.selectNone()
@@ -129,7 +129,7 @@ class WhiteboardToolsView : ScrollView {
                     ZegoWhiteboardManager.getInstance().toolType =
                         ZegoWhiteboardConstants.ZegoWhiteboardViewToolEraser
                 }
-                zegoWhiteboardView?.deleteSelectedGraphics(){}
+                zegoWhiteboardView?.deleteSelectedGraphics() {}
                 zegoWhiteboardViewHolder?.deleteSelectedGraphics()
 
             }
@@ -138,7 +138,7 @@ class WhiteboardToolsView : ScrollView {
                 val popWindow = ToolStylePopWindow(context)
                 it.isActivated = true
                 popWindow.show(this)
-                popWindow.setOnDismissListener{
+                popWindow.setOnDismissListener {
                     style.isActivated = false
                 }
                 onStyleClick.invoke(popWindow)
@@ -166,7 +166,7 @@ class WhiteboardToolsView : ScrollView {
 
             upload_files.setOnClickListener {
 
-                if(onInterceptUploadClick()){
+                if (onInterceptUploadClick()) {
                     return@setOnClickListener
                 }
 
@@ -176,14 +176,14 @@ class WhiteboardToolsView : ScrollView {
                     onUploadClick(-1, false)
                     return@setOnClickListener
                 }
-                var popWindow : ToolUploadPopupWindow? = null
+                var popWindow: ToolUploadPopupWindow? = null
                 popWindow = ToolUploadPopupWindow(context) { isDynamic ->
                     onUploadClick(0, isDynamic)
                     popWindow?.dismiss()
                 }
                 it.isActivated = true
                 popWindow.show(this)
-                popWindow.setOnDismissListener{
+                popWindow.setOnDismissListener {
                     upload_files.isActivated = false
                 }
             }
@@ -197,34 +197,35 @@ class WhiteboardToolsView : ScrollView {
                 }
             }
 
-            shapePopupWindow.shapeSelectListener = object : ToolShapePopupWindow.ShapeSelectListener {
-                override fun onShapeSelected(curShape: Int) {
-                    when (curShape) {
-                        ToolShapePopupWindow.SHAPE_NONE -> {
-                            shape.isSelected = false
-                        }
-                        ToolShapePopupWindow.SHAPE_RECTANGLE -> {
-                            unSelectOtherChild(shape)
-                            ZegoWhiteboardManager.getInstance().toolType =
-                                ZegoWhiteboardConstants.ZegoWhiteboardViewToolRect
-                        }
-                        ToolShapePopupWindow.SHAPE_OVAL -> {
-                            unSelectOtherChild(shape)
-                            ZegoWhiteboardManager.getInstance().toolType =
-                                ZegoWhiteboardConstants.ZegoWhiteboardViewToolEllipse
-                        }
-                        ToolShapePopupWindow.SHAPE_LINE -> {
-                            unSelectOtherChild(shape)
-                            ZegoWhiteboardManager.getInstance().toolType =
-                                ZegoWhiteboardConstants.ZegoWhiteboardViewToolLine
-                        }
-                        else -> {
-                            shape.isSelected = false
+            shapePopupWindow.shapeSelectListener =
+                object : ToolShapePopupWindow.ShapeSelectListener {
+                    override fun onShapeSelected(curShape: Int) {
+                        when (curShape) {
+                            ToolShapePopupWindow.SHAPE_NONE -> {
+                                shape.isSelected = false
+                            }
+                            ToolShapePopupWindow.SHAPE_RECTANGLE -> {
+                                unSelectOtherChild(shape)
+                                ZegoWhiteboardManager.getInstance().toolType =
+                                    ZegoWhiteboardConstants.ZegoWhiteboardViewToolRect
+                            }
+                            ToolShapePopupWindow.SHAPE_OVAL -> {
+                                unSelectOtherChild(shape)
+                                ZegoWhiteboardManager.getInstance().toolType =
+                                    ZegoWhiteboardConstants.ZegoWhiteboardViewToolEllipse
+                            }
+                            ToolShapePopupWindow.SHAPE_LINE -> {
+                                unSelectOtherChild(shape)
+                                ZegoWhiteboardManager.getInstance().toolType =
+                                    ZegoWhiteboardConstants.ZegoWhiteboardViewToolLine
+                            }
+                            else -> {
+                                shape.isSelected = false
+                            }
                         }
                     }
                 }
-            }
-            
+
             shape.setOnClickListener {
                 if (!shapePopupWindow.isShowing) {
                     shapePopupWindow.show(it)
@@ -301,7 +302,7 @@ class WhiteboardToolsView : ScrollView {
         }
 
         if (it == click) {
-            zegoWhiteboardViewHolder?.setDocsScaleEnable(true)
+            zegoWhiteboardViewHolder?.setDocsScaleEnable(false)
         }
         return selected
     }
@@ -399,5 +400,5 @@ class WhiteboardToolsView : ScrollView {
             }
         }
     }
-    
+
 }

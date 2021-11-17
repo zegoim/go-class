@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -27,6 +28,9 @@ import im.zego.goclass.upload.UploadFileHelper
 import im.zego.goclass.upload.UploadFileHelper.Companion.clearUploadingFileSet
 import im.zego.goclass.widget.*
 import im.zego.zegodocs.ZegoDocsViewConstants
+import im.zego.zegoquality.ZegoQualityFactory
+import im.zego.zegoquality.ZegoQualityLanguageType
+import im.zego.zegoquality.ZegoQualityManager
 import im.zego.zegowhiteboard.ZegoWhiteboardView
 import im.zego.zegowhiteboard.callback.IZegoWhiteboardManagerListener
 import kotlinx.android.synthetic.main.activity_join.*
@@ -292,7 +296,7 @@ class MainActivity : BaseActivity() {
                         override fun onResult(result: Result, t: Any?) {
                             when (result.code) {
                                 0 -> {
-                                    finish()
+                                    finishPage()
                                 }
                                 ZegoApiErrorCode.NEED_LOGIN -> {
                                     ToastUtils.showCenterToast(
@@ -334,7 +338,7 @@ class MainActivity : BaseActivity() {
                             }
                         }
                     })
-                    finish()
+                    finishPage()
                 }
                 .setNegativeButtonBackground(R.drawable.drawable_dialog_confirm2)
                 .setNegativeButtonTextColor(R.color.colorAccent)
@@ -360,7 +364,7 @@ class MainActivity : BaseActivity() {
                             }
                         }
                     })
-                    finish()
+                    finishPage()
                 }
                 .setNegativeButton(R.string.login_button_cancel) { dialog, _ ->
                     dialog.dismiss()
@@ -763,7 +767,7 @@ class MainActivity : BaseActivity() {
                     .setMessage(R.string.room_tip_teacher_finished_teaching)
                     .setPositiveButton(R.string.wb_determine) { dialog, _ ->
                         dialog.dismiss()
-                        finish()
+                        finishPage()
                     }.setCancelable(false)
                     .show()
             }
@@ -806,7 +810,7 @@ class MainActivity : BaseActivity() {
                                 }
                             }
                         })
-                        finish()
+                        finishPage()
                     }
                     .show()
             }
@@ -843,7 +847,7 @@ class MainActivity : BaseActivity() {
                     //这个时候再调用 leaveRoom 会返回"需要先登陆房间" 的提示
                     //通常收到这个消息的时候，http服务那边心跳肯定已经断了被下线了，所以直接exitRoom
                     ClassRoomManager.exitRoom()
-                    finish()
+                    finishPage()
                 }
                 .setNegativeButton(R.string.login_retry) { dialog, _ ->
                     dialog.dismiss()
@@ -1021,12 +1025,9 @@ class MainActivity : BaseActivity() {
             val isMainland = ZegoSDKManager.getInstance().isMainLandEnv
             val natEnv =
                 if (isMainland) getString(R.string.mainland_value) else getString(R.string.other_value)
-            val testRoomUrl =
-                "https://doc-demo-whiteboard-test.zego.im/#/login?roomId=$CONFERENCE_ID&&env=$natEnv"
             val officialRoomUrl =
                 "https://goclass.zego.im/#/login?roomId=$CONFERENCE_ID&&env=$natEnv"
-            val roomUrl =
-                if (SharedPreferencesUtil.isVideoSDKTestEnv()) testRoomUrl else officialRoomUrl
+            val roomUrl = officialRoomUrl
             val nat_env =
                 if (isMainland) getString(R.string.login_mainland_china) else getString(R.string.login_overseas)
             val copyText =
@@ -1093,6 +1094,12 @@ class MainActivity : BaseActivity() {
                     val holder = container.removeWhiteboardViewHolder(whiteboardID)
                     drawer_whiteboard_list.removeWhiteboard(whiteboardID)
                     updateToolsVisibility()
+                }
+
+                override fun onWhiteboardSwitched(whiteboardID: Long, zOrder: Long) {
+                }
+
+                override fun onRoomStatusChanged(roomId: String?, status: Int) {
                 }
 
                 override fun onError(errorCode: Int) {
@@ -1385,5 +1392,19 @@ class MainActivity : BaseActivity() {
     override fun onDestroy() {
         clearUploadingFileSet()
         super.onDestroy()
+    }
+
+    private fun finishPage()
+    {
+        finish()
+        if(ZegoSDKManager.getInstance().rtcSDKName().toLowerCase().indexOf("express") >= 0) {
+
+            if(isChinese()) {
+                ZegoQualityManager.getInstance().setLanguageType(ZegoQualityLanguageType.ZegoQualityLanguageTypeChinese)
+            }else{
+                ZegoQualityManager.getInstance().setLanguageType(ZegoQualityLanguageType.ZegoQualityLanguageTypeEnglish)
+            }
+            startActivity(ZegoQualityFactory.getQualityIntent(this@MainActivity))
+        }
     }
 }

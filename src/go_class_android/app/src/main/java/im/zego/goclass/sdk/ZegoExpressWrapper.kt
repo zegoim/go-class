@@ -5,16 +5,15 @@ import android.app.Application
 import android.util.Log
 import android.view.TextureView
 import im.zego.goclass.AppConstants
+import im.zego.goclass.classroom.ClassRoomManager
 import im.zego.goclass.entity.ChatMsg
 import im.zego.goclass.entity.ZegoClassUser
 import im.zego.goclass.entity.ZegoPlayStream
-import im.zego.goclass.classroom.ClassRoomManager
 import im.zego.zegoexpress.ZegoExpressEngine
 import im.zego.zegoexpress.callback.IZegoEventHandler
 import im.zego.zegoexpress.constants.*
 import im.zego.zegoexpress.entity.*
-import im.zego.zegoexpress.entity.ZegoEngineConfig
-import im.zego.zegoexpress.entity.ZegoLogConfig
+import im.zego.zegoquality.ZegoQualityManager
 import org.json.JSONObject
 import java.io.File
 import java.util.*
@@ -43,26 +42,31 @@ class ZegoExpressWrapper : IZegoVideoSDKProxy {
         application: Application,
         appID: Long,
         appSign: String,
-        testEnv: Boolean,
         initCallback: ZegoSDKManager.InitResult
     ) {
         Log.d(TAG, "init ZegoExpressEngine ,version:${ZegoExpressEngine.getVersion()}")
-        val config = ZegoEngineConfig()
         val zegoLogConfig = ZegoLogConfig()
         zegoLogConfig.logPath = application.getExternalFilesDir(null)!!.absolutePath + File.separator + AppConstants.LOG_SUBFOLDER
         zegoLogConfig.logSize = 5*1024*1024
-        config.logConfig = zegoLogConfig
+        val config = ZegoEngineConfig()
+        config.advancedConfig["allow_verbose_print_high_frequency_content"] = "true"
+        config.advancedConfig["enable_callback_verbose"] = "true"
+        config.advancedConfig["use_data_record"] = "true"
         ZegoExpressEngine.setEngineConfig(config)
-        val engine = ZegoExpressEngine.createEngine(
-            appID, appSign, testEnv,
-            ZegoScenario.COMMUNICATION, application, null
-        )
+        ZegoExpressEngine.setLogConfig(zegoLogConfig)
+        val profile = ZegoEngineProfile()
+        profile.appID = appID
+        profile.appSign = appSign
+        profile.scenario = ZegoScenario.COMMUNICATION
+        profile.application = application
+        val engine = ZegoExpressEngine.createEngine(profile,null)
         if (engine == null) {
             initCallback.initResult(false)
             return
         }
 
         expressEngine = engine
+        expressEngine.startPerformanceMonitor(3000)
         expressEngine.setEventHandler(object : IZegoEventHandler() {
 
             override fun onIMRecvBarrageMessage(
@@ -132,6 +136,7 @@ class ZegoExpressWrapper : IZegoVideoSDKProxy {
                     }
                     ZegoRoomState.CONNECTED -> {
                         if (isLoginRoom) {
+                            ZegoQualityManager.getInstance().setLoginOnFinish()
                             loginResult.invoke(errorCode)
                             isLoginRoom = false
                         } else {
@@ -255,6 +260,16 @@ class ZegoExpressWrapper : IZegoVideoSDKProxy {
                 )
             }
 
+            override fun onPlayerRenderVideoFirstFrame(streamID: String?) {
+                super.onPlayerRenderVideoFirstFrame(streamID)
+                ZegoQualityManager.getInstance().setPlayerStreamOnFirstFrame(streamID)
+            }
+
+            override fun onRecvExperimentalAPI(content: String?) {
+                super.onRecvExperimentalAPI(content)
+                ZegoQualityManager.getInstance().parsingLog(content)
+            }
+
             override fun onRoomExtraInfoUpdate(
                 roomID: String,
                 roomExtraInfoList: ArrayList<ZegoRoomExtraInfo>
@@ -285,6 +300,7 @@ class ZegoExpressWrapper : IZegoVideoSDKProxy {
         userName: String,
         publishResult: IStreamPublishCallback
     ) {
+        ZegoQualityManager.getInstance().setPublishStreamID(streamID)
         expressEngine.startPublishingStream(streamID)
         publishResultMap[streamID] = publishResult
     }
@@ -317,6 +333,7 @@ class ZegoExpressWrapper : IZegoVideoSDKProxy {
         Log.d(TAG, "startPlayingStream")
         val zegoCanvas = ZegoCanvas(view)
         zegoCanvas.viewMode = ZegoViewMode.ASPECT_FILL
+        ZegoQualityManager.getInstance().setPlayerStreamOnStart(streamID)
         expressEngine.startPlayingStream(streamID, zegoCanvas)
         playResultMap[streamID] = playResult
     }
@@ -371,6 +388,12 @@ class ZegoExpressWrapper : IZegoVideoSDKProxy {
         val roomConfig = ZegoRoomConfig()
         roomConfig.maxMemberCount = ZegoSDKManager.MAX_USER_COUNT
         roomConfig.isUserStatusNotify = true
+
+        ZegoQualityManager.getInstance().setUserID(userID)
+        ZegoQualityManager.getInstance().setUserName(userName)
+        ZegoQualityManager.getInstance().setRoomID(roomID)
+        ZegoQualityManager.getInstance().setProductName("goclass")
+        ZegoQualityManager.getInstance().setLoginOnStart()
         expressEngine.loginRoom(roomID, user, roomConfig)
         this.loginResult = function
         isLoginRoom = true

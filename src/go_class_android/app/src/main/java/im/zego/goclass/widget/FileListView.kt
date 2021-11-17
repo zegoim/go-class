@@ -115,7 +115,7 @@ class FileListView : RelativeLayout {
 
 class FileListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var productList = listOf<FileData>()
+    private var productList = mutableListOf<FileData>()
     private var testList = listOf<FileData>()
     private val TAG = javaClass.simpleName
 
@@ -126,11 +126,7 @@ class FileListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     private fun getFileList(): List<FileData> {
-        return if (SharedPreferencesUtil.isDocsViewTestEnv()) {
-            testList
-        } else {
-            productList
-        }
+        return productList
     }
 
     override fun getItemCount(): Int {
@@ -168,7 +164,8 @@ class FileListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val testJson = jsonObject["docs_test"]
 
         if (productJson != null) {
-            productList = gson.fromJson(productJson, Array<FileData>::class.java).toList()
+            productList = gson.fromJson(productJson, Array<FileData>::class.java).toMutableList()
+            productList.add(FileData("cqpUKGnH3qg6IzUZ","测试pptx",true,false))
         }
         testList = gson.fromJson(testJson, Array<FileData>::class.java).toList()
 

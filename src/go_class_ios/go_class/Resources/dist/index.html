@@ -1,0 +1,41 @@
+<!DOCTYPE html><html lang=en><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,user-scalable=no,minimum-scale=1,maximum-scale=1"><link rel=icon href=favicon.ico><link href=css/app.70187a9f.css rel=preload as=style><link href=css/chunk-vendors.4dc35c53.css rel=preload as=style><link href=js/app.08dad15e.js rel=preload as=script><link href=js/chunk-vendors.52dcfe33.js rel=preload as=script><link href=css/chunk-vendors.4dc35c53.css rel=stylesheet><link href=css/app.70187a9f.css rel=stylesheet></head><body><div id=app></div><script src=js/chunk-vendors.52dcfe33.js></script><script src=js/app.08dad15e.js></script></body><script src=./respond.js></script><script>// init vConsole
+    // var vConsole = new VConsole();
+    // console.log("Hello world");
+
+    // ios 10 禁止缩放
+    //ios 10以上
+    window.onload = function() {
+      document.documentElement.addEventListener(
+        "touchstart",
+        function(event) {
+          if (event.touches.length > 1) {
+            event.preventDefault();
+          }
+        },
+        false
+      );
+      var lastTouchEnd = 0;
+      document.addEventListener(
+        "touchend",
+        function(event) {
+          var now = Date.now();
+          if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+          }
+          lastTouchEnd = now;
+        },
+        false
+      );
+      // 阻止双指放大
+      document.addEventListener("gesturestart", function(event) {
+        event.preventDefault();
+      });
+    };
+
+    // document.body.addEventListener(
+    //   "touchmove",
+    //   function(e) {
+    //     e.preventDefault(); // 阻止默认的处理方式(阻止下拉滑动的效果)
+    //   },
+    //   { passive: false }
+    // ); // passive 参数不能省略，用来兼容ios和android</script></html>

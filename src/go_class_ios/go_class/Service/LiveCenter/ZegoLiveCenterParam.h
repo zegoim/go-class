@@ -208,12 +208,10 @@ typedef void(^ZegoLiveCenterImBlock)(int errorCode,NSString *roomId,NSString *me
 /// 初始化
 /// @param appID 申请的appID
 /// @param appSign 申请的appSign
-/// @param isDocTestEnv 文件转码环境
-/// @param isRTCTestEnv RTC服务环境
 /// @param scenario 应用场景
 /// @param complete 初始化回调
 /// @param delegate 代理
-+ (void)setupWithAppID:(unsigned int)appID appSign:(nonnull NSData *)appSign isDocTestEnv:(BOOL)isDocTestEnv isRTCTestEnv:(BOOL)isRTCTestEnv scenario:(NSUInteger)scenario complete:(nonnull ZegoLiveCenterCompletionBlock)complete delegate:(nullable id<ZegoLiveCenterDelegate>)delegate;
++ (void)setupWithAppID:(unsigned int)appID appSign:(nonnull NSData *)appSign  scenario:(NSUInteger)scenario complete:(nonnull ZegoLiveCenterCompletionBlock)complete delegate:(nullable id<ZegoLiveCenterDelegate>)delegate;
 
 /// 设置用户ID和用户名
 /// @param userId 用户ID

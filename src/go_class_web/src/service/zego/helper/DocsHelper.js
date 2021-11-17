@@ -13,7 +13,7 @@ export class DocsHelper {
   }
 
   getProxyFunc() {
-    return ["uploadFile", "createView", "setTestEnv", "setConfig", "getConfig"];
+    return ["uploadFile", "createView", "setConfig", "getConfig"];
   }
 
   docs(methodName = "", ...args) {
@@ -29,10 +29,6 @@ export class DocsHelper {
 
   uploadFile(file, renderType) {
     return this._client.uploadFile(file, renderType);
-  }
-
-  setTestEnv(isTest) {
-    return this._client.setTestEnv(isTest);
   }
 
   setConfig(key, value) {

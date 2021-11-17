@@ -90,7 +90,7 @@ class ToolStylePopWindow(context: Context) : BasePopWindow(
                 it.setImageResource(R.drawable.text_bold_1)
             }
             it.background = getFontBgDrawable(it.context)
-            it.setOnClickListener { iv ->
+            it.setOnClickListener { _ ->
                 it.isSelected = !it.isSelected
                 if (it.isSelected) {
                     it.setImageResource(R.drawable.text_bold_select_1)

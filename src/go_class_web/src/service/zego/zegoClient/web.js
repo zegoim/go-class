@@ -13,13 +13,12 @@ class WebZegoClient extends ZegoClient {
     console.warn('init web sdk start')
     const { userID } = user
     const { env = 'home' } = this.state
-    const { appID, logURL, server, isTestEnv, docsviewAppID } = await this.Config.getParams(env)
+    const { appID, logURL, server } = await this.Config.getParams(env)
     const zg = new ZegoExpressEngine(appID, server)
     const zgDocsClient = new ZegoExpressDocs({
-      appID: docsviewAppID,
-      token: this.state.tokenInfo.token2,
-      userID,
-      isTestEnv
+      appID,
+      token: this.state.tokenInfo.token1,
+      userID
     })
     if (zg) console.log('init web sdk success!')
     console.log('web sdk version ', zg.getVersion())

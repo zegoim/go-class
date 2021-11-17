@@ -16,7 +16,6 @@ interface IZegoVideoSDKProxy {
         application: Application,
         appID: Long,
         appSign: String,
-        testEnv: Boolean,
         initCallback: ZegoSDKManager.InitResult
     )
 

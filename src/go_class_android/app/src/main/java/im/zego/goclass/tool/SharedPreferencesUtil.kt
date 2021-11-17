@@ -19,48 +19,6 @@ class SharedPreferencesUtil {
         }
 
         @JvmStatic
-        fun setTestEnv(isTestEnv: Boolean) {
-            val sharedPreferences = getSharedPreferences(env)
-            sharedPreferences.edit().putBoolean("isTestEnv", isTestEnv).apply()
-        }
-
-        @JvmStatic
-        fun getTestEnv(): Boolean {
-            val sharedPreferences = getSharedPreferences(env)
-            return sharedPreferences.getBoolean("isTestEnv", true)
-        }
-
-        @JvmStatic
-        fun setAppID(appID: Long) {
-            val sharedPreferences = getSharedPreferences(env)
-            sharedPreferences.edit().putLong("appID", appID).apply()
-        }
-
-        @JvmStatic
-        fun getAppID(): Long {
-            val sharedPreferences = getSharedPreferences(env)
-            return sharedPreferences.getLong("appID", AuthConstants.APP_ID)
-        }
-
-        @JvmStatic
-        fun setAppSign(appSign: String) {
-            val sharedPreferences = getSharedPreferences(env)
-            sharedPreferences.edit().putString("appSign", appSign).apply()
-        }
-
-        @JvmStatic
-        fun removeAppSign() {
-            val sharedPreferences = getSharedPreferences(env)
-            sharedPreferences.edit().remove("appSign").apply()
-        }
-
-        @JvmStatic
-        fun getAppSign(): String {
-            val sharedPreferences = getSharedPreferences(env)
-            return sharedPreferences.getString("appSign", AuthConstants.APP_SIGN)!!
-        }
-
-        @JvmStatic
         fun setLastJoinName(name: String) {
             val sharedPreferences = getSharedPreferences(env)
             sharedPreferences.edit().putString("lastJoinName", name).apply()
@@ -94,60 +52,6 @@ class SharedPreferencesUtil {
         fun setProcessID(processID: Int) {
             val sharedPreferences = getSharedPreferences(env)
             sharedPreferences.edit().putInt("processID", processID).apply()
-        }
-
-        @JvmStatic
-        fun containsGoClassTestEnvSp(): Boolean {
-            val sharedPreferences = getSharedPreferences(env)
-            return sharedPreferences.contains("go_class_env")
-        }
-
-        @JvmStatic
-        fun setGoClassTestEnv(isTestEnv: Boolean) {
-            val sharedPreferences = getSharedPreferences(env)
-            sharedPreferences.edit().putBoolean("go_class_env", isTestEnv).apply()
-        }
-
-        @JvmStatic
-        fun isGoClassTestEnv(): Boolean {
-            val sharedPreferences = getSharedPreferences(env)
-            return sharedPreferences.getBoolean("go_class_env", false)
-        }
-
-        @JvmStatic
-        fun containsVideoSDKTestEnvSp(): Boolean {
-            val sharedPreferences = getSharedPreferences(env)
-            return sharedPreferences.contains("video_env")
-        }
-
-        @JvmStatic
-        fun setVideoSDKTestEnv(isTestEnv: Boolean) {
-            val sharedPreferences = getSharedPreferences(env)
-            sharedPreferences.edit().putBoolean("video_env", isTestEnv).apply()
-        }
-
-        @JvmStatic
-        fun isVideoSDKTestEnv(): Boolean {
-            val sharedPreferences = getSharedPreferences(env)
-            return sharedPreferences.getBoolean("video_env", false)
-        }
-
-        @JvmStatic
-        fun containsDocsViewTestEnvSp(): Boolean {
-            val sharedPreferences = getSharedPreferences(env)
-            return sharedPreferences.contains("docs_view_env")
-        }
-
-        @JvmStatic
-        fun setDocsViewTestEnv(isTestEnv: Boolean) {
-            val sharedPreferences = getSharedPreferences(env)
-            sharedPreferences.edit().putBoolean("docs_view_env", isTestEnv).apply()
-        }
-
-        @JvmStatic
-        fun isDocsViewTestEnv(): Boolean {
-            val sharedPreferences = getSharedPreferences(env)
-            return sharedPreferences.getBoolean("docs_view_env", false)
         }
 
         @JvmStatic

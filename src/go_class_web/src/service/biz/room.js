@@ -7,15 +7,18 @@ import Vue from 'vue'
 import axios from 'axios'
 import { Message } from 'element-ui'
 import zegoClient from '@/service/zego/zegoClient/index'
-import { ROLE_STUDENT, ROLE_TEACHER, STATE_CLOSE, STATE_OPEN, ZEGOENV } from '@/utils/constants'
-import { YOUR_HOME_BACKEND_URL, YOUR_OVERSEAS_BACKEND_URL } from '@/utils/config_data'
-import i18n from "../../i18n"
+import { ROLE_STUDENT, ROLE_TEACHER, STATE_CLOSE, STATE_OPEN } from '@/utils/constants'
+import {
+  YOUR_HOME_BACKEND_URL,
+  YOUR_OVERSEAS_BACKEND_URL
+} from '@/utils/config_data'
+import COMMON_DATA from '@/utils/common_data'
+import i18n from '../../i18n'
 export const bus = new Vue()
 
 Vue.prototype.$bus = bus
 
 const timeout = 10000
-// const loginCodes = [10005, 10006]
 const loginCodes = [10006]
 const errorTips = {
   'Network Error': i18n.t('login.login_network_exception'),
@@ -32,7 +35,8 @@ const errorTips = {
 }
 
 const translateError = res => {
-  res.ret.message = errorTips[res.ret.code] || res.ret.message || i18n.t('login.login_network_exception')
+  res.ret.message =
+    errorTips[res.ret.code] || res.ret.message || i18n.t('login.login_network_exception')
 }
 
 const handleError = res => {
@@ -82,9 +86,9 @@ http.interceptors.response.use(
 )
 
 export const setGoclassEnv = env => {
-  http.defaults.baseURL = hostMap[ZEGOENV.goclass+env] || hostMap.home
+  http.defaults.baseURL = hostMap[env] || hostMap.home
 }
-export const postRoomHttp = (api, data) => http.post(api, data)
+export const postRoomHttp = (api, data) => http.post(api, { ...data, common_data: COMMON_DATA })
 
 class RoomStore {
   roomId = ''
@@ -129,10 +133,10 @@ class RoomStore {
   }
 
   registerPushEvent() {
-    zegoClient._client.on('IMRecvCustomCommand',(roomid, fromUser, command)=>{
+    zegoClient._client.on('IMRecvCustomCommand', (roomid, fromUser, command) => {
       try {
         let res = JSON.parse(command)
-        console.warn('后台 message',res)
+        console.warn('后台 message', res)
         console.log('====edu_zpush====', res)
         if (res.cmd == 102) {
           this.onUserStateChange(res.data)
@@ -171,12 +175,20 @@ class RoomStore {
     if (this.role == ROLE_STUDENT && user) {
       let str = ''
       if (data.type == 4) {
-        
-        str = user.can_share == STATE_CLOSE ? i18n.t('room.room_student_tip_revoke_share') : i18n.t('room.room_student_tip_permission')
+        str =
+          user.can_share == STATE_CLOSE
+            ? i18n.t('room.room_student_tip_revoke_share')
+            : i18n.t('room.room_student_tip_permission')
       } else if (data.type == 2) {
-        str = user.camera == STATE_CLOSE ? i18n.t('room.room_student_tip_turned_off_camera') : i18n.t('room.room_student_tip_turned_on_camera')
+        str =
+          user.camera == STATE_CLOSE
+            ? i18n.t('room.room_student_tip_turned_off_camera')
+            : i18n.t('room.room_student_tip_turned_on_camera')
       } else if (data.type == 3) {
-        str = user.mic == STATE_CLOSE ? i18n.t('room.room_student_tip_turned_off_mic') : i18n.t('room.room_student_tip_turned_on_mic')
+        str =
+          user.mic == STATE_CLOSE
+            ? i18n.t('room.room_student_tip_turned_off_mic')
+            : i18n.t('room.room_student_tip_turned_on_mic')
       }
       this.auth.camera = user.camera
       this.auth.mic = user.mic

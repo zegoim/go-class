@@ -28,11 +28,9 @@
 #import "ZegoClassEnvManager.h"
 #import "NSString+ZegoExtension.h"
 #import "ZegoErrorMap.h"
-#ifndef IS_OPENSOURCE
-#import "ZegoEnvSettingViewController.h"
-#endif
+#import <ZegoQualitySDK/ZegoQuality.h>
 
-@interface ZegoLoginViewController ()<UITextFieldDelegate,ZegoLiveCenterDelegate>
+@interface ZegoLoginViewController ()<UITextFieldDelegate, ZegoLiveCenterDelegate, ZegoClassViewControllerProtocol>
 @property (weak, nonatomic) IBOutlet UITextField *classRoomTF;
 @property (weak, nonatomic) IBOutlet UITextField *nameTF;
 @property (weak, nonatomic) IBOutlet ZegoDemoRoundTextField *classTypeTF;
@@ -66,12 +64,12 @@
 @implementation ZegoLoginViewController
 
 - (void)viewDidLoad {
-    [super viewDidLoad];
-    [self setInterfaceOrientation:UIInterfaceOrientationPortrait];  //强制竖屏
-    [self setupReachabilityObserver];   //配置网络监听
-    [self setupNavigationBar];          //加载并设置导航栏
-    [self setupSubviews];               //加载并设置子视图
-    [self loadDefault];                 //加载默认配置
+  [super viewDidLoad];
+  [self setInterfaceOrientation:UIInterfaceOrientationPortrait];  //强制竖屏
+  [self setupReachabilityObserver];   //配置网络监听
+  [self setupNavigationBar];          //加载并设置导航栏
+  [self setupSubviews];               //加载并设置子视图
+  [self loadDefault];                 //加载默认配置
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -213,8 +211,6 @@
         }
     }
 #endif
-    BOOL isDocTest = [ZegoClassEnvManager shareManager].docsSeviceTestEnv;
-    BOOL isRTCTest = [ZegoClassEnvManager shareManager].roomSeviceTestEnv;
     
     /**
      初始化 LiveRoom / Express.
@@ -222,8 +218,6 @@
      */
     [ZegoLiveCenter setupWithAppID:(unsigned int)self.appID
                            appSign:self.appSign
-                      isDocTestEnv:isDocTest
-                      isRTCTestEnv:isRTCTest
                           scenario:2
                           complete:^(int errorCode) {
         if (errorCode) {
@@ -250,10 +244,7 @@
 }
 
 - (IBAction)onTestButtonTapped {
-#ifndef IS_OPENSOURCE
-    ZegoEnvSettingViewController *setting = [[ZegoEnvSettingViewController alloc] init];
-    [self presentViewController:setting animated:YES completion:nil];
-#endif
+
 }
 
 - (IBAction)onRoleTypeButtonTapped:(id)sender {
@@ -316,6 +307,7 @@
                                                                             classType:self.classPatternType
                                                                            streamList:[ZegoLiveCenter streamList]
                                                                           isEnvAbroad:self.abroadEnvButton.selected];
+      vc.delegate = self;
         vc.modalPresentationStyle = UIModalPresentationFullScreen;
         [self presentViewController:vc animated:YES completion:nil];
     } failure:^(ZegoResponseModel *response) {
@@ -379,6 +371,21 @@
 - (void)textFieldDidEndEditing:(UITextField *)textField {
     [ZegoLiveCenter setUserId:@(self.userID).stringValue userName:self.nameTF.text];
 }
+
+#pragma mark - ZegoClassViewControllerProtocol
+//- (void)classViewControllerDidDismissWithQualityVCConfig:(ZegoQualityVCConfig *)qualityConfig {
+//  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//    ZegoQualityViewController *qualityVC = [[ZegoQualityViewController alloc] initWithConfig:qualityConfig];
+////    qualityVC.modalPresentationStyle = UIModalPresentationFullScreen;
+////    [self presentViewController:qualityVC animated:YES completion:nil];
+//    [self.navigationController pushViewController:qualityVC animated:YES];
+//  });
+//}
+- (void)classVCDidDismiss {
+  UIViewController *qualityVC = [ZegoQualityFactory qualityViewControllerWithDelegate:nil];
+  [self.navigationController pushViewController:qualityVC animated:YES];
+}
+
 
 #pragma mark - UI
 - (void)enableJoinClassButton:(BOOL)enable {

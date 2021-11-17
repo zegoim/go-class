@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		5C0B4E5725AD851300A11790 /* NSBundle+ZegoExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0B4E5525AD851300A11790 /* NSBundle+ZegoExtension.m */; };
-		5C179C77255A8CFF00FC138E /* BuildFile in Sources */ = {isa = PBXBuildFile; };
-		5C179C78255A8CFF00FC138E /* BuildFile in Resources */ = {isa = PBXBuildFile; };
 		5C179C7B255A8E7900FC138E /* ZegoClassEnvManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C179C7A255A8E7900FC138E /* ZegoClassEnvManager.m */; };
 		5C3050B225A86B9300AEDE94 /* ZegoClassRoomTopBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C3050B425A86B9300AEDE94 /* ZegoClassRoomTopBar.xib */; };
 		5C3050B925A86BFF00AEDE94 /* ZegoClassRoomSharePopView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C3050BB25A86BFF00AEDE94 /* ZegoClassRoomSharePopView.xib */; };
@@ -17,7 +15,6 @@
 		5C3050D925ABF2E000AEDE94 /* NSString+ZegoExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3050D825ABF2E000AEDE94 /* NSString+ZegoExtension.m */; };
 		5C3D9DB125AEDD12006681CC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5C3D9DB025AEDD12006681CC /* Main.storyboard */; };
 		5C3D9DB325AEDD34006681CC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5C3D9DB225AEDD34006681CC /* LaunchScreen.storyboard */; };
-		5C3D9DB525AEDD8D006681CC /* ZegoSettingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C3D9DB425AEDD8D006681CC /* ZegoSettingViewController.xib */; };
 		5C3D9DB925AEDDF0006681CC /* ZegoClassViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C3D9DB825AEDDF0006681CC /* ZegoClassViewController.xib */; };
 		5C3D9DC625B14909006681CC /* ZegoSettingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C3D9DC525B14909006681CC /* ZegoSettingViewController.xib */; };
 		5C3D9DC925B189E4006681CC /* ZegoUploadFileTypeSelectorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3D9DC825B189E4006681CC /* ZegoUploadFileTypeSelectorView.m */; };
@@ -26,6 +23,10 @@
 		5CA2751D250A003A00D79E51 /* ZegoRoomMemberListRspModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA27519250A003900D79E51 /* ZegoRoomMemberListRspModel.m */; };
 		5CA2751E250A003A00D79E51 /* ZegoLiveMemberUpdateRMModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA2751B250A003A00D79E51 /* ZegoLiveMemberUpdateRMModel.m */; };
 		8602934C2578B0F700850D3F /* UIButton+Delay.m in Sources */ = {isa = PBXBuildFile; fileRef = 8602934A2578B0F700850D3F /* UIButton+Delay.m */; };
+		8605F80F267C96B800EFC9EE /* ZegoPortraitNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8605F80E267C96B800EFC9EE /* ZegoPortraitNavigationController.m */; };
+		8605F816267CB00E00EFC9EE /* ZegoQualitySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8605F814267CAED100EFC9EE /* ZegoQualitySDK.framework */; };
+		8605F817267CB00E00EFC9EE /* ZegoQualitySDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8605F814267CAED100EFC9EE /* ZegoQualitySDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		8605F81A267CC72600EFC9EE /* dist in Resources */ = {isa = PBXBuildFile; fileRef = 8605F819267CC72600EFC9EE /* dist */; };
 		861320842484E91E002F95CA /* ZegoViewAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 861320832484E91E002F95CA /* ZegoViewAnimator.m */; };
 		861320872484F076002F95CA /* ZegoDemoRoundTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 861320852484F076002F95CA /* ZegoDemoRoundTextField.m */; };
 		86132093248503CC002F95CA /* ZegoClassViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 86132091248503CC002F95CA /* ZegoClassViewController.m */; };
@@ -124,12 +125,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		5C52FC5F24E156790044B38D /* Embed Frameworks */ = {
+		8605F818267CB00E00EFC9EE /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				8605F817267CB00E00EFC9EE /* ZegoQualitySDK.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -150,7 +152,6 @@
 		5C3D9DA325AED72D006681CC /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5C3D9DB025AEDD12006681CC /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		5C3D9DB225AEDD34006681CC /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
-		5C3D9DB425AEDD8D006681CC /* ZegoSettingViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ZegoSettingViewController.xib; sourceTree = "<group>"; };
 		5C3D9DB825AEDDF0006681CC /* ZegoClassViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ZegoClassViewController.xib; sourceTree = "<group>"; };
 		5C3D9DC525B14909006681CC /* ZegoSettingViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ZegoSettingViewController.xib; sourceTree = "<group>"; };
 		5C3D9DC725B189E4006681CC /* ZegoUploadFileTypeSelectorView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZegoUploadFileTypeSelectorView.h; sourceTree = "<group>"; };
@@ -165,6 +166,11 @@
 		5CA2751C250A003A00D79E51 /* ZegoRoomMemberListRspModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZegoRoomMemberListRspModel.h; sourceTree = "<group>"; };
 		8602934A2578B0F700850D3F /* UIButton+Delay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+Delay.m"; sourceTree = "<group>"; };
 		8602934B2578B0F700850D3F /* UIButton+Delay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+Delay.h"; sourceTree = "<group>"; };
+		8605F80D267C96B800EFC9EE /* ZegoPortraitNavigationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZegoPortraitNavigationController.h; sourceTree = "<group>"; };
+		8605F80E267C96B800EFC9EE /* ZegoPortraitNavigationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZegoPortraitNavigationController.m; sourceTree = "<group>"; };
+		8605F814267CAED100EFC9EE /* ZegoQualitySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ZegoQualitySDK.framework; sourceTree = "<group>"; };
+		8605F819267CC72600EFC9EE /* dist */ = {isa = PBXFileReference; lastKnownFileType = folder; path = dist; sourceTree = "<group>"; };
+		860DB631267C71F0005529F2 /* ZegoQualitySDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ZegoQualitySDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		861320822484E91E002F95CA /* ZegoViewAnimator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZegoViewAnimator.h; sourceTree = "<group>"; };
 		861320832484E91E002F95CA /* ZegoViewAnimator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZegoViewAnimator.m; sourceTree = "<group>"; };
 		861320852484F076002F95CA /* ZegoDemoRoundTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZegoDemoRoundTextField.m; sourceTree = "<group>"; };
@@ -355,6 +361,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				86D5F9CF2480D568002ED31E /* VideoToolbox.framework in Frameworks */,
+				8605F816267CB00E00EFC9EE /* ZegoQualitySDK.framework in Frameworks */,
 				86D5F9D12480D571002ED31E /* SystemConfiguration.framework in Frameworks */,
 				86D5F9D82480D5C8002ED31E /* libc++.tbd in Frameworks */,
 				86402D022490DF7E0066A45E /* HomeKit.framework in Frameworks */,
@@ -411,6 +418,7 @@
 		86165DDA247E71B5007EA3FE /* go_class */ = {
 			isa = PBXGroup;
 			children = (
+				8605F814267CAED100EFC9EE /* ZegoQualitySDK.framework */,
 				86D5F9E72484A608002ED31E /* Service */,
 				862611D4250A480900EA21A6 /* Modules */,
 				86165DF4247E7226007EA3FE /* Tool */,
@@ -477,6 +485,8 @@
 				864A7FC32557A6C3007EF894 /* ZegoClassJustTestViewController.xib */,
 				86642058265F49CD00C26174 /* ZegoFeedBackViewController.h */,
 				86642059265F49CD00C26174 /* ZegoFeedBackViewController.m */,
+				8605F80D267C96B800EFC9EE /* ZegoPortraitNavigationController.h */,
+				8605F80E267C96B800EFC9EE /* ZegoPortraitNavigationController.m */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -698,7 +708,6 @@
 				862611D7250B597700EA21A6 /* ModuleService */,
 				86165DE1247E71B5007EA3FE /* ZegoLoginViewController.h */,
 				86165DE2247E71B5007EA3FE /* ZegoLoginViewController.m */,
-				5C3D9DB425AEDD8D006681CC /* ZegoSettingViewController.xib */,
 				5C179C79255A8E7900FC138E /* ZegoClassEnvManager.h */,
 				5C179C7A255A8E7900FC138E /* ZegoClassEnvManager.m */,
 				862611D5250A480900EA21A6 /* ClassRoom */,
@@ -760,6 +769,7 @@
 		8658E2D124EF7A6600E2AC8B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				8605F819267CC72600EFC9EE /* dist */,
 				862611E8251304F500EA21A6 /* SourceHanSansSC-Bold.otf */,
 				862611E9251304F500EA21A6 /* SourceHanSansSC-Regular.otf */,
 			);
@@ -821,6 +831,7 @@
 		86D5F9CD2480D568002ED31E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				860DB631267C71F0005529F2 /* ZegoQualitySDK.framework */,
 				86402D012490DF7E0066A45E /* HomeKit.framework */,
 				86D5F9D72480D592002ED31E /* libiconv.tbd */,
 				86D5F9D62480D587002ED31E /* libc++.tbd */,
@@ -867,7 +878,8 @@
 				86165DD5247E71B5007EA3FE /* Frameworks */,
 				86165DD6247E71B5007EA3FE /* Resources */,
 				8684FBDC24908D1B00F79C47 /* ShellScript */,
-				5C52FC5F24E156790044B38D /* Embed Frameworks */,
+				BFDB54C8C5123C71C5D16A69 /* [CP] Embed Pods Frameworks */,
+				8605F818267CB00E00EFC9EE /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -884,7 +896,7 @@
 		86165DD0247E71B5007EA3FE /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1150;
+				LastUpgradeCheck = 1310;
 				ORGANIZATIONNAME = zego;
 				TargetAttributes = {
 					86165DD7247E71B5007EA3FE = {
@@ -927,12 +939,11 @@
 				862611AE250A3F4400EA21A6 /* ZegoWhiteBoardListCell.xib in Resources */,
 				5C3D9DB325AEDD34006681CC /* LaunchScreen.storyboard in Resources */,
 				5C3D9DB925AEDDF0006681CC /* ZegoClassViewController.xib in Resources */,
-				5C179C78255A8CFF00FC138E /* BuildFile in Resources */,
+				8605F81A267CC72600EFC9EE /* dist in Resources */,
 				864A7FC52557A6C3007EF894 /* ZegoClassJustTestViewController.xib in Resources */,
 				5C3050C025A86C1700AEDE94 /* ZegoClassRoomCameraPopView.xib in Resources */,
 				5C3050B225A86B9300AEDE94 /* ZegoClassRoomTopBar.xib in Resources */,
 				5C3D9DC625B14909006681CC /* ZegoSettingViewController.xib in Resources */,
-				5C3D9DB525AEDD8D006681CC /* ZegoSettingViewController.xib in Resources */,
 				5C3D9DB125AEDD12006681CC /* Main.storyboard in Resources */,
 				5C3050B925A86BFF00AEDE94 /* ZegoClassRoomSharePopView.xib in Resources */,
 			);
@@ -980,6 +991,23 @@
 			shellPath = /bin/sh;
 			shellScript = "\n";
 		};
+		BFDB54C8C5123C71C5D16A69 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-go_class/Pods-go_class-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-go_class/Pods-go_class-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-go_class/Pods-go_class-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1013,7 +1041,6 @@
 				8626117E250A3DFD00EA21A6 /* ZFView.m in Sources */,
 				86B288502499C5BA000D5151 /* ZegoClassInviteManager.m in Sources */,
 				86939DC02487A33E00A68E15 /* ZegoClassRoomBottomBar.m in Sources */,
-				5C179C77255A8CFF00FC138E /* BuildFile in Sources */,
 				866C6753251C8F1D00B034B7 /* ZegoDispath.m in Sources */,
 				862611F525136C7E00EA21A6 /* ZegoWhiteBoardService.m in Sources */,
 				8626116F2509C4C000EA21A6 /* ZegoStringPickerView.m in Sources */,
@@ -1026,6 +1053,7 @@
 				86B288512499C5BA000D5151 /* ZGAppSignHelper.m in Sources */,
 				861320872484F076002F95CA /* ZegoDemoRoundTextField.m in Sources */,
 				86FDF939256B6624000727D5 /* ZegoDrawingToolModel.m in Sources */,
+				8605F80F267C96B800EFC9EE /* ZegoPortraitNavigationController.m in Sources */,
 				8626115D25087EC500EA21A6 /* ZegoHttpHeartbeat.m in Sources */,
 				862611DD250F41EE00EA21A6 /* ZegoHUD.m in Sources */,
 				8664205B265F49CD00C26174 /* ZegoFeedBackViewController.m in Sources */,
@@ -1143,6 +1171,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1167,7 +1196,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1202,6 +1231,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1220,7 +1250,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -1248,7 +1278,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$SRCROOT/$PROJECT_NAME/Constant/Global.pch";
 				INFOPLIST_FILE = go_class/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1257,7 +1287,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/go_class/CommonView",
 				);
-				MARKETING_VERSION = 2.4.0;
+				MARKETING_VERSION = 2.9.1;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",
@@ -1291,7 +1321,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$SRCROOT/$PROJECT_NAME/Constant/Global.pch";
 				INFOPLIST_FILE = go_class/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1300,7 +1330,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/go_class/CommonView",
 				);
-				MARKETING_VERSION = 2.4.0;
+				MARKETING_VERSION = 2.9.1;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",

@@ -297,7 +297,7 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
 
 - (void)enableCurrentContainer:(BOOL)isEnable {
     self.currentContainerEnable = isEnable;
-    [self.currentContainer setupWhiteboardOperationMode:isEnable?(ZegoWhiteboardOperationModeDraw|ZegoWhiteboardOperationModeZoom):ZegoWhiteboardOperationModeZoom];
+    [self.currentContainer setupWhiteboardOperationMode:isEnable?(ZegoWhiteboardOperationModeDraw|ZegoWhiteboardOperationModeZoom):ZegoWhiteboardOperationModeNone];
 }
 
 - (void)deleteSelectedGraphics {
@@ -426,7 +426,11 @@ typedef void(^ZegoCompleteBlock)(NSInteger errorCode);
     if (_currentContainer.isExcel) {
         [_currentContainer.docsView switchSheet:(int)_currentContainer.sheetIndex];
         //加载完文件后，白板的contentSize要调整到和文件的contentSize一致（因为加载excell时，不同sheet对应的contenSize会不同）
-        _currentContainer.whiteboardView.contentSize = _currentContainer.docsView.contentSize;
+        [_currentContainer.docsView reloadFileWithCompletionBlock:nil];
+        if (_currentContainer.docsView.contentSize.width != 0 && _currentContainer.docsView.contentSize.height != 0) {
+            _currentContainer.whiteboardView.contentSize = _currentContainer.docsView.contentSize;
+         }
+      
     }
     
     ZegoWhiteBoardViewContainerModel *currentContainerModel = [self currentContainerModel];

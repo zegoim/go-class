@@ -54,9 +54,8 @@ static ZegoLiveRoomLiveCenter *sharedInstance = nil;
 
 #pragma mark - API - LiveRoom
  
-+ (void)setupWithAppID:(unsigned int)appID appSign:(nonnull NSData *)appSign isDocTestEnv:(BOOL)isDocTestEnv isRTCTestEnv:(BOOL)isRTCTestEnv scenario:(NSUInteger)scenario complete:(nonnull ZegoLiveCenterCompletionBlock)complete delegate:(nullable id<ZegoLiveCenterDelegate>)delegate {
++ (void)setupWithAppID:(unsigned int)appID appSign:(nonnull NSData *)appSign  scenario:(NSUInteger)scenario complete:(nonnull ZegoLiveCenterCompletionBlock)complete delegate:(nullable id<ZegoLiveCenterDelegate>)delegate {
     
-     [ZegoLiveRoomApi setUseTestEnv:isRTCTestEnv];
     ZegoLiveRoomApi *api = [[ZegoLiveRoomApi alloc] initWithAppID:appID appSignature: appSign completionBlock:^(int errorCode) {
         if (complete) {
             complete(errorCode);
@@ -91,7 +90,6 @@ static ZegoLiveRoomLiveCenter *sharedInstance = nil;
  
      //文档初始化
      ZegoDocsViewConfig * docsViewConfig = [ZegoDocsViewConfig new];
-     docsViewConfig.isTestEnv = isDocTestEnv;
     //文档暂时没有国际环境，统一用国内的appID初始化
      docsViewConfig.appSign = [ZGAppSignHelper convertAppSignToStringFromChars:kZegoSign];
      docsViewConfig.appID = kZegoAppID;

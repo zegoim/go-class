@@ -103,7 +103,15 @@ const setLoginInfo = data => {
     userName,
     isMe: true
   }
-  const loginInfo = { roomId, userId: uid, userName, role: role || ROLE_STUDENT, env, user, classScene }
+  const loginInfo = {
+    roomId,
+    userId: uid,
+    userName,
+    role: role || ROLE_STUDENT,
+    env,
+    user,
+    classScene
+  }
   storage.set('loginInfo', loginInfo)
   return loginInfo
 }

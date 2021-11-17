@@ -11,9 +11,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ZegoClassEnvManager : NSObject
-@property (nonatomic, assign) BOOL businessTestEnv;
-@property (nonatomic, assign) BOOL roomSeviceTestEnv;
-@property (nonatomic, assign) BOOL docsSeviceTestEnv;
 @property (nonatomic, assign) BOOL abroadEnv;
 @property (nonatomic, assign) BOOL isChinese;
 @property (nonatomic, assign) BOOL isSystemFont;

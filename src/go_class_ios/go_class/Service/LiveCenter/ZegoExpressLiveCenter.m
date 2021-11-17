@@ -15,7 +15,7 @@
 #import "ZGAppSignHelper.h"
 #import "ZegoClassEnvManager.h"
 #import "ZegoChatModel.h"
-
+#import <ZegoQualitySDK/ZegoQuality.h>
 @interface ZegoExpressLiveCenter ()<ZegoEventHandler>
 
 @property (weak, nonatomic) id<ZegoLiveCenterDelegate> delegate;
@@ -29,7 +29,6 @@
 
 @property (assign, nonatomic) ZegoRoomState roomState;
 @property (copy, nonatomic) NSString *roomID;
-
 
 @end
 
@@ -63,26 +62,27 @@ static ZegoExpressLiveCenter *sharedInstance = nil;
 
 #pragma mark - API - LiveRoom
  
-+ (void)setupWithAppID:(unsigned int)appID appSign:(nonnull NSData *)appSign isDocTestEnv:(BOOL)isDocTestEnv isRTCTestEnv:(BOOL)isRTCTestEnv scenario:(NSUInteger)scenario complete:(nonnull ZegoLiveCenterCompletionBlock)complete delegate:(nullable id<ZegoLiveCenterDelegate>)delegate {
++ (void)setupWithAppID:(unsigned int)appID appSign:(nonnull NSData *)appSign  scenario:(NSUInteger)scenario complete:(nonnull ZegoLiveCenterCompletionBlock)complete delegate:(nullable id<ZegoLiveCenterDelegate>)delegate {
     ZegoExpressLiveCenter *center = [ZegoExpressLiveCenter sharedInstance];
     [ZegoExpressEngine destroyEngine:nil];
-    [ZegoExpressEngine createEngineWithAppID:appID appSign:[ZGAppSignHelper convertAppSignToExpressString:appSign] isTestEnv:isRTCTestEnv scenario:scenario eventHandler:center];
-
-    center.delegate = delegate;
-    
     ZegoEngineConfig *config = [[ZegoEngineConfig alloc] init];
     config.advancedConfig = @{
         @"room_retry_time": @300,
         @"play_clear_last_frame": @YES,
-        @"preview_clear_last_frame": @YES
+        @"preview_clear_last_frame": @YES,
+        @"allow_verbose_print_high_frequency_content":@"true",
+        @"enable_callback_verbose":@"true"
     };
-    ZegoLogConfig *logConfig = [[ZegoLogConfig alloc] init];
-    logConfig.logPath = kZegoLogPath;
-    config.logConfig = logConfig;
-    
 
     [ZegoExpressEngine setEngineConfig:config];
     
+    ZegoEngineProfile *profile = [[ZegoEngineProfile alloc] init];
+    profile.appID = appID;
+    profile.appSign = [ZGAppSignHelper convertAppSignToExpressString:appSign];
+    profile.scenario = scenario;
+    
+    [ZegoExpressEngine createEngineWithProfile:profile eventHandler:center];
+    center.delegate = delegate;
     
     ZegoExpressEngine *engine = [ZegoExpressEngine sharedEngine];
     ZegoVideoConfig *videoConfig = [[ZegoVideoConfig alloc] init];
@@ -93,7 +93,6 @@ static ZegoExpressLiveCenter *sharedInstance = nil;
  
      //文档初始化
      ZegoDocsViewConfig * docsViewConfig = [ZegoDocsViewConfig new];
-     docsViewConfig.isTestEnv = isDocTestEnv;
     
     //文档sdk没有海外环境，统一用国内环境初始化
 //    docsViewConfig.appSign = [ZGAppSignHelper convertAppSignToStringFromChars:kZegoSign];
@@ -140,9 +139,32 @@ static ZegoExpressLiveCenter *sharedInstance = nil;
      ZegoRoomConfig *config = [ZegoRoomConfig defaultConfig];
      config.maxMemberCount = 10;
      config.isUserStatusNotify = YES;
-     
-     [[ZegoExpressLiveCenter sharedInstance].api loginRoom:roomID user:user config:config];
-     
+   
+   
+     [[ZegoExpressLiveCenter sharedInstance].api startPerformanceMonitor:3000];
+   
+   [ZegoQualityManager init];
+   [ZegoQualityManager setUserID:userId];
+   [ZegoQualityManager setUserName:userName];
+   [ZegoQualityManager setRoomID:roomID];
+   [ZegoQualityManager setProductName:@"goclass"];
+   [ZegoQualityManager setLanguageType:ZegoQualityLanguageTypeEnglish];
+   if ([ZegoClassEnvManager shareManager].isChinese) {
+     [ZegoQualityManager setLanguageType:ZegoQualityLanguageTypeChinese];
+   }
+   [ZegoQualityManager setShowingRatingPageOnly:NO];
+   
+   NSURL *htmlURL = [[NSBundle mainBundle] URLForResource:@"index" withExtension:@"html" subdirectory:@"dist"];
+   [ZegoQualityManager setQualityPageURL:htmlURL];
+   
+   NSDictionary *info = [[NSBundle mainBundle] infoDictionary];
+   NSString *appVersion = [info objectForKey:@"CFBundleShortVersionString"];
+   [ZegoQualityManager setAppVersion:appVersion];
+   
+   [ZegoQualityManager setLoginOnStart];
+   [[ZegoExpressLiveCenter sharedInstance].api loginRoom:roomID user:user config:config];
+  
+   
      if ([ZegoExpressLiveCenter sharedInstance].roomState == ZegoRoomStateConnected) {
          [[ZegoExpressLiveCenter sharedInstance] onRoomStateUpdate:ZegoRoomStateConnected errorCode:0 extendedData:nil roomID:[ZegoExpressLiveCenter sharedInstance].roomID];
      }
@@ -199,7 +221,8 @@ static ZegoExpressLiveCenter *sharedInstance = nil;
 
 
 + (void)publishStream:(NSString *)streamID {
-    [[ZegoExpressLiveCenter sharedInstance].api startPublishingStream:streamID];
+  [ZegoQualityManager setPublishStreamID:streamID];
+  [[ZegoExpressLiveCenter sharedInstance].api startPublishingStream:streamID];
 }
 
 
@@ -208,7 +231,7 @@ static ZegoExpressLiveCenter *sharedInstance = nil;
 }
 
 + (void)muteAudio:(BOOL)isMute {
-    [[ZegoExpressLiveCenter sharedInstance].api enableAudioCaptureDevice:!isMute];
+    [[ZegoExpressLiveCenter sharedInstance].api muteMicrophone:isMute];
 }
 
 + (void)muteVideo:(BOOL)isMute {
@@ -217,10 +240,11 @@ static ZegoExpressLiveCenter *sharedInstance = nil;
 }
 
 + (bool)playStream:(NSString *)streamID inView:(UIView *)view {
-    ZegoCanvas *canvas = [ZegoCanvas canvasWithView:view];
-    canvas.viewMode = ZegoViewModeAspectFill;
-    [[ZegoExpressLiveCenter sharedInstance].api startPlayingStream:streamID canvas:canvas];
-    return YES;
+  ZegoCanvas *canvas = [ZegoCanvas canvasWithView:view];
+  canvas.viewMode = ZegoViewModeAspectFill;
+  [ZegoQualityManager setPlayerStreamOnStart:streamID];
+  [[ZegoExpressLiveCenter sharedInstance].api startPlayingStream:streamID canvas:canvas];
+  return YES;
 }
 
 + (bool)updateStream:(NSString *)streamID inView:(UIView *)view {
@@ -366,6 +390,10 @@ static ZegoExpressLiveCenter *sharedInstance = nil;
 }
 
 - (void)onRoomStateUpdate:(ZegoRoomState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData roomID:(NSString *)roomID {
+    
+    if (state == ZegoRoomStateConnected) {
+      [ZegoQualityManager setLoginOnFinish];
+    }
     self.roomState = state;
     self.roomID = roomID;
     NSString *customReason = [extendedData objectForKey:@"custom_kickout_message"];
@@ -420,6 +448,14 @@ static ZegoExpressLiveCenter *sharedInstance = nil;
         [array addObject:liveStream];
     }
     return array;
+}
+
+- (void)onPlayerRenderVideoFirstFrame:(NSString *)streamID {
+  [ZegoQualityManager setPlayerStreamOnFirstFrame:streamID];
+}
+
+- (void)onRecvExperimentalAPI:(NSString *)content {
+  [ZegoQualityManager parsingLog:content];
 }
 @end
 

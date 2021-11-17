@@ -1,9 +1,7 @@
-import axios from 'axios'
 import { storage } from '@/utils/tool'
 import { LiveHelper } from '@/service/zego/helper/LiveHelper/index'
 import { WhiteboardHelper } from '@/service/zego/helper/WhiteboardHelper'
 import { DocsHelper } from '@/service/zego/helper/DocsHelper'
-import { YOUR_SDK_TOKEN_URL } from '@/utils/config_data'
 
 export class ZegoClient {
   _client = null
@@ -77,29 +75,18 @@ export class ZegoClient {
     })
   }
 
-  async getToken(appID, userID) {
-    console.log('getToken', { appID, userID })
-    const { data } = await axios.get(YOUR_SDK_TOKEN_URL, {
-      params: {
-        app_id: appID,
-        id_name: userID
-      }
-    })
-    return data
+  getToken() {
+    return this.state.tokenInfo.token
   }
 
   async createZegoContext(roomEnv) {
-    const { appID, userID, isTestEnv, docsviewAppID } = await this.Config.getParams(roomEnv)
-    console.warn('createZegoContext appID,roomEnv', appID, roomEnv)
-    const token1 = await this.getToken(appID, userID)
-    let token2 = token1
-    if (docsviewAppID != appID && !isTestEnv) {
-      token2 = await this.getToken(docsviewAppID, userID)
-    }
-    console.warn('tokenInfo:', token1, token2)
+    const { appID, userID, docsviewAppID } = await this.Config.getParams(roomEnv)
+    console.warn('createZegoContext appID,docsviewAppID,roomEnv', appID, docsviewAppID, roomEnv)
+    const token1 = this.getToken(appID, userID)
+    console.warn('tokenInfo:', token1)
     this.setState({
       env: roomEnv,
-      tokenInfo: { token1, token2 }
+      tokenInfo: { token1 }
     })
   }
 
