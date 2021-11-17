@@ -1,0 +1,17 @@
+{
+ "name": "zegoliveroom",
+  "version": "1.0.3",
+  "description": "zego electron sdk",
+  "keywords": [
+    "zego",
+    "electron",
+    "live",
+    "video",
+    "audio"
+  ],
+  "dependencies": {
+    "zegodown": "latest"
+  },
+  "author": "zego",
+  "license": "MIT"
+}

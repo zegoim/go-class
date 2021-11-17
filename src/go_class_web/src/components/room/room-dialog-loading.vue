@@ -1,3 +1,6 @@
+<!--
+ * @Description: loading弹窗组件
+-->
 <template>
   <div class="room-dialog-loading">
     <div class="loading-box">

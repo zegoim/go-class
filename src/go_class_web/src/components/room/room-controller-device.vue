@@ -1,3 +1,6 @@
+<!--
+ * @Description: 成员列表设备管理组件
+-->
 <template>
   <div class="room-controller-device">
     <ul class="control-btn-list">
@@ -43,7 +46,7 @@ const controlBtnList = [
 ]
 
 import { debounce } from '@/utils/tool'
-import { roomStore } from '@/service/biz/room'
+import { roomStore } from '@/service/store/roomStore'
 import { ROLE_TEACHER, STATE_CLOSE, STATE_OPEN } from '@/utils/constants'
 
 export default {
@@ -58,6 +61,7 @@ export default {
     this.roomId = roomStore.roomId // 房间id
     this.userId = roomStore.uid // 用户id
     this.role = roomStore.role  // 用户角色
+    this.handleMainBtnClick_ = debounce(this.handleMainBtnClick, 500, true)
   },
   methods: {
     /**
@@ -75,10 +79,6 @@ export default {
         str = isOpen ? '取消' : ''
       }
       return str + item.cnName
-    },
-
-    handleMainBtnClick_(item) {
-      debounce(this.handleMainBtnClick(item), 500, true)
     },
 
     /**

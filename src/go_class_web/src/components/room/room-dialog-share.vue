@@ -1,3 +1,6 @@
+<!--
+ * @Description: 分享课堂组件
+-->
 <template>
   <div class="room-dialog-share">
     <el-dialog
@@ -7,10 +10,10 @@
       @close="$emit('handleClose')"
     >
       <div class="dialog-content">
-        <div class="classLink">
-          <span class="link">课堂链接</span>
-          <span class="linkContent">{{ shareUrl }}</span>
-        </div>
+<!--        <div class="classLink">-->
+<!--          <span class="link">课堂链接</span>-->
+<!--          <span class="linkContent">{{ shareUrl }}</span>-->
+<!--        </div>-->
         <div class="classID">
           <span class="linkid">课堂ID</span>
           <span class="linkContent">{{ roomId }}</span>

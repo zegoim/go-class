@@ -1,3 +1,14 @@
+<!--
+ * @Author: your name
+ * @Date: 2020-11-19 21:52:08
+ * @LastEditTime: 2020-11-27 12:03:17
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: /work/web-go-class-demo/src/components/room/room-controller-ppt.vue
+-->
+<!--
+ * @Description: 动态ppt上/下一步控制组件
+-->
 <template>
   <div class="ppt-dynamic" v-if="activeViewIsPPTH5">
     <button
@@ -24,13 +35,9 @@ export default {
       return this.zegoWhiteboardArea.activeViewIsPPTH5
     }
   },
-  methods: {
-    previousStep() {
-      debounce(this.zegoWhiteboardArea.previousStep(), 300, true)
-    },
-    nextStep() {
-      debounce(this.zegoWhiteboardArea.nextStep(), 300, true)
-    }
+  created() {
+    this.previousStep = debounce(this.zegoWhiteboardArea.previousStep, 300, true)
+    this.nextStep = debounce(this.zegoWhiteboardArea.nextStep, 300, true)
   }
 }
 </script>

@@ -6,15 +6,15 @@ import path from 'path'
 
 let isOnLive = false
 
-ipcMain.on('get-current-system', (e) => {
+ipcMain.on('get-current-system', e => {
   e.returnValue = platform
 })
 
-ipcMain.on('get-user-path', (e) => {
+ipcMain.on('get-user-path', e => {
   e.returnValue = app.getPath('appData')
 })
 
-ipcMain.on('get-cache-path', (e) => {
+ipcMain.on('get-cache-path', e => {
   e.returnValue = app.getPath('cache')
 })
 
@@ -57,7 +57,7 @@ ipcMain.on('open-window', (e, args) => {
       })
     }
     if (args.listenClose) {
-      wins[args.name].on('close', (event) => {
+      wins[args.name].on('close', event => {
         console.log('try close', isOnLive)
         if (isOnLive) {
           event.preventDefault()
@@ -75,28 +75,28 @@ ipcMain.on('open-window', (e, args) => {
   }
 })
 
-ipcMain.on('minimize-window', (e) => {
+ipcMain.on('minimize-window', e => {
   const win = BrowserWindow.fromWebContents(e.sender)
   if (win.isMinimizable) {
     win.minimize()
   }
 })
 
-ipcMain.on('unmaximize-window', (e) => {
+ipcMain.on('unmaximize-window', e => {
   const win = BrowserWindow.fromWebContents(e.sender)
   win.unmaximize()
 })
 
-ipcMain.on('maximize-window', (e) => {
+ipcMain.on('maximize-window', e => {
   const win = BrowserWindow.fromWebContents(e.sender)
   if (win.isMaximizable) {
     win.maximize()
   }
 })
 
-ipcMain.on('close-window', (e) => {
+ipcMain.on('close-window', e => {
   const win = BrowserWindow.fromWebContents(e.sender)
-  win.close()
+    win && win.close()
 })
 
 ipcMain.on('get-web-content-id', (e, name) => {
@@ -111,7 +111,7 @@ ipcMain.on('logout', () => {
   if (wins.login) {
     return wins.login.show()
   }
-  wins.login = createWindow(windows.login, (win) => {
+  wins.login = createWindow(windows.login, win => {
     const allBrowserWindow = BrowserWindow.getAllWindows()
     allBrowserWindow.forEach(item => {
       if (item.id !== win.id) {

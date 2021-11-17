@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+<defs><style>.cls-1{fill:#fff;opacity:0;}.cls-2{fill:#b0b3ba;}</style></defs>
+<rect class="cls-1" width="20" height="20" transform="translate(20) rotate(90)"/>
+<path class="hover-fill" fill="#b1b4bb" fill-rule="evenodd" d="M16.53,5.53,14.47,3.47A1.61,1.61,0,0,0,13.34,3H10V6A1,1,0,0,1,9,7H6A1,1,0,0,1,5,6V3H4.6A1.6,1.6,0,0,0,3,4.6V15.4A1.6,1.6,0,0,0,4.6,17H15.4A1.6,1.6,0,0,0,17,15.4V6.66A1.61,1.61,0,0,0,16.53,5.53ZM15,14.3a.7.7,0,0,1-.7.7H5.7a.7.7,0,0,1-.7-.7V10.7a.7.7,0,0,1,.7-.7h8.6a.7.7,0,0,1,.7.7Z"/>
+<path class="hover-fill" fill="#b1b4bb" fill-rule="evenodd" d="M6,3H9A0,0,0,0,1,9,3V5.4a.6.6,0,0,1-.6.6H6.6A.6.6,0,0,1,6,5.4V3A0,0,0,0,1,6,3Z"/>
+</svg>

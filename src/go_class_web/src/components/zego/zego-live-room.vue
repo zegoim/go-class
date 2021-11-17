@@ -1,3 +1,6 @@
+<!--
+ * @Description: 提供音视频sdk相关实例的组件，通过provide提供该能力，如需使用该音视频相关方法的组件可通过inject注入
+-->
 <template>
   <div class="zego-live-room" v-if="!!client && isLogin">
     <slot></slot>
@@ -8,11 +11,12 @@
 
 <script>
 import zegoClient from '@/service/zego/zegoClient'
+import { storage, defaultOpenVideo } from '@/utils/tool'
+import ErrorHandle from '@/utils/error'
 import RoomDialogLoading from '@/components/room/room-dialog-loading'
 import RoomDialogError from '@/components/room/room-dialog-error'
-import { postRoomHttp, roomStore, setGoclassEnv } from '@/service/biz/room'
-import { storage, defaultOpenVideo, isElectron } from '@/utils/tool'
-import ErrorHandle from '@/utils/error'
+import { postRoomHttp, roomStore, setGoclassEnv } from '@/service/store/roomStore'
+import { STATE_OPEN } from '@/utils/constants'
 
 const { ipcRenderer } = window.require('electron')
 
@@ -23,31 +27,34 @@ export default {
     RoomDialogError
   },
   props: {
-    roomId  : String, // 传入roomId
+    roomId: String, // 传入roomId
     userName: String, // 传入用户名
-    env     : String, // env
+    env: String // env
   },
-  data () {
+  data() {
     return {
-      client: null,             // sdk实例
-      streamList: [],           // 流
-      userList: [],             // 房间用户列表
-      user: {},                 // 用户本身
-      isPushStreamList: false,  // 是否正在推流
-      isLogin: false,           // 是否登录
-      publishStreamId: '',      // 推流id
-      publishingFlag: '',       // 判断正在推的是视频流还是音频流
-      devices: null,            // 音频、视频输入输出设备列表
-      activeDevice: {},         // 当前使用设备
-      roomState: '',            // 房间当前状态
+      client: null, // sdk实例
+      streamList: [], // 流
+      userList: [], // 房间用户列表
+      user: {}, // 用户本身
+      isPushStreamList: false, // 是否正在推流
+      isLogin: false, // 是否登录
+      publishStreamId: '', // 推流id
+      publishingFlag: '', // 判断正在推的是视频流还是音频流
+      devices: null, // 音频、视频输入输出设备列表
+      activeDevice: {}, // 当前使用设备
+      roomState: '', // 房间当前状态
       loading: false,
       loadingTimer: null,
       loadingInterval: 30,
       confirm: false,
-      roomExtraInfo: null
+      roomExtraInfo: null,
+      messages: [], // 房间消息
+      sendLoadingTimer: null, //发送消息loading
+      sendLoadingInterval: 5 //发送消息loading
     }
   },
-  provide () {
+  provide() {
     return {
       zegoLiveRoom: this
     }
@@ -56,7 +63,7 @@ export default {
     const env = storage.get('loginInfo')?.env
     setGoclassEnv(env)
   },
-  async mounted () {
+  async mounted() {
     // 调用顺序：loginRoomBiz -> initClient -> initLiveRoom -> loginRoom | 后台业务登录房间 -> 初始化sdk -> 监听回调方法 -> 登录房间
     const loading = this.$loading()
     try {
@@ -75,20 +82,35 @@ export default {
      * @desc: 后台业务 - 登录房间
      */
     async loginRoomBiz() {
-      const { roomId, userId, userName, role, env } = storage.get('loginInfo')
+      const { roomId, userId, userName, role, env, classScene } = storage.get('loginInfo')
       this.roomId = roomId
       this.userName = userName
       this.env = env
-      if (this.$route.meta.from) return
+      //从登录页面跳转过来
+      if (localStorage.route === 'electron_mock') {
+        // 用户自身加入房间，往房间消息push一条系统提示
+        let data = {
+          userID: userId,
+          messageCategory: 2,
+          messageContent: ['加入课堂'],
+          messageState: 1,
+          nick_name: userName,
+          messageTimestamp: new Date().getTime()
+        }
+        this.setRoomMessage(1, data)
+        // return
+      }
       // 非登录页面跳转，直接刷新页面时需要执行业务登录接口
       const loginParams = {
         uid: userId,
         room_id: roomId,
         nick_name: userName,
-        role: role || 2
+        role: role || 2,
+        room_type: classScene
       }
       try {
         await postRoomHttp('login_room', loginParams)
+        localStorage.route = null
       } catch (e) {
         // 已有老师 或者 人数已满
         const code = e && e.ret && e.ret.code
@@ -105,15 +127,16 @@ export default {
      */
     async initClient() {
       this.client = await zegoClient.init('live', this.env)
+      roomStore.$on('selfChanged', (key, val) => {
+        this.handleDeviceStateChange(key, val, false)
+      })
     },
     /**
      * @desc: sdk - 登录房间
      */
     async loginRoom() {
       const res = await this.client.express('loginRoom', this.roomId)
-      console.warn('loginRoom', { res })
       if (res.error) {
-        storage.remove('tokenInfo')
         if (res.code) {
           ErrorHandle.showErrorCodeMsg(res.code, () => {
             const timer = setTimeout(() => {
@@ -132,21 +155,22 @@ export default {
       this.$set(this, 'user', user)
       this.userList.push(user)
       if (res.streamList && res.streamList.length) {
-        res.streamList.map(stream => stream.isVideoOpen = defaultOpenVideo)
+        res.streamList.map(stream => (stream.isVideoOpen = defaultOpenVideo))
         this.$set(this, 'streamList', res.streamList)
       }
     },
+
     /**
      * @desc: 监听回调方法
      */
-
     async initLiveRoom() {
+      // 监听房间流更新
       this.client.on('roomStreamUpdate', (roomID, updateType, streamList) => {
         console.log('roomStreamUpdate', { roomID, updateType, streamList })
         let tempStreamList = []
         streamList = streamList.filter(v => !!v.streamID)
         if (updateType === 'ADD') {
-          streamList.map(x => x.isVideoOpen = (x.isVideoOpen || defaultOpenVideo))
+          streamList.map(x => (x.isVideoOpen = x.isVideoOpen || defaultOpenVideo))
           tempStreamList = [...this.streamList, ...streamList]
         }
         if (updateType === 'DELETE') {
@@ -156,8 +180,9 @@ export default {
         tempStreamList = tempStreamList.filter(v => v.streamID)
         this.$set(this, 'streamList', tempStreamList)
       })
+      // 监听房间用户变化
       this.client.on('roomUserUpdate', (roomID, updateType, userList) => {
-        console.warn('this.client.on(\'roomUserUpdate\'', { roomID, updateType, userList })
+        console.warn("this.client.on('roomUserUpdate'", { roomID, updateType, userList })
         if (updateType === 'ADD' && userList?.length) {
           // 去重
           console.warn(userList, 'ADD userList')
@@ -172,49 +197,42 @@ export default {
           const index = this.userList.findIndex(x => x.userID === userList[0].userID)
           index !== -1 && this.userList.splice(index, 1)
         }
+        roomStore.getAttendeeList()
+        roomStore.getJoinLiveList()
       })
+      // 监听摄像头状态
       this.client.on('remoteCameraStatusUpdate', (streamID, status) => {
         console.warn('remoteCameraStatusUpdate', streamID, status)
         const streamIndex = this.streamList.findIndex(item => streamID.endsWith(item.streamID))
         streamIndex !== -1 && this.$set(this.streamList[streamIndex], 'isVideoOpen', status === 'OPEN')
-        roomStore.getAttendeeList()
       })
       this.client.on('remoteMicStatusUpdate', (streamID, status) => {
         console.warn('remoteMicStatusUpdate', streamID, status)
         const streamIndex = this.streamList.findIndex(item => streamID.endsWith(item.streamID))
         streamIndex !== -1 && this.$set(this.streamList[streamIndex], 'isAudioOpen', status === 'OPEN')
-        roomStore.getAttendeeList()
       })
       this.client.on('publisherStateUpdate', result => {
         console.warn('publisherStateUpdate', result)
         console.warn('publishStreamId', this.publishStreamId)
         if (result.state === 'PUBLISHING') {
-          const flag = this.publishingFlag
-          if (this.isPushStreamList) {
-            this.streamList.push({
-              streamID: this.publishStreamId,
-              type: 'push',
-              stream: this.client.localStream,
-              isVideoOpen: flag !== 'audio',
-              user: this.user
-            })
-            this.isPushStreamList = false
-            // flag === 'video' && this.client.express('mutePublishStreamAudio', true)
-            // flag === 'audio' && this.client.express('mutePublishStreamVideo', true)
-          }
+          // redo
         }
       })
+      // 监听房间状态
       this.client.on('roomStateUpdate', (roomID, state) => {
         console.warn('roomStateUpdate', state)
         this.roomState = state
         if (!this.client.isLogin) return // 对应loginState
         switch (state) {
+          // 连接中
           case 'CONNECTING':
             this.offlineHandle()
             break
+          // 已连接
           case 'CONNECTED':
             this.initLoadingTimerHandle()
             break
+          // 连接失败
           case 'DISCONNECTED':
             this.disconnectedHandle()
             break
@@ -222,15 +240,27 @@ export default {
             break
         }
       })
-      this.client.on('roomExtraInfoUpdate', (roomID, type, data) => {
-        console.log('onRoomExtraInfoUpdate', { roomID, type, data })
+      // 监听房间附加信息
+      this.client.on('roomExtraInfoUpdate', (roomID, key, value) => {
         const roomExtraInfo = {
-          type,
-          data
+          type: key,
+          data: value
         }
         this.$set(this, 'roomExtraInfo', roomExtraInfo)
       })
-
+      // 监听IM消息接收（弹幕消息）
+      this.client.on('IMRecvBarrageMessage', (roomID, chatData) => {
+        console.warn("this.client.on('IMRecvBarrageMessage'", { roomID, chatData })
+        let data = {
+          userID: chatData[0]?.fromUser.userID,
+          messageCategory: 1,
+          messageID: chatData[0]?.messageID,
+          messageContent: [{ messageState: 3, content: chatData[0]?.message }],
+          nick_name: chatData[0]?.fromUser.userName,
+          messageTimestamp: new Date().getTime()
+        }
+        this.setRoomMessage(1, data)
+      })
       window.addEventListener('offline', () => {
         this.offlineHandle()
       })
@@ -250,17 +280,17 @@ export default {
     },
     /**
      * @desc 设备选择处理
-     * @param {'camera'|'microphone'|'speak'} type
+     * @param {'camera'|'mic'|'speak'} type
      * @param {boolean} value
      */
-    selectDevice(type, value) {
+    async selectDevice(value, type) {
       const { localStream } = this.client
       switch (type) {
         case 'camera':
-          localStream && this.client.express('useVideoDevice', value)
+          localStream && (await this.client.express('useVideoDevice', value))
           break
-        case 'microphone':
-          localStream && this.client.express('useAudioDevice', value)
+        case 'mic':
+          localStream && (await this.client.express('useAudioDevice', value))
           break
         case 'speak':
           this.$set(this.activeDevice, 'speaker', value)
@@ -279,7 +309,7 @@ export default {
      * @param {Object} publishOption
      * @param {Boolean} isStartPub
      */
-    async createPushStream (publishOption = {}) {
+    async createPushStream(publishOption = {}) {
       console.warn('createPushStream, 开始推流！')
       const { isVideoOpen, isAudioOpen } = publishOption
       const { camera, microphone } = this.activeDevice
@@ -289,6 +319,7 @@ export default {
           width: 640,
           height: 360,
           bitRate: 600,
+          frameRate: 15,
           video: isVideoOpen,
           audio: isAudioOpen
         }
@@ -298,39 +329,59 @@ export default {
 
       await this.client.express('createStream', option)
       const { userID } = this.user
-      this.publishStreamId = `${isElectron ? 'ec' : 'web'}_${userID}`
-      await this.client.express(
-          'startPublishingStream',
-          this.publishStreamId,
-          {}
-      )
       this.isPushStreamList = true
+      this.publishStreamId = `ec_${userID}`
+      if (this.isPushStreamList) {
+        this.streamList.push({
+          streamID: this.publishStreamId,
+          type: 'push',
+          stream: this.client.localStream,
+          isVideoOpen: true,
+          isAudioOpen: true,
+          user: this.user
+        })
+        this.isPushStreamList = false
+      }
+      console.warn('创建流 更新流列表 end')
+      // 创建流 更新流列表 end
+
+      await this.client.express('startPublishingStream', this.publishStreamId, publishOption)
     },
     /**
      * @desc - 本地设备状态变更
-     * @param {'video'|'audio'} flag
-     * @param {boolean} isVideoOpen
-     * @param {boolean} isAudioOpen
      * @returns {Promise<void>}
+     * @param key
+     * @param val
      */
-    async handleDeviceStateChange(flag, isVideoOpen, isAudioOpen) {
+    async handleDeviceStateChange(key, val, isSend = true) {
+      const isVideoOpen = (key === 'camera' ? val : roomStore.auth.camera) === STATE_OPEN
+      const isAudioOpen = (key === 'mic' ? val : roomStore.auth.mic) === STATE_OPEN
+      const flag = key === 'camera' ? 'video' : 'audio'
       const [isSendVideoStream, isSendAudioStream] = [!isVideoOpen, !isAudioOpen]
-      console.warn({ localStream: this.client.localStream, flag, isVideoOpen, isAudioOpen })
+      console.warn({ localStream: this.client.localStream, key, val, isVideoOpen, isAudioOpen })
       // 摄像头/麦克风 二者之一的状态是开 则推送一条流
+      const params = {
+        target_uid: roomStore.uid,
+        [key]: val
+      }
+      if (isSend) await roomStore.setUserInfo(params)
       if (isVideoOpen || isAudioOpen) {
-        if (!this.client.localStream) { // 已经推流
+        if (!this.client.localStream) {
+          // 已经推流
           if (this.client.isCreatingStream) return
-          this.publishingFlag = flag
+          this.publishingFlag = key === 'camera' ? 'video' : 'audio'
           await this.createPushStream({ isVideoOpen, isAudioOpen })
-          this.client.express('mutePublishStreamVideo', isSendVideoStream)
-          this.client.express('mutePublishStreamAudio', isSendAudioStream)
+          await this.client.express('mutePublishStreamVideo', isSendVideoStream)
+          await this.client.express('mutePublishStreamAudio', isSendAudioStream)
         } else {
           // 更新摄像头麦克风状态
-          if (flag === 'video' || (isVideoOpen && isAudioOpen)) { //  || (isVideoOpen && isAudioOpen)
+          if (flag === 'video') {
+            //  || (isVideoOpen && isAudioOpen)
             this.client.express('mutePublishStreamVideo', isSendVideoStream) // 是否停止发送视频流 -> true-表示不发送视频流 false-表示发送视频流
             this.handleSelfVideoToggle(isVideoOpen)
           }
-          if (flag === 'audio' || (isVideoOpen && isAudioOpen)) { //  || (isVideoOpen && isAudioOpen)
+          if (flag === 'audio') {
+            //  || (isVideoOpen && isAudioOpen)
             this.client.express('mutePublishStreamAudio', isSendAudioStream)
             this.handleSelfAudioToggle(isAudioOpen)
           }
@@ -368,21 +419,20 @@ export default {
       const idx = this.streamList.findIndex(stream => stream.streamID === this.publishStreamId || !stream.streamID)
       idx !== -1 && this.streamList.splice(idx, 1)
     },
-
     /**
      * @desc: 播放流
      * @param {streamID} 需播放目标流id
      * @param {playOption}
      * @param {element}
      */
-    async startPlayingStream (streamID, playOption, element, isMe = false) {
+    async startPlayingStream(streamID, playOption, element, isMe = false) {
       return await this.client.express('startPlayingStream', streamID, playOption, element, isMe)
     },
     /**
      * @desc: 停止播放流
      * @param {streamID} 需停止播放目标流id
      */
-    stopPlayingStream (streamID) {
+    stopPlayingStream(streamID) {
       this.client.express('stopPlayingStream', streamID)
     },
 
@@ -439,23 +489,114 @@ export default {
         this.$refs.errorDialog.show = false
       }
     },
+
+    /**
+     * @desc: 维护im聊天室消息
+     * @param {*} type 设置类型 1-增加 2-更新
+     * @param {*} data 消息主体
+     * @return {*}
+     */
+    setRoomMessage(type, data, targetMessageID, res) {
+      const lastMessage = this.messages[this.messages.length - 1]
+      if (type === 1) {
+        if (!lastMessage) {
+          this.messages.push(data)
+        } else {
+          const { userID: lastUserID, messageCategory: lastMessageCategory } = lastMessage
+          // 判断信息数组里面最新到一条信息是否是系统信息并且是否是同一个用户发送的，如果不是系统信息且是同一个用户发送则是该用户连续发送消息。
+          if (lastMessageCategory === 1 && lastUserID === data.userID && data.messageCategory === 1) {
+            lastMessage.messageContent.push({
+              messageID: new Date().getTime(),
+              messageState: 1,
+              content: data.messageContent[0].content
+            })
+          } else {
+            this.messages.push(data)
+          }
+        }
+      } else if (type === 2) {
+        /**
+         * messageState状态：
+         * 1 消息发送中
+         * 2 发送失败
+         * 3 发送成功
+         */
+        lastMessage.messageContent.find(item => {
+          if (item.messageID === targetMessageID) {
+            if (res.errorCode === 0) {
+              item.messageState = 3
+              item.messageID = res.messageID
+            } else {
+              item.messageState = 2
+            }
+          }
+        })
+      }
+    },
+
+    /**
+     * @desc: 大班课通过弹幕信息发送im消息
+     * @param {*} message
+     * @return {*}
+     */
+    async sendBarrageMessage(message) {
+      let data = {
+        userID: this.user.userID,
+        messageCategory: 1,
+        messageTimestamp: new Date().getTime(),
+        messageContent: [{ messageState: 1, content: message, messageID: new Date().getTime() }],
+        nick_name: this.user.userName
+      }
+      // 需要更新的目标消息id
+      let targetMessageID = data.messageContent[0].messageID
+      // 用户自身发送消息默认发送中状态，后续消息状态更新根据回调重置
+      this.setRoomMessage(1, data)
+      try {
+        let res = await this.client.express('sendBarrageMessage', message)
+        console.warn('sendBarrageMessage', { res })
+        var num = 0,
+          max = 5,
+          intervalId = null
+        intervalId = setInterval(() => {
+          num++
+          console.warn('倒计时：', num)
+          if (res) {
+            console.warn('发送成功')
+            clearInterval(intervalId)
+            // 消息发送成功，更新该消息状态
+            if (res.errorCode === 0) this.setRoomMessage(2, data, targetMessageID, res)
+            // 消息发送不成功，更新该消息状态
+            if (res.errorCode !== 0) this.setRoomMessage(2, data, targetMessageID, res)
+          }
+          if (num === max) {
+            clearInterval(intervalId)
+            // 超过60s接收不到状态回调，消息发送不成功，更新该消息状态
+            this.setRoomMessage(2, data, targetMessageID, res)
+          }
+        }, 1000)
+      } catch (error) {
+        console.warn('------error----', error)
+        this.setRoomMessage(2, data, targetMessageID, { errorCode: error })
+      }
+    },
     // tips: electron有，web没有的方法 start
-    loseCanvasContext ({ canvas }, cb) {
+    loseCanvasContext({ canvas }, cb) {
       this.client.express('loseCanvasContext', { canvas }, cb)
     },
-    enableSpeaker ({ enable }) {
+    enableSpeaker({ enable }) {
       this.client.express('enableSpeaker', { enable })
     },
-    startPreview (streamID, $ele) {
+    startPreview(streamID, $ele) {
       this.client.express('startPreview', streamID, $ele)
     },
-    stopPreview () {
+    stopPreview() {
       this.client.express('stopPreview')
     }
     // tips: electron有，web没有的方法 end
   },
   destroyed() {
     this.$off(['muteSpeaker', 'roomExtraInfoUpdate'])
+    roomStore.$off(['selfChanged'])
   }
 }
 </script>

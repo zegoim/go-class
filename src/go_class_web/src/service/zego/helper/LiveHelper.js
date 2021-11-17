@@ -1,10 +1,9 @@
-import { isElectron } from '@/utils/tool'
-import ExpressWeb from '../repository/web/express'
 import LiveRoomEl from '../repository/electron/liveRoom'
 import ExpressEl from '../repository/electron/express'
 
 export class LiveHelper {
   _client = null
+
   constructor({ context, client }) {
     this.context = context
     this._client = client
@@ -12,17 +11,12 @@ export class LiveHelper {
     this.instance = null
     this.roomUserList = []
     this.localStream = null
-    this._isElectron = isElectron()
     this.stream_publish_state = 'NO_PUBLISH' // NO_PUBLISH-未推流状态｜PUBLISH_REQUESTING-正在请求推流状态｜PUBLISHING-正在推流状态
     this.isCreatingStream = false
     this.initInstance()
   }
 
   initInstance() {
-    if (!this._isElectron) {
-      this.instance = new ExpressWeb()
-      return
-    }
     if (this.context.electronSdk === 'liveRoom') {
       this.instance = new LiveRoomEl()
       return
@@ -57,7 +51,8 @@ export class LiveHelper {
       'startPreview',
       'stopPreview',
       'loseCanvasContext',
-      'logoutRoom'
+      'logoutRoom',
+      'sendBarrageMessage'
     ]
   }
 

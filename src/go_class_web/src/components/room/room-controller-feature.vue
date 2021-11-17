@@ -1,3 +1,6 @@
+<!--
+ * @Description: 底部工具栏（创建白板、文件、成员列表和设备管理等）
+-->
 <template>
   <div class="room-controller-feature">
     <div ref="analogTrigger" />
@@ -67,9 +70,10 @@
           <div class="device-select-list-content">
             <div class="device-main-name">{{ item.cnName }}</div>
             <el-select
-                v-model="activeDeviceIds[item.name]"
-                placeholder="请选择"
-                popper-class="device-select-list-dropdown"
+              v-model="activeDeviceIds[item.name]"
+              placeholder="请选择"
+              popper-class="device-select-list-dropdown"
+              @change="value => handleChangeDevice(value, item.name)"
             >
               <el-option
                   v-for="device in deviceInfo[item.name]"
@@ -122,11 +126,11 @@ import RoomDialogShare from '@/components/room/room-dialog-share'
 import RoomDialogFiles from '@/components/room/room-dialog-files'
 import RoomDialogQuit from '@/components/room/room-dialog-quit'
 import { getUserMedia } from '@/utils/browser'
-import { debounce } from '@/utils/tool'
-import { roomStore } from '@/service/biz/room'
+import { debounce, storage } from '@/utils/tool'
+import { roomStore } from '@/service/store/roomStore'
 import { ROLE_STUDENT, ROLE_TEACHER, STATE_CLOSE, STATE_OPEN } from '@/utils/constants'
 
-const controlBtnList = [
+const smallClassControlBtnList = [
   {
     name: 'camera',
     cnName: '摄像头',
@@ -185,6 +189,34 @@ const controlBtnList = [
   }
 ]
 
+const largeClassControlBtnList = [
+  {
+    name: 'speaker',
+    cnName: '扬声器',
+    imgSrc: {
+      default: require('../../assets/icons/room/sound_open.svg').default,
+      open: require('../../assets/icons/room/sound_open.svg').default,
+      close: require('../../assets/icons/room/sound_close.svg').default
+    },
+    canSpread: false,
+    isOpen: true
+  },
+  {
+    name: 'invite',
+    cnName: '邀请',
+    imgSrc: {
+      default: require('../../assets/icons/room/invite.svg').default
+    }
+  },
+  {
+    name: 'member',
+    cnName: '成员',
+    imgSrc: {
+      default: require('../../assets/icons/room/member.svg').default
+    }
+  }
+]
+
 let allowSetExtra = false
 
 export default {
@@ -197,104 +229,98 @@ export default {
   },
   data() {
     return {
-      controlBtnList,
+      controlBtnList:[],
       deviceInfo: {
         camera: [],
-        microphone: [],
+        mic: [],
         speaker: []
       },
       activeDeviceIds: {
         camera: '',
-        microphone: '',
+        mic: '',
         speaker: ''
       },
       memberListDialogShow: false, // 成员列表弹窗标识
       shareDialogShow: false, // 邀请弹窗标识
       quitDialogShow: false, // 退出课堂弹窗标识
-      roomUserList: [], // 房间成员列表
-      roomAuth: roomStore.auth // 房间权限
+      // roomUserList: [], // 房间成员列表
+      // roomAuth: roomStore.auth, // 房间权限
+      classScene: storage.get('loginInfo').classScene || 1, // 当前课堂场景
+      role: storage.get('loginInfo').role || 1, // 当前用户角色
     }
   },
   inject: ['zegoLiveRoom', 'zegoWhiteboardArea'],
   computed: {
+    roomAuth() {
+      return roomStore.auth
+    },
     filesListDialogShow() {
       return this.zegoWhiteboardArea.filesListDialogShow
+    },
+    /**
+     * @desc: 当前激活是否动态ppt
+     */
+    activeViewIsPPTH5() {
+      return this.zegoWhiteboardArea.activeViewIsPPTH5
+    },
+    roomUserList() {
+      return roomStore.attendeeList
+    },
+    joinLiveList() {
+     return roomStore.joinLiveList
+    },
+    selfLiveState() {
+      return roomStore.self
     }
   },
-  mounted() {
-    this.initDevices()
-    this.$bus.$on('roomAttendeesChange', this.onRoomAttendeesChange)
-    this.$bus.$on('userStateChange', this.tryJionLive)
-    this.tryJionLive(null, true)
+  watch: {
+    // async selfLiveState(newVal, oldVal) {
+      // 大班课场景
+      // if(this.role === 2 && this.classScene === 2) return
+      // if (!oldVal) return
+      // if (newVal?.camera !== oldVal?.camera || newVal?.mic !== oldVal?.mic) {
+      //   await this.selfJoinLiveChange(newVal, true)
+      // }
+    // }
+  },
+  async mounted() {
+    // 业务逻辑：如果是学生进入大班课场景，底部工具栏控制显示并且不启用设备推流
+    console.warn('roomAuth', JSON.stringify(this.roomAuth))
+    if(this.role === 2 && this.classScene === 2){
+      this.controlBtnList = largeClassControlBtnList
+    } else {
+      this.controlBtnList = smallClassControlBtnList
+      await this.initDevices()
+      // 初始进入房间
+      await this.selfJoinLiveChange(null, false)
+    }
+    this.handleMainBtnClick_ = debounce(this.handleMainBtnClick, 500, true)
     setTimeout(() => {
       allowSetExtra = true
     }, 5000)
   },
-  destroyed() {
-    this.$bus.$off('roomAttendeesChange', this.onRoomAttendeesChange)
-    this.$bus.$off('userStateChange', this.tryJionLive)
-  },
   methods: {
-    /**
-     * @desc: 监听房间成员变化
-     */
-    onRoomAttendeesChange(res) {
-      this.roomUserList = res
-    },
-    /**
-     * @desc: 用户进入房间尝试开启摄像头和麦克风
-     * @param {users}
-     * @return {noSetUser}
-     */
-    async tryJionLive(users, noSetUser) {
-      console.warn('tryJionLive', { users, noSetUser })
+    async selfJoinLiveChange(state, noSetUser) {
+      console.warn('selfJoinLiveChange', { state })
+      state = state || { camera: STATE_OPEN, mic: STATE_OPEN }
+      const [isVideoShouldAuth, isAudioShouldAuth] = [state.camera == STATE_OPEN, state.mic == STATE_OPEN]
+      console.warn({ isVideoShouldAuth, isAudioShouldAuth, role: JSON.stringify(roomStore.role) });
+      // this.$set(this, 'roomAuth', Object.assign(this.roomAuth, state))
       if (roomStore.role == ROLE_TEACHER) {
-        let state = (users && users[roomStore.uid])
-        if (!users && noSetUser) {
-          state = state || { camera: STATE_OPEN, mic: STATE_OPEN }
-        }
-        console.warn('tryJionLive', { state })
-        if (!state) return
-        this.$set(this, 'roomAuth', Object.assign(this.roomAuth, state))
-        if (state.camera == STATE_OPEN) {
-          this.getUserMediaAuth(0, false, async () => {
-            await this.toggleDeviceOpen('video', this.controlBtnList[0], false)
+        this.getUserMediaAuth(0, false, isVideoShouldAuth, async () => {
+          await this.toggleDeviceOpen('video', this.controlBtnList[0], noSetUser)
+        })
+        this.getUserMediaAuth(1, false, isAudioShouldAuth, async () => {
+          await this.toggleDeviceOpen('audio', this.controlBtnList[1], noSetUser)
+        })
+      } else if (roomStore.role == ROLE_STUDENT) {
+        const len = this.joinLiveList.length
+        if (len <= 4) {
+          this.getUserMediaAuth(0, false, isVideoShouldAuth, async () => {
+            await this.toggleDeviceOpen('video', this.controlBtnList[0], noSetUser)
           })
-        } else {
-          await this.toggleDeviceOpen('video', this.controlBtnList[0], false)
-        }
-        if (state.mic == STATE_OPEN) {
-          this.getUserMediaAuth(1, false, async () => {
-            await this.toggleDeviceOpen('audio', this.controlBtnList[1], false)
-          })
-        } else {
-          await this.toggleDeviceOpen('audio', this.controlBtnList[1], false)
-        }
-      } else {
-        const state = users && users[roomStore.uid]
-        if (!state) return
-        console.log('====edu_zpush_room====', state)
-        this.$set(this, 'roomAuth', Object.assign(this.roomAuth, state))
-        const len = roomStore.joinLiveList.length
-        if (len <= 4 && state.camera == STATE_OPEN) {
-          this.getUserMediaAuth(0, false, () => {
-            this.toggleDeviceOpen('video', this.controlBtnList[0], noSetUser)
-          })
-        }
-        if (len <= 4 && state.mic == STATE_OPEN) {
-          this.getUserMediaAuth(1, false, () => {
-            this.toggleDeviceOpen('audio', this.controlBtnList[1], noSetUser)
-          })
-        }
-
-        if (state.camera == STATE_CLOSE) {
-          this.getUserMediaAuth(0, false, () => {
-            this.toggleDeviceOpen('video', this.controlBtnList[0], noSetUser)
-          })
-        }
-        if (state.mic == STATE_CLOSE) {
-          this.getUserMediaAuth(1, false, () => {
-            this.toggleDeviceOpen('audio', this.controlBtnList[1], noSetUser)
+          this.getUserMediaAuth(1, false, isAudioShouldAuth, async () => {
+            await this.toggleDeviceOpen('audio', this.controlBtnList[1], noSetUser)
           })
         }
       }
@@ -304,25 +330,27 @@ export default {
      */
     async initDevices() {
       const devices = await this.zegoLiveRoom.getDevices()
-      console.log({ devices })
+      console.warn({ devices })
       const deviceInfo = {
         camera: devices.cameras,
-        microphone: devices.microphones,
+        mic: devices.microphones,
         speaker: devices.speakers
       }
       this.$set(this, 'deviceInfo', deviceInfo)
       this.activeDeviceIds.camera = devices.cameras[0].deviceID
-      this.activeDeviceIds.microphone = devices.microphones[0].deviceID
+      this.activeDeviceIds.mic = devices.microphones[0].deviceID
       this.activeDeviceIds.speaker = devices.speakers[0].deviceID
       this.zegoLiveRoom.setActiveDevice(this.activeDeviceIds)
     },
     /**
      * @desc: 获取设备权限
-     * @param {num} 0video 1audio undefined return
-     * @param {showErrorToast} 展示错误提示，默认true
-     * @param {cb} 回调方法
+     * @param num
+     * @param showErrorToast
+     * @param isShouldAuth
+     * @param cb
      */
-    getUserMediaAuth(num, showErrorToast = true, cb) {
+    getUserMediaAuth(num, showErrorToast = true, isShouldAuth = true, cb) {
+      console.warn('getUserMediaAuth', { num })
       if (num > 1) {
         if (num == 3 && !this.roomAuth.share) {
           this.showToast('老师还未允许你使用共享功能')
@@ -340,6 +368,7 @@ export default {
        * @param {error} 失败时执行的回调方法
        */
 
+      if (!isShouldAuth) return cb?.()
       getUserMedia(
           option,
           stream => {
@@ -349,23 +378,24 @@ export default {
             } else if (num === 1) {
               stream.getAudioTracks().forEach(track => track.stop())
             }
-            console.warn(`${controlBtnList[num].cnName}权限获取成功`)
+            console.warn(`${this.controlBtnList[num].cnName}权限获取成功`)
             this.initDevices()
-            cb && cb()
+            cb?.()
           },
+          // eslint-disable-next-line no-unused-vars
           error => {
-            if (num === 0) {
-              this.roomAuth.camera = STATE_CLOSE
-            } else if (num === 1) {
-              this.roomAuth.mic = STATE_CLOSE
-            }
-            console.warn('摄像头麦克风权限获取错误', error)
-            if (showErrorToast) this.showToast(`请在设置中开启${controlBtnList[num].cnName}权限`)
+            roomStore.setUserInfo({
+              target_uid: roomStore.uid,
+              [num === 0 ? 'camera' : 'mic']: STATE_CLOSE,
+            })
+            this.controlBtnList[num].noAuth = true
+            console.warn('摄像头麦克风权限获取错误', num)
+            if (showErrorToast) this.showToast(`请在设置中开启${this.controlBtnList[num].cnName}权限`)
           }
       )
     },
-
     handleMainBtnClick(item) {
+      if (item.noAuth) return
       switch (item.name) {
         case 'camera':
           this.toggleDeviceOpen('video', item, false, true)
@@ -376,7 +406,7 @@ export default {
         case 'speaker':
           if (item) {
             this.zegoLiveRoom.muteSpeaker(!item.isOpen)
-            let idx = controlBtnList.findIndex(v => v.name === item.name)
+            let idx = this.controlBtnList.findIndex(v => v.name === item.name)
             item = { ...item, isOpen: !item.isOpen }
             idx !== -1 && this.$set(this.controlBtnList, idx, item)
           }
@@ -402,17 +432,14 @@ export default {
      * @param {reverse}
      */
     async toggleDeviceOpen(flag, item, noSetUser, reverse) {
-      // if (item.noAuth) {
-      //   reverse && this.showToast('获取摄像头/麦克风的系统授权请求')
-      //   return
-      // }
       if (
           roomStore.role == ROLE_STUDENT &&
-          roomStore.joinLiveList.length >= 4 &&
+          this.joinLiveList.length >= 4 &&
           this.roomAuth[item.name] == STATE_CLOSE
       ) {
         const id = roomStore.uid
         const joined = roomStore.joinLiveList.find(v => v.uid == id)
+        console.warn('toggleDeviceOpen', joined)
         if (!joined) {
           await roomStore.setUserInfo({
             target_uid: roomStore.uid,
@@ -422,40 +449,35 @@ export default {
           return this.showToast('演示课堂最多开启3路学生音视频')
         }
       }
-
-      if (!noSetUser) {
-        const key = flag == 'video' ? 'camera' : 'mic'
-        const val = this.roomAuth[key]
-        const params = {
-          target_uid: roomStore.uid,
-          [key]: reverse ? (val == STATE_OPEN ? STATE_CLOSE : STATE_OPEN) : val
-        }
-        await roomStore.setUserInfo(params)
-        this.roomAuth[key] = params[key]
-      }
-      await this.zegoLiveRoom.handleDeviceStateChange(
-          flag,
-          this.roomAuth.camera == STATE_OPEN,
-          this.roomAuth.mic == STATE_OPEN
-      )
-      await roomStore.getJoinLiveList()
+      const key = flag == 'video' ? 'camera' : 'mic'
+      const val = reverse ? (this.roomAuth[key] == STATE_OPEN ? STATE_CLOSE : STATE_OPEN) : this.roomAuth[key]
+      await this.zegoLiveRoom.handleDeviceStateChange(key, val)
     },
 
-    handleMainBtnClick_(item) {
-      if (item.noAuth) return
-      debounce(this.handleMainBtnClick(item), 500, true)
-    },
     /**
      * @desc: 获取设备状态图标
      * @param {item} 对应设备item
      * @return {imgSrc.state} 设备状态图标路径
      */
     getItemIcon(item) {
+      // if (item.noAuth) return
       // 返回除了摄像头/麦克风/扬声器 的默认图标
       if (!item.canSpread && item.name !== 'speaker') return item.imgSrc.default
       if (item.noAuth) return item.imgSrc.warn
       if (item.isOpen || this.roomAuth[item.name] == STATE_OPEN) return item.imgSrc.open
       return item.imgSrc.close
+    },
+
+    /**
+     * @desc: 麦克风/摄像头设备切换
+     * @param {设备id} value
+     * @param {设备类型 'camera'|'mic'} type
+     */
+    handleChangeDevice(value, type){
+      this.zegoLiveRoom.selectDevice(value, type)
+      if(type ==='camera') this.activeDeviceIds.camera = value
+      if(type ==='mic') this.activeDeviceIds.mic = value
+      this.handleAnalogTriggerClick()
     },
     /**
      * @desc: 创建白板
@@ -463,6 +485,8 @@ export default {
     async createWhiteboard() {
       if (!allowSetExtra) return
       if (this.zegoWhiteboardArea) {
+        // 如果新建普通白板之前的是动态ppt，需手动停止该文件音视频
+        if (this.activeViewIsPPTH5) this.zegoWhiteboardArea.stopPlay()
         this.zegoWhiteboardArea.setIsAllowSendRoomExtraInfo(true)
         await this.zegoWhiteboardArea.createWhiteboard()
       }
@@ -482,6 +506,9 @@ export default {
       const analogTrigger = this.$refs.analogTrigger
       if (analogTrigger) analogTrigger.click()
     },
+    changeActiveDevice(){
+      this.zegoLiveRoom.setActiveDevice(this.activeDeviceIds)
+    }
   },
   beforeDestroy() {
     allowSetExtra = false

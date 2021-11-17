@@ -1,3 +1,6 @@
+<!--
+ * @Description: 退出课堂弹窗组件
+-->
 <template>
   <div class="room-dialog-quit">
     <el-dialog
@@ -33,7 +36,7 @@
 
 <script>
 import zegoClient from '@/service/zego/zegoClient'
-import { postRoomHttp, roomStore } from '@/service/biz/room'
+import { postRoomHttp, roomStore } from '@/service/store/roomStore'
 const { ipcRenderer } = window.require('electron')
 
 export default {

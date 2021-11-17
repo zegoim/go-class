@@ -1,6 +1,16 @@
+<!--
+ * @Description: 教学区（暂无白板或者文件分享）
+-->
 <template>
   <div class="room-whiteboard-none">
-    <div class="content">
+    <!--业务场景：如果在大班课场景下且用户角色是学生-->
+    <div class="content" v-if="role === 2 && classScene === 2">
+      <div class="share-content large-class">
+        <img src="../../assets/images/whiteboard/default_waiting_share.png" alt />
+        <div>等待老师共享</div>
+      </div>
+    </div>
+    <div class="content" v-else>
       <div class="share-content">
         <span>请选择要共享的内容</span>
       </div>
@@ -9,20 +19,29 @@
         <el-button round @click="showFileListDialog">共享文件</el-button>
       </div>
     </div>
+    
   </div>
 </template>
 
 <script>
+import { storage } from '@/utils/tool'
+
 export default {
   name: 'RoomWhiteboardNone',
-  props: ['auth'],
+  props: ['auth','role'],
   inject: ['zegoWhiteboardArea'],
+  data(){
+    return{
+      classScene: storage.get('loginInfo')?.classScene
+    }
+  },
   methods: {
     /**
      * @desc: 创建普通白板
      */    
     async createWhiteboard() {
       if (!this.auth) return this.showToast('老师还未允许你使用共享功能')
+      this.zegoWhiteboardArea.setIsAllowSendRoomExtraInfo(true)
       this.zegoWhiteboardArea && this.zegoWhiteboardArea.createWhiteboard('whiteboardDemo')
     },
 
@@ -44,6 +63,12 @@ export default {
   background-color: #f4f5f8;
   .share-content {
     @include sc(20px, #585c62);
+    &.large-class{
+      font-size: 16px;
+      line-height: 16px;
+      margin: 0;
+      margin-top: 6px;
+    }
   }
 
   .el-button {

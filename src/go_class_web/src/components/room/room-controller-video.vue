@@ -1,3 +1,6 @@
+<!--
+ * @Description: 坐席区设备管理
+-->
 <template>
   <div class="room-controller-video">
     <ul class="controller-btn-list">
@@ -59,7 +62,7 @@ const controlBtnList = [
 ]
 
 import { debounce } from '@/utils/tool'
-import { roomStore } from '@/service/biz/room'
+import { roomStore } from '@/service/store/roomStore'
 import { ROLE_TEACHER, STATE_CLOSE, STATE_OPEN } from '@/utils/constants'
 
 export default {
@@ -81,6 +84,10 @@ export default {
     this.role = roomStore.role
     this.isMe = this.userId == this.user.uid
   },
+  mounted(){
+    this.handleMainBtnClick_ = debounce(this.handleMainBtnClick, 500, true)
+  },
+  inject: ['zegoLiveRoom'],
   methods: {
     getItemDisabled({ name }) {
       return this.role == ROLE_TEACHER ? false : !(this.isMe && name !== 'can_share')
@@ -96,21 +103,20 @@ export default {
       }
       return str + item.cnName
     },
-    handleMainBtnClick_(item) {
-      debounce(this.handleMainBtnClick(item), 500, true)
-    },
     async handleMainBtnClick({ name }) {
-      if (this.isMe && name === 'can_share') return
-      if (this.role == ROLE_TEACHER || this.isMe) {
-        const state = this.user[name] == STATE_OPEN ? STATE_CLOSE : STATE_OPEN
-        await roomStore.setUserInfo({
+      const state = this.user[name] == STATE_OPEN ? STATE_CLOSE : STATE_OPEN
+      if (name === 'can_share') {
+        if (this.isMe) return
+        const params = {
           target_uid: this.user.uid,
           [name]: state
-        })
-        this.user[name] = state
-        if (this.isMe) {
-          this.$bus.$emit('userStateChange', { [this.user.uid]: { [name]: state } }, false)
         }
+        await roomStore.setUserInfo(params)
+        return
+      }
+      if (this.role == ROLE_TEACHER || this.user.isMe) {
+
+        await this.zegoLiveRoom.handleDeviceStateChange(name, state)
       }
     }
   }

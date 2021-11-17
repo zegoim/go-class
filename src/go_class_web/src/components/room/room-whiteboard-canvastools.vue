@@ -1,12 +1,17 @@
+<!--
+ * @Description: 白板区域内等工具栏（文字，画笔，矩形等工具）
+-->
 <template>
   <div class="canvas-tools" id="canvasTools">
     <ul class="tools-list">
       <li
         :class="[
           'tool-item',
-          item.name === 'undo' && 'divide-line',
+          item.name === 'undo' && 'divide-line undo',
+          item.name === 'clearCurrentPage' && 'divide-line clearCurrentPage',
           isClickable(item) && 'active',
-          hoverState ? '' : 'forbid'
+          hoverState ? '' : 'forbid',
+          item.popperType === 'graph' && item.clicked && 'active'
         ]"
         v-for="item in canvasToolList"
         :key="item.name"
@@ -24,7 +29,7 @@
 <script>
 import { debounce } from '@/utils/tool'
 import RoomWhiteboardPencil from '@/components/room/room-whiteboard-pencil'
-import { roomStore } from '@/service/biz/room'
+import { roomStore } from '@/service/store/roomStore'
 import { ROLE_STUDENT } from '@/utils/constants'
 
 const canvasToolConf = {
@@ -68,30 +73,17 @@ const canvasToolList = [
     ...canvasToolConf
   },
   {
-    imgName: 'tool_square',
-    cnName: '矩形',
-    type: 8,
-    popperType: 'pencil',
-    ...canvasToolConf
-  },
-  {
-    imgName: 'tool_round',
-    cnName: '椭圆',
-    type: 16,
-    popperType: 'pencil',
+    imgName: 'tool_figure',
+    cnName: '图形',
+    popperType: 'graph',
+    clicked: false,
+    type: 'graph',
     ...canvasToolConf
   },
   {
     imgName: 'tool_eraser',
     cnName: '橡皮擦',
     type: 64
-  },
-  {
-    imgName: 'tool_line',
-    cnName: '直线',
-    type: 4,
-    popperType: 'pencil',
-    ...canvasToolConf
   },
   {
     name: 'clear',
@@ -127,6 +119,7 @@ export default {
     if (roomStore.role == ROLE_STUDENT) {
       this.setToolType(this.canvasToolList.find(v => v.type == this.initType))
     }
+    this.setToolType_ = debounce(this.setToolType, 500, true)
   },
   computed: {
     /**
@@ -143,6 +136,12 @@ export default {
     },
     activeViewIsPPTH5() {
       return this.zegoWhiteboardArea.activeViewIsPPTH5
+    },
+    graphTypes() {
+      return this.zegoWhiteboardArea.graphTypes
+    },
+    graphType() {
+      return this.zegoWhiteboardArea.graphType
     }
   },
   methods: {
@@ -168,25 +167,36 @@ export default {
         this.hoverState = type === 256 ? false : true
       }
     },
-    setToolType_(item) {
-      // 非动态ppt文件不可以选择点击工具
-      if (!this.activeViewIsPPTH5 && item.type === 256) return
-      debounce(this.setToolType(item), 500, true)
-    },
 
     /**
      * @desc: 设置工具类型
      */
     setToolType(item) {
-      console.warn(this.zegoWhiteboardArea.activeWBView)
-      console.warn('setToolType item=', item)
-      this.zegoWhiteboardArea.setActivePopperType(item.popperType)
       const type = item.type
+      // 非动态ppt文件不可以选择点击工具
+      if (!this.activeViewIsPPTH5 && type === 256) return
+      // 多选图元点击橡皮擦可批量删除
+      if (type === 64) this.zegoWhiteboardArea.deleteSelectedGraphics()
+      this.zegoWhiteboardArea.setActivePopperType(item.popperType)
+
+      // 点击工具，将 图形 按钮点击激活样式关闭
+      var graphIcon = this.canvasToolList.filter(function(item) {
+        return item.popperType == 'graph'
+      })
+      graphIcon[0].clicked = false
+
       if (typeof type === 'number') {
         this.zegoWhiteboardArea.setActiveToolType(type)
         this.zegoWhiteboardArea.activeWBView.setToolType(type || null)
       } else {
-        this.zegoWhiteboardArea.activeWBView[item.name]()
+        // 点击图形按钮，默认为矩形
+        if (item.popperType === 'graph') {
+          item.clicked = true
+          this.zegoWhiteboardArea.activeWBView.setToolType(this.zegoWhiteboardArea.graphType)
+          this.zegoWhiteboardArea.setActiveToolType(this.zegoWhiteboardArea.graphType)
+        } else {
+          this.zegoWhiteboardArea.activeWBView[item.name]()
+        }
       }
       if (this.zegoWhiteboardArea.pencilTextTypes.includes(type)) {
         this.zegoWhiteboardArea.setActiveTextPencil(type)
@@ -218,7 +228,9 @@ export default {
      * @param {value}
      */
     updateCanvasToolList(key, value) {
-      const type = +this.zegoWhiteboardArea.activeTextPencil
+      const type =
+        this.zegoWhiteboardArea.activeTextPencil == 'graph' ? 'graph' : +this.zegoWhiteboardArea.activeTextPencil
+      console.warn('updateCanvasToolList', type)
       const tool = canvasToolList.find(item => item.type && item.type == type)
       if (tool) {
         tool[key] = value
@@ -241,7 +253,7 @@ export default {
   .tool-item {
     @include wh(20px, 20px);
     position: relative;
-    margin: 12px 10px;
+    margin: 13px 10px;
     cursor: pointer;
 
     &.divide-line {
@@ -249,31 +261,36 @@ export default {
       padding-top: 10px;
       border-top: 1px solid rgba(237, 239, 243, 1);
     }
-
+    &.undo {
+      margin-bottom: 11px;
+    }
+    &.clearCurrentPage {
+      &:hover {
+        .tooltip {
+          margin-top: 4px;
+        }
+      }
+    }
     &.disabled {
       pointer-events: none;
     }
     &.forbid {
       &:hover {
         cursor: not-allowed !important;
-        /deep/ {
-          .hover-fill {
-            fill: #b0b3ba !important;
-          }
-          .hover-stroke {
-            stroke: #b0b3ba !important;
-          }
+        .hover-fill {
+          fill: #b0b3ba !important;
+        }
+        .hover-stroke {
+          stroke: #b0b3ba !important;
         }
       }
     }
     &:hover {
-      /deep/ {
-        .hover-fill {
-          fill: #18191a;
-        }
-        .hover-stroke {
-          stroke: #18191a;
-        }
+      .hover-fill {
+        fill: #18191a;
+      }
+      .hover-stroke {
+        stroke: #18191a;
       }
 
       .tooltip {
@@ -283,13 +300,11 @@ export default {
     }
 
     &.active {
-      /deep/ {
-        .hover-fill {
-          fill: #0044ff;
-        }
-        .hover-stroke {
-          stroke: #0044ff;
-        }
+      .hover-fill {
+        fill: #0044ff;
+      }
+      .hover-stroke {
+        stroke: #0044ff;
       }
     }
 

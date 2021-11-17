@@ -1,6 +1,9 @@
+<!--
+ * @Description: 白板操作区域组件
+-->
 <template>
   <div class="room-whiteboard-area">
-    <room-whiteboard-none v-if="!WBViewList.length" :auth="roomAuth.share" />
+    <room-whiteboard-none v-if="noList" :auth="roomAuth.share" :role="role" />
     <div class="whiteboard-canvas-wrap" id="mainArea">
       <div class="whiteboard-canvas" id="whiteboardDemo" @click="handleEntireCanvasClick"></div>
       <room-whiteboard-canvastools v-if="roomAuth.share" :initType="activeToolType" />
@@ -12,13 +15,12 @@
 </template>
 
 <script>
-import { isElectron } from '@/utils/tool'
 import RoomWhiteboardNone from '@/components/room/room-whiteboard-none'
 import RoomWhiteboardCanvastools from '@/components/room/room-whiteboard-canvastools'
 import RoomControllerPpt from '@/components/room/room-controller-ppt'
 import RoomControllerThumbnails from '@/components/room/room-controller-thumbnails'
 import RoomDialogEnd from '@/components/room/room-dialog-end'
-import { roomStore } from '@/service/biz/room'
+import { roomStore } from '@/service/store/roomStore'
 import { ROLE_STUDENT } from '@/utils/constants'
 
 export default {
@@ -33,28 +35,28 @@ export default {
   },
   data() {
     return {
-      // activeToolType: 1,
-      isElectron: isElectron,
-      // noList: false,
+      isMounted: false,
+      noList: false,
       defaultAspectAutio: 16 / 9,
-      roomAuth: roomStore.auth
+      roomAuth: roomStore.auth,
+      role: roomStore.role
     }
   },
   computed: {
     isThumbnailsVisible() {
       return this.zegoWhiteboardArea.isThumbnailsVisible
     },
-    activeToolType(){
+    activeToolType() {
       return this.zegoWhiteboardArea.activeToolType
     },
-    activeViewIsPPTH5(){
+    activeViewIsPPTH5() {
       return this.zegoWhiteboardArea.activeViewIsPPTH5
-    },
-    WBViewList() {
-      return this.zegoWhiteboardArea.WBViewList
     }
   },
   watch: {
+    'zegoWhiteboardArea.WBViewList': function() {
+      this.noList = !this.zegoWhiteboardArea.WBViewList.length && this.isMounted
+    },
     'zegoWhiteboardArea.activeWBView': function(view) {
       this.setWBViewEnable(view)
     },
@@ -64,20 +66,31 @@ export default {
   },
   mounted() {
     this.init()
-    this.$bus.$on('endTeaching', this.endTeaching)
+    roomStore.$on('endTeaching', this.endTeaching)
   },
   destroyed() {
-    this.$bus.$off('endTeaching', this.endTeaching)
+    roomStore.$off('endTeaching', this.endTeaching)
   },
   methods: {
-    init() {
-      this.initCanvasWidthHeight()
-      this.initLayoutHeight()
+    async init() {
+      try {
+        this.WBViewList = await this.zegoWhiteboardArea.getViewList()
+        this.initCanvasWidthHeight()
+        this.initLayoutHeight()
+        if (this.WBViewList.length == 0 && this.roomAuth.share) {
+          this.$nextTick(() => {
+            this.zegoWhiteboardArea.setIsAllowSendRoomExtraInfo(true)
+            this.zegoWhiteboardArea.createWhiteboard()
+          })
+        }
+      } finally {
+        this.noList = this.WBViewList.length == 0
+        this.isMounted = true
+      }
     },
 
     initCanvasWidthHeight() {
-      const $whiteboardDemo = document.getElementById("whiteboardDemo");
-
+      const $whiteboardDemo = document.getElementById('whiteboardDemo')
       if ($whiteboardDemo) {
         const { clientWidth, clientHeight } = $whiteboardDemo
         const ratio = clientWidth / clientHeight
@@ -94,8 +107,7 @@ export default {
       }
 
       const $canvasTools = document.getElementById('canvasTools')
-      if ($canvasTools && $whiteboardDemo)
-        $canvasTools.style.right = $whiteboardDemo.offsetLeft + 10 + 'px'
+      if ($canvasTools && $whiteboardDemo) $canvasTools.style.right = $whiteboardDemo.offsetLeft + 10 + 'px'
     },
 
     initLayoutHeight() {
@@ -116,29 +128,25 @@ export default {
 
     setWBViewEnable(view) {
       if (roomStore.role == ROLE_STUDENT && view) {
+        // setTimeout(() => {
         const val = this.roomAuth.share
-        view.enable(val)
+        val ? view.setWhiteboardOperationMode(2 | 4 | 8) : view.setWhiteboardOperationMode(8)
+        window.aaa = view
         view.setToolType(val ? 1 : null)
-        if(val){
+        if (val) {
           // 如果当前文件不是动态ppt但是当前使用工具是点击工具就重置工具
-          if(!this.activeViewIsPPTH5 && this.activeToolType === 256){
+          if (!this.activeViewIsPPTH5 && this.activeToolType === 256) {
             view.setToolType(1)
-            this.zegoWhiteboardArea.set()
-            // this.activeToolType = 1
-          }else{
+          } else {
             view.setToolType(this.activeToolType)
           }
-        }else {
-          view.setToolType(null)
         }
-        // if (val) {
-        //   this.activeToolType = 1
-        // }
+        // }, 10);
       }
     },
 
     endTeaching() {
-      if(roomStore.role == ROLE_STUDENT) this.$refs.endDialog.show = true
+      if (roomStore.role == ROLE_STUDENT) this.$refs.endDialog.show = true
     }
   }
 }
@@ -154,77 +162,12 @@ export default {
   .whiteboard-canvas-wrap {
     flex: 1;
     position: relative;
-    border: 1px solid aliceblue;
-
     .whiteboard-canvas {
       @include wh(100%, 100%);
       position: relative;
       margin: 0 auto;
-      //position: absolute !important;
-    }
-
-    .canvas-tools {
-      @include abs-pos(50%, 10px, auto, auto);
-      @include box-shadow(0px 10px 30px 0px rgba(0, 0, 0, 0.05));
-      transform: translate(0, -50%);
-      background: #fff;
-      z-index: 9;
-      border-radius: 4px;
-
-      .tool-item {
-        @include wh(20px, 20px);
-        position: relative;
-        margin: 16px 10px;
-        cursor: pointer;
-
-        &.divide-line {
-          margin-top: -4px;
-          padding-top: 10px;
-          border-top: 1px solid rgba(237, 239, 243, 1);
-        }
-
-        &.disabled {
-          pointer-events: none;
-        }
-
-        &:hover {
-          /deep/ {
-            .hover-fill {
-              fill: #18191a;
-            }
-            .hover-stroke {
-              stroke: #18191a;
-            }
-          }
-
-          .tooltip {
-            display: block;
-            background: rgba(0, 0, 0, 0.7);
-          }
-        }
-
-        &.active {
-          /deep/ {
-            .hover-fill {
-              fill: #0044ff;
-            }
-            .hover-stroke {
-              stroke: #0044ff;
-            }
-          }
-        }
-
-        .tooltip {
-          @include sc(12px, #fff);
-          @include abs-pos(50%, 110%, auto, auto);
-          display: none;
-          padding: 10px;
-          white-space: nowrap;
-          background: #18191a;
-          border-radius: 4px;
-          transform: translate(0, -50%);
-        }
-      }
+      border: 1px solid aliceblue;
+      box-sizing: border-box;
     }
   }
 }

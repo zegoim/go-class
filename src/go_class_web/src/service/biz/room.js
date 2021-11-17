@@ -9,9 +9,8 @@
 import Vue from 'vue'
 import axios from 'axios'
 import { Message } from 'element-ui'
-import zegoClient from '@/service/zego/zegoClient'
-import { isElectron } from '@/utils/tool'
-import { ROLE_STUDENT, ROLE_TEACHER, STATE_CLOSE, STATE_OPEN } from '@/utils/constants'
+import zegoClient from '@/service/zego/zegoClient/index'
+import { ROLE_STUDENT, ROLE_TEACHER, STATE_CLOSE, STATE_OPEN, ZEGOENV } from '@/utils/constants'
 
 export const bus = new Vue()
 
@@ -50,8 +49,10 @@ const handleError = res => {
 }
 
 const hostMap = {
+  testhome: process.env.VUE_APP_TEST_HOME_URL, // 测试环境-国内环境
+  testoverseas: process.env.VUE_APP_TEST_OVERSEA_URL, // 测试环境-海外环境
   home: process.env.VUE_APP_HOME_URL, // 正式环境下的国内环境
-  overseas: process.env.VUE_APP_OVERSEA_URL // 正式环境下的海外环境
+  overseas: process.env.VUE_APP_HOME_URL // 正式环境下的海外环境
 }
 
 const http = axios.create({
@@ -84,7 +85,7 @@ http.interceptors.response.use(
 )
 
 export const setGoclassEnv = env => {
-  http.defaults.baseURL = hostMap[env]
+  http.defaults.baseURL = hostMap[ZEGOENV.goclass + env] || hostMap.home
 }
 export const postRoomHttp = (api, data) => http.post(api, data)
 
@@ -94,6 +95,7 @@ class RoomStore {
   name = ''
   role = 0
   route = '' // from route name
+  room_type = 1
   heartBeatId = 0
   attendeeListSeq = 0
   joinLiveListSeq = 0
@@ -103,7 +105,7 @@ class RoomStore {
   auth = { camera: STATE_OPEN, mic: STATE_OPEN, can_share: STATE_CLOSE, share: false }
   inited = false
 
-  init({ roomId, uid, name, role, route }) {
+  init({ roomId, uid, name, role, route, room_type }) {
     this.roomId = roomId
     this.uid = +uid
     this.name = name
@@ -111,6 +113,7 @@ class RoomStore {
     this.route = route
     this.params.room_id = roomId
     this.params.uid = uid
+    this.params.room_type = room_type
     if (role == ROLE_TEACHER) {
       this.auth.can_share = STATE_OPEN
       this.auth.share = true
@@ -129,7 +132,7 @@ class RoomStore {
   }
 
   registerPushEvent() {
-    const socket = zegoClient._client.socketCenter.websocket
+    const socket = zegoClient._client.zegoWebRTC.socketCenter.websocket
     if (socket) {
       socket.addEventListener('message', res => {
         const reg = /custommsg.*custom_content.*cmd.*10[1-7]/
@@ -142,6 +145,7 @@ class RoomStore {
           if (res.cmd == 102) {
             this.onUserStateChange(res.data)
           } else if (res.cmd == 103) {
+            this.notifyAttendeeChange(res.data)
             this.getAttendeeList()
           } else if (res.cmd == 104) {
             this.getJoinLiveList()
@@ -155,38 +159,6 @@ class RoomStore {
           console.error('====edu_zpush====', e)
         }
       })
-    }
-  }
-
-  electronRegisterPushEvent() {
-    console.warn('electronRegisterPushEvent')
-    zegoClient.liveClient.on('iMRecvCustomCommand', res => {
-      this.handleEventMessage(JSON.parse(res.command))
-    })
-  }
-
-  handleEventMessage(res) {
-    console.warn('handleEventMessage', { res })
-    // const reg = /custommsg.*custom_content.*cmd.*10[1-7]/
-    if (!res.data) return
-    try {
-      // res = JSON.parse(res.body.custommsg)
-      // res = JSON.parse(res.custom_content)
-      console.log('====edu_zpush====', res)
-      if (res.cmd == 102) {
-        this.onUserStateChange(res.data)
-      } else if (res.cmd == 103) {
-        this.getAttendeeList()
-      } else if (res.cmd == 104) {
-        this.getJoinLiveList()
-        if (this.role == ROLE_STUDENT) {
-          this.getAttendeeList()
-        }
-      } else if (res.cmd == 105) {
-        this.onEndTeaching()
-      }
-    } catch (e) {
-      console.error('====edu_zpush====', e)
     }
   }
 
@@ -221,12 +193,11 @@ class RoomStore {
       Message({ customClass: 'common-toast', type: 'info', message: str })
     }
     // 同步所有人状态
-    let map = data.users.reduce((s, v) => {
+    const map = data.users.reduce((s, v) => {
       s[v.uid] = v
       return s
     }, {})
-    console.warn('onUserStateChange')
-    bus.$emit('userStateChange', map, data.operator_uid !== uid)
+    bus.$emit('userStateChange', map)
   }
 
   onEndTeaching() {
@@ -234,6 +205,7 @@ class RoomStore {
   }
 
   async startHeartBeat() {
+    if (!this.inited) return
     const { data } = await postRoomHttp('heartbeat', this.params)
     if (data.interval) {
       this.attendeeListSeq = data.attendee_list_seq
@@ -327,28 +299,19 @@ class RoomStore {
       list.push(...temp)
     }
     this.joinLiveList = list
-    console.warn('getJoinLiveList this.attendeeList=', JSON.stringify(this.attendeeList))
     bus.$emit('roomJoinLivesChange', list)
     return list
   }
 
   async setUserInfo(params) {
     if (!this.inited) return
-    try {
-      const res = await postRoomHttp('set_user_info', { ...params, ...this.params })
-      const id = params.target_uid
-      let user = this.attendeeList.find(v => v.uid == id)
-      if (user) {
-        console.warn('set_user_info')
-        Object.assign(user, params)
-      }
-      user = this.joinLiveList.find(v => v.uid == id)
-      if (user) Object.assign(user, params)
-      return res
-    } catch (e) {
-      // console.error('setUserInfo', e)
-      return null
-    }
+    const res = await postRoomHttp('set_user_info', { ...params, ...this.params })
+    const id = params.target_uid
+    let user = this.attendeeList.find(v => v.uid == id)
+    if (user) Object.assign(user, params)
+    user = this.joinLiveList.find(v => v.uid == id)
+    if (user) Object.assign(user, params)
+    return res
   }
 
   async getControlAuth() {
@@ -390,6 +353,10 @@ class RoomStore {
       return false
     })
     this.stopHeartBeat()
+  }
+
+  notifyAttendeeChange(res) {
+    bus.$emit('imAttendeesChange', res)
   }
 }
 

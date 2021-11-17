@@ -1,3 +1,6 @@
+<!--
+ * @Description: 结束课程弹窗组件
+-->
 <template>
   <div class="room-dialog-error">
     <el-dialog

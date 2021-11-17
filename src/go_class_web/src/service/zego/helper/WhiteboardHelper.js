@@ -1,11 +1,8 @@
-import { isElectron } from '@/utils/tool'
-
 export class WhiteboardHelper {
   _client = null
   constructor({ context, client }) {
     this.context = context
     this._client = client
-    this._isElectron = isElectron
   }
 
   on(eventName, callback) {
@@ -20,8 +17,6 @@ export class WhiteboardHelper {
   whiteboard(methodName = '', ...args) {
     const proxyFunc = this.getProxyFunc()
     if (proxyFunc.some(func => func === methodName)) {
-      console.warn('方法被转发, methods: ', methodName, ', args:', args)
-      console.warn('isELectron: ', this._isElectron)
       return this[methodName](...args)
     } else {
       console.warn('不存在该方法, methodName=', methodName)

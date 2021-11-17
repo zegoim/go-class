@@ -1,63 +1,40 @@
 <template>
-  <div class='page-login'>
-    <div class='login-content'>
-      <div class='img-section draggable-area'>
-        <img src='../assets/images/login/logo.png' alt class='logo'/>
-        <img class='login-bg' src='../assets/images/login/login-page-bg.png' alt/>
+  <div class="page-login">
+    <div class="login-content">
+      <div class="img-section draggable-area">
+        <img src="../assets/images/login/logo.png" alt class="logo" />
+        <img class="login-bg" src="../assets/images/login/login-page-bg.png" alt />
       </div>
-      <el-form
-          :model='loginForm'
-          :rules='rules'
-          :hide-required-asterisk='false'
-          ref='loginForm'
-          class='login-form'
-      >
-        <div class='login-form-container'>
+      <el-form :model="loginForm" :rules="rules" :hide-required-asterisk="false" ref="loginForm" class="login-form">
+        <div class="login-form-container">
+          <!-- 意见反馈 -->
+          <span class="zego-feedback" @click="handleRecord" title="意见反馈">
+            <img src="../assets/images/login/feedback.png" alt="意见反馈" />
+          </span>
           <div>
-            <span class='welcome'>欢迎加入</span>
-            <span class='forClass'>GO课堂</span>
+            <span class="welcome">欢迎加入</span>
+            <span class="forClass">GO课堂</span>
           </div>
-          <el-form-item prop='roomId' class='el-form-item__content roomid'>
-            <el-input
-                placeholder='请输入课堂ID'
-                v-model='loginForm.roomId'
-                class='el-input el-input-ID'
-            ></el-input>
+          <el-form-item prop="roomId" class="el-form-item__content roomid">
+            <el-input placeholder="请输入课堂ID" v-model="loginForm.roomId" class="el-input el-input-ID"></el-input>
           </el-form-item>
-          <el-form-item prop='userName' class='el-form-item__content username'>
-            <el-input
-                placeholder='请输入名称'
-                v-model='loginForm.userName'
-                class='el-input'
-            ></el-input>
+          <el-form-item prop="userName" class="el-form-item__content username">
+            <el-input placeholder="请输入名称" v-model="loginForm.userName" class="el-input"></el-input>
           </el-form-item>
           <el-form-item class="el-form-item__content login-select">
             <el-select
-                v-model="loginForm.classScene"
-                placeholder="请选择"
-                popper-class="login-select-list"
+              v-model="loginForm.classScene"
+              placeholder="请选择"
+              popper-class="login-select-list"
+              @change="setRoomType"
             >
-              <el-option
-                  v-for="item in classOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-              >
+              <el-option v-for="item in classOptions" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item class="el-form-item__content login-select">
-            <el-select
-                v-model="loginForm.role"
-                placeholder="请选择"
-                popper-class="login-select-list"
-            >
-              <el-option
-                  v-for="item in roleOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-              >
+            <el-select v-model="loginForm.role" placeholder="请选择" popper-class="login-select-list">
+              <el-option v-for="item in roleOptions" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
           </el-form-item>
@@ -66,14 +43,13 @@
 
           </el-form-item> -->
           <el-button
-              type="primary"
-              native-type="submit"
-              @click="handleJoinClassroom"
-              class="join-class"
-              :disabled="!joinBtnClickable"
-          >加入课堂
-          </el-button
-          >
+            type="primary"
+            native-type="submit"
+            @click="handleJoinClassroom"
+            class="join-class"
+            :disabled="!joinBtnClickable"
+            >加入课堂
+          </el-button>
           <!--接入环境-->
           <div class="env">
             <el-divider>接入环境</el-divider>
@@ -81,9 +57,7 @@
               <el-radio label="home" class="left">中国内地</el-radio>
               <el-radio label="overseas">海外</el-radio>
             </el-radio-group>
-            <p class="env-tip">
-              国内和海外不互通，请确保体验者均连接相同环境
-            </p>
+            <p class="env-tip">国内和海外不互通，请确保体验者均连接相同环境</p>
           </div>
         </div>
       </el-form>
@@ -92,15 +66,12 @@
 </template>
 
 <script>
-
 import zegoClient from '@/service/zego/zegoClient'
-// import Config from '@/service/zego/config'
-import {ZEGOENV} from '@/utils/constants'
-// const electronConf = new Config('electron')
-import {storage, setLoginInfo} from '@/utils/tool'
-import {postRoomHttp, setGoclassEnv} from '@/service/biz/room'
+import { storage, setLoginInfo } from '@/utils/tool'
+import { postRoomHttp } from '@/service/store/roomStore'
+import { LIVE_END } from '@/utils/constants'
 
-const {ipcRenderer} = window.require('electron')
+const { ipcRenderer } = window.require('electron')
 
 const rules = {
   roomId: [
@@ -129,7 +100,6 @@ export default {
     return {
       isSetEnv,
       showEnv: false,
-      envForm: ZEGOENV,
       loginForm: {
         roomId: '',
         userName: '',
@@ -142,6 +112,10 @@ export default {
         {
           value: 1,
           label: '小班课'
+        },
+        {
+          value: 2,
+          label: '大班课'
         }
       ],
       roleOptions: [
@@ -158,21 +132,28 @@ export default {
   },
   computed: {
     joinBtnClickable() {
-      const {roomId, userName} = this.loginForm
+      const { roomId, userName } = this.loginForm
       return roomId && userName
     }
   },
   beforeRouteEnter(to, from, next) {
     next(() => {
       if (from.name) {
-        // storage.remove('zegouid')
         // tip:重新初始化sdk
         window.location.reload()
       }
     })
   },
+  watch: {
+    loginForm: {
+      handler(newValue) {
+        setLoginInfo(newValue)
+      },
+      deep: true
+    }
+  },
   mounted() {
-    zegoClient.setState({isInit: false})
+    zegoClient.setState({ isInit: false })
     this.initParams()
   },
   methods: {
@@ -183,22 +164,24 @@ export default {
       this.loginForm.env = loginInfo.env
       this.loginForm.userName = loginInfo?.userName || ''
       this.loginForm.role = loginInfo?.role || 1
+      this.loginForm.classScene = storage.get('zego_room_type') || 1
     },
     handleJoinClassroom(e) {
       e.preventDefault()
       this.$refs.loginForm.validate(async valid => {
         if (!valid) return
         const loading = this.$loading()
-        const {roomId, userName, env, role} = this.loginForm
+        const { roomId, userName, role, classScene } = this.loginForm
         const data = setLoginInfo(this.loginForm)
         const loginParams = {
           uid: +data.userId,
           room_id: roomId,
           nick_name: userName,
-          role: role
+          role: role,
+          room_type: classScene
         }
         // 设置后台环境
-        setGoclassEnv(env)
+        // setGoclassEnv(env)
         try {
           await postRoomHttp('login_room', loginParams)
           await zegoClient.init('live', data.env, data.user)
@@ -211,16 +194,41 @@ export default {
           })
         } finally {
           localStorage.route = 'electron_mock'
+          localStorage.isStartLive = LIVE_END
           this.$nextTick(() => {
             loading.close()
           })
         }
       })
     },
-    setAllEnv() {
-      localStorage.setItem('zegoenv', JSON.stringify(this.envForm))
-      this.showEnv = false
+    setRoomType() {
+      localStorage.setItem('zego_room_type', JSON.stringify(this.loginForm.classScene))
       window.location.reload()
+    },
+    handleRecord() {
+      // 没有 log_filename、device_id
+      const domain = 'https://demo-operation.zego.im',
+        device_id = '',
+        system_version = window.navigator.userAgent,
+        app_version = '2.6.0',
+        sdk_version = 'v1.20.0_v1.20.0',
+        log_filename = '',
+        client = ''
+      let url =
+        domain +
+        '/feedback/goclass/index.html?platform=64&system_version=' +
+        system_version +
+        '&app_version=' +
+        app_version +
+        '&sdk_version=' +
+        sdk_version +
+        '&device_id=' +
+        device_id +
+        '&log_filename=' +
+        log_filename +
+        '&client=' +
+        client
+      window.open(url)
     }
   }
 }
@@ -343,6 +351,7 @@ export default {
       @include sc(18px, #585c62);
       font-weight: bold;
       text-align: left;
+      margin-left: 18px;
     }
 
     .forClass {
@@ -458,6 +467,12 @@ export default {
     top: 0;
     right: 0;
     color: transparent;
+  }
+  .zego-feedback {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    float: right;
   }
 }
 </style>

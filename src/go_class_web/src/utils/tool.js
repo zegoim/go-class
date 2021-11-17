@@ -1,28 +1,5 @@
 import { ROLE_STUDENT } from '@/utils/constants'
 
-function isElectron() {
-  // Renderer process
-  if (typeof window !== 'undefined' && typeof window.process === 'object' && window.process.type === 'renderer') {
-    return true
-  }
-
-  // Main process
-  if (typeof process !== 'undefined' && typeof process.versions === 'object' && !!process.versions.electron) {
-    return true
-  }
-
-  // Detect the user agent when the `nodeIntegration` option is set to true
-  if (
-    typeof navigator === 'object' &&
-    typeof navigator.userAgent === 'string' &&
-    navigator.userAgent.indexOf('Electron') >= 0
-  ) {
-    return true
-  }
-
-  return false
-}
-
 function getQueryValue(queryName) {
   const query = decodeURI(window.location.href)
   const vars = query.split('&')
@@ -61,8 +38,7 @@ function debounce(func, wait, immediate) {
 }
 
 const storage = class {
-  static _isEle = isElectron()
-  static _store = this._isEle ? localStorage : sessionStorage
+  static _store = localStorage
   static set(key, value) {
     this._store.setItem(key, JSON.stringify(value))
   }
@@ -82,13 +58,13 @@ const createUserId = () => {
 
 const setLoginInfo = data => {
   const uid = createUserId()
-  const { roomId, userName, env, role } = data
+  const { roomId, userName, env, role, classScene } = data
   const user = {
     userID: uid,
     userName,
     isMe: true
   }
-  const loginInfo = { roomId, userId: uid, userName, role: role || ROLE_STUDENT, env, user }
+  const loginInfo = { roomId, userId: uid, userName, role: role || ROLE_STUDENT, env, user, classScene }
   storage.set('loginInfo', loginInfo)
   return loginInfo
 }
@@ -117,12 +93,12 @@ function electron_get_cachePath() {
   return ipcRenderer?.sendSync('get-cache-path')
 }
 
-const defaultOpenVideo = isElectron()
+const defaultOpenVideo = true
 
 const firstUpperCase = ([first, ...rest]) => first.toUpperCase() + rest.join('')
 
 export {
-  isElectron,
+  defaultOpenVideo,
   getQueryValue,
   debounce,
   storage,
@@ -132,6 +108,5 @@ export {
   signToArray,
   electron_get_system,
   electron_get_cachePath,
-  defaultOpenVideo,
   firstUpperCase
 }

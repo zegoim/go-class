@@ -1,3 +1,6 @@
+<!--
+ * @Description: 成员列表组件
+-->
 <template>
   <div class="room-dialog-members">
     <el-dialog
@@ -12,7 +15,9 @@
         <ul class="member-list">
           <li class="member-item" v-for="item in userList" :key="item.uid">
             <span>{{ item.nick_name + (item.role == 1 ? '（老师）' : '') }}</span>
-            <room-controller-device v-if="role == 1 && item.role == 2" :user="item" />
+            <div v-if="classScene === 1">
+              <room-controller-device v-if="role == 1 && item.role == 2" :user="item" />
+            </div>
           </li>
         </ul>
       </div>
@@ -22,7 +27,8 @@
 
 <script>
 import RoomControllerDevice from '@/components/room/room-controller-device'
-import { roomStore } from '@/service/biz/room'
+import { roomStore } from '@/service/store/roomStore'
+import { storage } from '@/utils/tool'
 
 export default {
   name: 'RoomDialogMembers',
@@ -33,7 +39,8 @@ export default {
   data() {
     return {
       dialogVisible: true,
-      role: 0
+      role: 0,
+      classScene: storage.get('loginInfo').classScene || 1,
     }
   },
   mounted() {
@@ -75,7 +82,7 @@ export default {
     .member-item {
       @include wh(400px, 34px);
       @include sc(12px, #18191a);
-      
+
       display: flex;
       justify-content: space-between;
       line-height: 34px;

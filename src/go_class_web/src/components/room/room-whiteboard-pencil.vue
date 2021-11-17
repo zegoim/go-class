@@ -1,6 +1,26 @@
+<!--
+ * @Description: 白板工具-文字、矩形和画笔等样式设置
+-->
 <template>
   <div class="pencil-text-setting">
-    <div class="common-box pencil-box" v-if="activePopperType === 'pencil'">
+    <div class="common-box pencil-box" v-if="activePopperType === 'graph' ">
+      <div class="setting-title pencilThickness">形状选择</div>
+      <ul class="pencil-style">
+        <li
+          :class="['graph-style-item', item.type === activeToolType && 'active']"
+          v-for="item in graphList"
+          :key="item.type"
+          @click="setGraphType(item)"
+        >
+          <div
+            class="style-item"
+            v-html="require(`../../assets/icons/room/${item.imgName}.svg`).default"
+          ></div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="common-box pencil-box" v-if="activePopperType === 'pencil' || activePopperType === 'graph'">
       <div class="setting-title pencilThickness">笔触粗细</div>
       <ul class="bs-list">
         <li
@@ -46,7 +66,7 @@
     </div>
     <div class="common-box">
       <div class="setting-title">
-        {{ { text: '文本颜色', pencil: '笔触颜色' }[activePopperType] }}
+        {{ { text: '文本颜色', pencil: '笔触颜色', graph: '笔触颜色' }[activePopperType] }}
       </div>
       <ul class="color-list">
         <li
@@ -79,6 +99,23 @@ const textStyleList = [
     isClicked: false
   }
 ]
+const graphList = [
+  {
+    imgName: 'tool_square',
+    cnName: '矩形',
+    type: 8
+  },
+  {
+    imgName: 'tool_round',
+    cnName: '椭圆',
+    type: 16
+  },
+  {
+    imgName: 'tool_line',
+    cnName: '直线',
+    type: 4
+  },
+]
 const colorList = [
   '#ffffff',
   '#a4a4a4',
@@ -95,9 +132,6 @@ const colorList = [
 ]
 export default {
   name: 'RoomWhiteboardPencil',
-  props: {
-    type: String
-  },
   components: {},
   data() {
     return {
@@ -105,7 +139,8 @@ export default {
       brushSizeList: [4, 6, 8, 10],
       textSizeList: [18, 24, 36, 48],
       colorList,
-      textStyleList
+      textStyleList,
+      graphList
     }
   },
   inject: ['zegoWhiteboardArea'],
@@ -125,12 +160,15 @@ export default {
     // 当前激活颜色
     activeColor() {
       return this.zegoWhiteboardArea.activeColor
+    },
+    activeToolType(){
+      return this.zegoWhiteboardArea.activeToolType
     }
   },
-  mounted() {},
   methods: {
     // 设置画笔粗细
     setBrushSize(val) {
+      console.warn(val)
       this.zegoWhiteboardArea.setBrushSize(val)
       this.$parent.updateCanvasToolList('size', val)
     },
@@ -155,6 +193,12 @@ export default {
           this.zegoWhiteboardArea.setTextStyle(item.type, item.isClicked)
           break
       }
+    },
+    // 设置图形  
+    setGraphType(item){
+      let type = item.type
+      this.zegoWhiteboardArea.setGraphType(type)
+      this.zegoWhiteboardArea.activeWBView.setToolType(type)
     }
   }
 }
@@ -165,7 +209,7 @@ export default {
   right: 200%;
   top: 50%;
   transform: translate(0, -50%);
-  width: 238px;
+  width: 232px;
   background-color: #fff;
   display: flex;
   flex-direction: column;
@@ -245,6 +289,46 @@ export default {
         height: 12px;
         margin: 0 auto;
         padding: 2px 0;
+      }
+    }
+  }
+  .graph-style {
+    display: flex;
+    align-items: center;
+    margin: 10px 0 0 16px;
+
+    &-item {
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+      margin-right: 14px;
+      font-size: 12px;
+      &.active {
+        /deep/ {
+          .graph-stroke{
+            stroke: #0044ff;
+          }
+          .graph-fill{
+            fill: #0044ff;
+          }
+        }
+      }
+      &:hover{
+        /deep/ {
+          .graph-stroke{
+            stroke: #18191a;
+          }
+          .graph-fill{
+            fill: #18191a;
+          }
+        }
+      }
+
+      .style-item {
+        width: 18px;
+        height: 18px;
+        margin: 0 auto;
+        // padding: 2px 0;
       }
     }
   }

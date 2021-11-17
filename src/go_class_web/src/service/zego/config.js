@@ -1,59 +1,73 @@
-import {
-  signToArray,
-  createUserId,
-  electron_get_cachePath,
-  storage
-} from '@/utils/tool'
-
+import axios from 'axios'
+import { signToArray, createUserId, electron_get_cachePath, storage } from '@/utils/tool'
 const cachePath = electron_get_cachePath()
 
 /**
  * go class配置梳理:
  * 1. 构建环境分为：
- *    * 测试环境 - ZEGOENV.wb=[alpha|test]
  *    * 生产环境 - ZEGOENV.wb=
  * 2. 房间环境分为国内(home)和海外(oversea)环境；
- * 3. 当构建环境为test时，无论当前房间环境为国内还是国外, docview appID返回test配置的appID 和 fileList；
- * 4. 海外环境的docview取的是home的appid配置
+ * 3. 海外环境的docview取的是home的appid配置
  */
 
 const appIDMap = {
-  home1: +process.env.VUE_APP_ZEGO_APPID, // 国内-小班课
-  overseas1: +process.env.VUE_APP_ZEGO_APPID2, // 海外-小班课
+  1: +process.env.VUE_APP_ZEGO_APPID,
+  2: +process.env.VUE_APP_ZEGO_APPID2,
+  3: +process.env.VUE_APP_ZEGO_APPID3,
+  4: +process.env.VUE_APP_ZEGO_APPID4
 }
 
 const appSignMap = {
-  home1: process.env.VUE_APP_ZEGO_APPSIGN, // 国内-小班课
-  overseas1: process.env.VUE_APP_ZEGO_APPSIGN2, // 海外-小班课
+  1: process.env.VUE_APP_ZEGO_APPSIGN,
+  2: process.env.VUE_APP_ZEGO_APPSIGN2,
+  3: process.env.VUE_APP_ZEGO_APPSIGN3,
+  4: process.env.VUE_APP_ZEGO_APPSIGN4
 }
-
 
 class BaseConfig {
   constructor() {
-    const {
-      classScene = 1, env = 'home'
-    } = storage.get('loginInfo') || {}
-    console.log('---BaseConfig---', env, classScene)
-    this.appID = appIDMap[env + classScene]
-    this.appSign = appSignMap[env + classScene]
-    this.serverEnv = process.env.VUE_APP_WB_ENV
-    this.isTestEnv = !!process.env.VUE_APP_DOCS_ENV
+    let index = 1
+    const loginInfo = storage.get('loginInfo')
+    if (loginInfo) {
+      index = loginInfo.env === 'overseas' ? (loginInfo.classScene === 1 ? 2 : 4) : loginInfo.classScene === 1 ? 1 : 3
+    }
+    this.appID = appIDMap[index]
+    console.warn('appID', this.appID)
+    this.appSign = appSignMap[index]
     this.userID = createUserId() + ''
     this.home = this.createConfig(this.appID, '', '', this.userID, [])
     this.overseas = this.createConfig(this.appID, '', '', this.userID, [])
+    this.test = this.createConfig(this.appID, '', '', this.userID, [])
   }
+
+  // async getFileList() {
+  //   // TODO: getFileList-请求文件列表，自行实现
+  //   if (!this.home.fileList.length) {
+  //     this.home.fileList = [{
+  //       fileID: 'your fileID',
+  //       fileName: 'your fileName'
+  //     }]
+  //     this.overseas.fileList = []
+  //   }
+  // }
 
   async getFileList() {
-    // TODO: getFileList-请求文件列表，自行实现
     if (!this.home.fileList.length) {
-      this.home.fileList = [{
-        fileID: 'your fileID',
-        fileName: 'your fileName'
-      }]
-      this.overseas.fileList = []
+      const res = await axios({
+        method: 'get',
+        url: 'https://storage.zego.im/goclass/config.json',
+        dataType: 'json',
+        crossDomain: true,
+        cache: false
+      })
+      const { docs_prod } = res.data
+      this.docs_prod = docs_prod
+      // this.docs_test = docs_test
+      this.home.fileList = this.docs_prod
+      this.overseas.fileList = this.docs_prod
+      // this.test.fileList = this.docs_test
     }
   }
-
 
   createConfig(appID, server, logURL, userID, fileList) {
     return {
@@ -62,9 +76,7 @@ class BaseConfig {
       server,
       logURL,
       userID,
-      fileList,
-      isTestEnv: this.isTestEnv,
-      serverEnv: this.serverEnv
+      fileList
     }
   }
 
@@ -87,7 +99,7 @@ class ElectronConfig extends BaseConfig {
     EXPRESS: 'express'
   }
 
-  env = ['home', 'overseas']
+  env = ['home', 'overseas', 'test']
   base_electron_config = {
     LOGDIRS: {
       win32: `${cachePath}/zegodocsviewlog/`,
@@ -95,10 +107,12 @@ class ElectronConfig extends BaseConfig {
       browser: `${cachePath}/docsviewlog/`
     },
     LIVEROOM_LOGDIR: `${cachePath}/zegoLiveroomLog/`,
-    FILE_FILTERS: [{
-      name: 'All',
-      extensions: ['*']
-    }]
+    FILE_FILTERS: [
+      {
+        name: 'All',
+        extensions: ['*']
+      }
+    ]
   }
 
   constructor() {

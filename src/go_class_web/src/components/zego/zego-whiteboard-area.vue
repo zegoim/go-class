@@ -1,3 +1,6 @@
+<!--
+ * @Description: 提供白板sdk和文件转码相关实例的组件，通过provide提供该能力，如需使用相关方法的组件可通过inject注入
+-->
 <template>
   <div class="zego-whiteboard-area" v-if="!!client">
     <slot></slot>
@@ -6,7 +9,9 @@
 <script>
 import zegoClient from '@/service/zego/zegoClient'
 import ErrorHandle from '@/utils/error'
-import { roomStore } from '@/service/biz/room'
+import { roomStore } from '@/service/store/roomStore'
+import { ZEGOENV } from '@/utils/constants'
+
 let extraTask = null
 let allowSetExtra = false
 
@@ -38,7 +43,7 @@ export default {
       activeWBView: null, // 当前激活白板
       WBNameIndex: 1, // 白板索引
       fileInfo: null, // 文件白板信息
-      activeViewIsPPTH5: null, // 当前激活文件白板是否动态ppt
+      activeViewIsPPTH5: null, // 当前激活文件白板是否动态 ppt 和自定义 H5
       activeViewIsPDF: null, // 当前激活文件白板是否pdf
       activeViewIsPPT: null, // 当前激活文件白板是否静态ppt
       activeViewIsExcel: null, // 当前激活文件白板是否excel
@@ -46,7 +51,9 @@ export default {
       activeTextPencil: null, // 当前激活白板工具类型
       activePopperType: '', // 当前激活白板文件类型
       activeToolType: 1, // 当前激活白板默认选择工具类型
-      pencilTextTypes: [1, 2, 4, 8, 16], // 白板工具类型
+      pencilTextTypes: [1, 2, 4, 8, 16, 'graph'], // 白板工具类型
+      graphTypes: [4, 8, 16], // 图形类型
+      graphType: 8, // 图形类型默认选中矩形
       activeColor: '#f64326', // 默认激活颜色
       activeBrushSize: 6, // 默认粗细
       activeTextSize: 24, // 默认字体大小
@@ -88,6 +95,10 @@ export default {
     }
   },
   watch: {
+    /**
+     * @desc: 监听房间状态
+     * @param {房间状态：DISCONNECTED-sdk重连失败，CONNECTING-sdk检测到网络断开，CONNECTED-连接成功} state
+     */
     roomState(state) {
       switch (state) {
         case 'CONNECTED':
@@ -174,12 +185,14 @@ export default {
       }
     },
     /**
-     * @desc: 初始化相关client
+     * @desc: 初始化相关client-sdk
      */
     async initClient() {
       this.client = await zegoClient.init('whiteboard')
       this.docsClient = await zegoClient.init('docs')
       this.liveClient = await zegoClient.init('live')
+      this.docsClient.setConfig('disableH5ImageDrag', 'true')
+      this.docsClient.setConfig('pptStepMode', ZEGOENV.pptStepMode)
     },
     /**
      * @desc: 初始化白板区域相关回调
@@ -191,6 +204,14 @@ export default {
        */
       this.client.on('error', errorData => {
         console.warn('error', errorData)
+        switch (errorData.code) {
+          case 3030005:
+            this.showToast('操作失败，当前图元大小超过限制')
+            break
+
+          default:
+            break
+        }
       })
       /**
        * @desc: 监听远端创建白板view，返回远端创建的白板view实例
@@ -211,7 +232,7 @@ export default {
       })
       /**
        * @desc: 监听远端滚动、翻页白板view
-       * @return {id, page, step } 返回白板ID，翻页模式时当前页码，动态PPT当前动画步数
+       * @return {返回白板ID，翻页模式时当前页码，动态PPT当前动画步数} id, page, step
        * 更多参数请见官网2.4滚动白板view部分 https://doc-zh.zego.im/zh/4327.html
        */
       this.client.on('viewScroll', ({ id, page, step }) => {
@@ -220,7 +241,7 @@ export default {
       })
       /**
        * @desc: 监听加载文档
-       * @return {res} 文档相关信息
+       * @return {文档相关信息} res
        */
       this.docsClient.on('onLoadFile', async res => {
         console.log('docsClient.onLoadFile---', { res })
@@ -232,6 +253,14 @@ export default {
         }
       })
       /**
+       * @desc: 动态PPT步数改变的回调
+       * @return {返回参数} res
+       * 更多参数详情 https://doc-zh.zego.im/zh/api?doc=DocsView_API~Javascript~interface~ZegoDocsViewStepChangeModel
+       */
+      this.docsClient.on('onStepChange', res => {
+        console.log('======onStepChange', res.page, res.step, res.notify)
+      })
+      /**
        * @desc: 断线重连相关处理，重新更新白板列表和激活白板
        */
       window.addEventListener('online', () => {
@@ -239,10 +268,27 @@ export default {
         // this.activeWBView.serviceHandle.reload()
         // window.location.reload()
       })
+      /**
+       * @desc: 监听键盘按键事件
+       */
+      window.addEventListener('keydown', event => {
+        var e = event || window.event //  || arguments.callee.caller.arguments[0]
+        if (!e) return
+        switch (e.keyCode) {
+          case 8: // 监听backspace按键，批量删除选中图元
+            this.deleteSelectedGraphics()
+            break
+          case 46: // 监听Delete按键，批量删除选中图元
+            this.deleteSelectedGraphics()
+            break
+          default:
+            break
+        }
+      })
     },
     /**
      * @desc: 向本地白板列表添加白板
-     * @param {view} 白板
+     * @param {白板} view
      */
     addView(view) {
       this.originWBViewList.unshift(view)
@@ -250,7 +296,7 @@ export default {
     },
     /**
      * @desc: 本地白板列表删除白板
-     * @param {viewID} 需删除的白板id
+     * @param {需删除的白板id} viewID
      */
     removeView(viewID) {
       // 如果要删除的白板当前是激活状态，关闭缩略图
@@ -270,7 +316,7 @@ export default {
     },
     /**
      * @desc: 获取房间内全部白板列表
-     * @param isPullNew { boolean }
+     * @param {是否从服务器拉去新的列表} isPullNew
      */
     async getViewList(isPullNew = true) {
       let viewList = []
@@ -278,6 +324,7 @@ export default {
       if (isPullNew) {
         console.warn('getViewList', { isPullNew })
         viewList = await this.client.getViewList()
+        console.warn('getViewList', { viewList })
         this.originWBViewList = viewList
       } else {
         viewList = this.originWBViewList
@@ -311,8 +358,8 @@ export default {
 
     /**
      * @desc:白板列表里默认展示第一个sheet
-     * @param {fileID} 文件id
-     * @return {lastMatched} 匹配得到的第一个文件
+     * @param {文件id} fileID
+     * @return {匹配得到的第一个文件} lastMatched
      */
     getLastMatchedViewByFileID(fileID) {
       let lastMatched
@@ -327,7 +374,7 @@ export default {
 
     /**
      * @desc: 给每一个view对象添加name属性
-     * @param {view} 白板实例
+     * @param {白板实例} view
      */
     addAttrToView(view) {
       return Object.assign(view, {
@@ -337,7 +384,7 @@ export default {
 
     /**
      * @desc: 获取该view实例的name
-     * @param {view} 白板实例
+     * @param {白板实例} view
      */
     getViewName(view) {
       return view.getName()
@@ -345,7 +392,7 @@ export default {
 
     /**
      * @desc: 更新当前页码，起始是1
-     * @param {page} 需要更新页码
+     * @param {需要更新页码} page
      */
     updateCurrPage(page) {
       this.currPage = page || this.activeWBView?.getCurrentPage() || 1
@@ -353,7 +400,7 @@ export default {
 
     /**
      * @desc: 设置是否发送房间附加信息，本演示项目中房间附加信息一般用来通知对端文件或白板的更新，默认1001
-     * @param {val} 是否发送
+     * @param {是否发送} val
      */
     setIsAllowSendRoomExtraInfo(val) {
       this.isAllowSendRoomExtraInfo = val
@@ -419,7 +466,7 @@ export default {
 
     /**
      * @desc: 本演示项目普通白板最多只能创建10个，文件只能创建10个
-     * @param {type} 需检查的类型 view-普通白板 file-文件
+     * @param {需检查的类型 view-普通白板 file-文件} type
      */
     checkViewFileMaxLength(type = 'view') {
       const viewList = []
@@ -443,12 +490,11 @@ export default {
 
     /**
      * @desc: 更新当前激活白板相关参数
-     * @param {activeWBView} 当前激活白板
+     * @param {当前激活白板} activeWBView
      */
     async updateActiveView(activeWBView) {
       this.$set(this, 'activeWBId', activeWBView.whiteboardID)
       this.$set(this, 'activeWBView', activeWBView)
-
       // 每次切换文件/白板 关闭缩略图
       this.isThumbnailsVisible = false
       // 获取文件相关参数
@@ -479,7 +525,10 @@ export default {
       await this.notifyAllViewChanged()
     },
 
-    // 收到1001可靠消息时，可能白板列表还未更新，所以白板列表中找不到激活的id时，用定时器不断进行尝试
+    /**
+     * @desc: 收到1001可靠消息时，可能白板列表还未更新，所以白板列表中找不到激活的id时，用定时器不断进行尝试
+     * @param {白板id} id
+     */
     async checkRemoteView(id) {
       if (this.originWBViewList.find(item => item.whiteboardID === id)) {
         this.selectRemoteView(id, true)
@@ -497,9 +546,9 @@ export default {
 
     /**
      * @desc: 从服务器获取白板
-     * @param {id} 目标文件id
+     * @param {目标id} id
      */
-    async selectRemoteView(id, setSheetID = false) {
+    selectRemoteView(id, setSheetID = false) {
       if (this.isCreating || !id) return
       console.warn('selectRemoteView', { originWBViewList: this.originWBViewList })
       const view = this.originWBViewList.find(v => id == v.whiteboardID)
@@ -510,9 +559,11 @@ export default {
       console.warn('selectRemoteView', view)
       this.$set(this, 'activeWBView', view)
       this.$set(this, 'activeWBId', view.whiteboardID)
+      // 通过普通白板关联的文件信息加载文件
       const fileInfo = this.activeWBView && this.activeWBView.getFileInfo()
       this.$nextTick(() => {
         if (fileInfo) {
+          // Excel文件
           if (fileInfo.fileType === 4) {
             this.isCreating = id
           }
@@ -520,6 +571,7 @@ export default {
         } else {
           this.loadNormalWhiteboard()
         }
+        this.updateActiveView(this.activeWBView)
         // const page = view.getCurrentPage()
         // console.warn('selectRemoteView page', page)
         // this.updateCurrPage(page)
@@ -528,9 +580,11 @@ export default {
 
     /**x
      * @desc: 加载文件
-     * @param {id} 文件id
-     * @param {fileInfo} 文件信息
-     * @param {setSheetID} 是否设置sheet id
+     * @param {文件id} id
+     * @param {文件信息} fileInfo
+     * @param {是否设置sheet id} setSheetID
+     * 文件白板实质上就是一层文件view上面叠加一层透明的普通白板结合，
+     * 加载文件白板就是先根据普通白板id去加载该白板再根据关联的文件信息进行创建和加载对应的文件
      */
     async loadFileView(id, fileInfo, setSheetID = false) {
       const isExcelFile = fileInfo.fileType === 4
@@ -543,11 +597,13 @@ export default {
         }
       }
       this.isRemote = true
-      // 创建文件
+      // 创建和加载文件
       const zgDocsView = this.docsClient.createView(this.parentId, id, fileInfo.fileName)
       this.$set(this, 'zgDocsView', zgDocsView)
       try {
         const res = await zgDocsView.loadFile(fileInfo.fileID, fileInfo.authKey)
+        this.zgDocsView = zgDocsView
+        this.testPPT(fileInfo.fileID)
         this.$nextTick(() => {
           this.splitExcelSheetSuffixHandle(res)
           this.updateExcelSheetNamesIdMap(res, fileInfo.fileID)
@@ -559,20 +615,41 @@ export default {
       this.isCreating = false
     },
 
+    /**
+     * @desc: 加载普通白板
+     */
     async loadNormalWhiteboard() {
       this.isCreating = false
       await this.client.attachView(this.activeWBView, this.parentId)
       this.zgDocsView = null
-      await this.updateActiveView(this.activeWBView)
+      // await this.updateActiveView(this.activeWBView)
+    },
+
+    testPPT(fileID) {
+      const files = [
+        '81XpTUhfhUAfjmgV',
+        'xaPB31CucBgvb_5I',
+        'B9woySjyMIDvJ8yz',
+        'MzmXyyPuU2OunOU8',
+        'WD7d2diBgFrQwi0P',
+        'i48rKR3HKnhbe6nu'
+      ]
+      if (files.includes(fileID)) {
+        this.zgDocsView.addDOMEventListener('click', () => {
+          this.zgDocsView.previousStep()
+        })
+        this.zgDocsView.addDOMEventListener('mouseup', e => {
+          e.button == 2 && this.zgDocsView.nextStep()
+        })
+        console.log('testPPT', fileID)
+      }
     },
 
     /**
      * @desc: 创建文件
-     * @param fileID {number | string} 文件id
-     * @param fileName {string} 文件名
-     * @return type {any}
+     * @param {文件id} fileID
+     * @param {文件名} fileName
      */
-    // eslint-disable-next-line no-unused-vars
     async createFileView(fileID, fileName) {
       if (this.activeViewIsPPTH5) this.stopPlay()
       const originWBViewList = this.originWBViewList
@@ -596,6 +673,7 @@ export default {
         // 获得当前打开Excel每个sheet的名字
         this.updateExcelSheetNamesIdMap(res, fileID)
         this.zgDocsView = zgDocsView
+        this.testPPT(fileID)
       } catch (e) {
         console.error(e)
         this.showToast(`${(e && e.message) || '网络错误'}，请刷新页面后重试`)
@@ -604,7 +682,7 @@ export default {
 
     /**
      * @desc: 在创建了文件执行完loadFile之后会触发回调，需在回调中配合创建文件白板
-     * @param {res} 创建文件之后得到的相关文件参数
+     * @param {创建文件之后得到的相关文件参数} res
      */
     async createFileWBView(res) {
       if (this.activeViewIsPPTH5) this.stopPlay()
@@ -620,11 +698,12 @@ export default {
       // 创建普通文件白板
       if (!this.isRemote) {
         try {
+          console.warn('创建文件白板回调返回参数：', res)
           activeWBView = await this.client.createView({
             roomID: this.roomID,
             name: res.fileName || `file-${res.fileID}`,
-            aspectWidth: this.aspectWidth,
-            aspectHeight: this.aspectHeight,
+            aspectWidth: res.width,
+            aspectHeight: res.height,
             pageCount: res.pageCount,
             fileInfo: {
               fileID: res.fileID,
@@ -662,7 +741,7 @@ export default {
 
     /**
      * @desc: 给每一个sheet创建对应的普通白板
-     * @param {res} 创建文件回调返回的相关参数
+     * @param {创建文件回调返回的相关参数} res
      */
     async createExcelSheetView(res) {
       const { sheets } = res
@@ -726,18 +805,18 @@ export default {
 
     /**
      * @desc: 获得新的Excel每个sheet的名字
-     * @param {res} 创建文件之后返回的相关文件参数
-     * @return {fileID} 文件id
+     * @param {创建文件之后返回的相关文件参数} res
+     * @return {文件id} fileID
      */
     updateExcelSheetNamesIdMap(res, fileID) {
       if (res.fileType === 4 && !this.excelSheetNamesIdMap[fileID]) {
-        this.excelSheetNamesIdMap[fileID] = res.file_list.map(file => file.file_name)
+        this.excelSheetNamesIdMap[fileID] = res.sheets;
       }
     },
 
     /**
      * @desc: 销毁白板
-     * @param {whiteboardView} 需要销毁的白板对象
+     * @param {需要销毁的白板对象} whiteboardView
      */
     async destroyView(whiteboardView) {
       const fileInfo = whiteboardView.getFileInfo() || {}
@@ -810,47 +889,97 @@ export default {
       this.setTextSize(this.activeTextSize)
     },
 
+    /**
+     * @desc: 重置当前激活文字类型的笔变量
+     */
     resetActiveTextPencil() {
       this.activeTextPencil = ''
     },
+    /**
+     * @desc: 设置工具类型变量
+     * @param {工具类型} type
+     */
     setActiveToolType(type) {
       this.activeToolType = type
     },
+    /**
+     * @desc: 删除选中图元
+     */
+    deleteSelectedGraphics() {
+      this.activeWBView.deleteSelectedGraphics()
+    },
+
+    /**
+     * @desc: 设置文本类型笔变量
+     * @param {*} type
+     */
     setActiveTextPencil(type) {
       this.activeTextPencil = type
     },
+    /**
+     * @desc: 设置当前文件类型
+     * @param {*} type
+     */
     setActivePopperType(type) {
       this.activePopperType = type
     },
+    /**
+     * @desc: 设置画笔颜色变量
+     * @param {颜色} val
+     */
     setActiveColor(val) {
       this.activeColor = val
     },
+    /**
+     * @desc: 设置画笔粗细值变量
+     * @param {画笔粗细，取值1~100} val
+     */
     setActiveBrushSize(val) {
       this.activeBrushSize = val
     },
+    /**
+     * @desc: 设置文本大小变量
+     * @param {文本大小，取值12~100} val
+     */
     setActiveTextSize(val) {
       this.activeTextSize = val
     },
-    // 设置背景颜色
+    /**
+     * @desc: 设置白板背景色
+     * @param {val支持16进制、rgba，参数类型：string} val
+     */
     setBackgroundColor(val) {
       this.activeWBView && this.activeWBView.setBackgroundColor(val)
     },
-    // 设置画笔颜色
+    /**
+     * @desc: 设置画笔颜色
+     * @param {val支持16进制、rgba，参数类型：string} val
+     */
     setBrushColor(val) {
       this.activeWBView && this.activeWBView.setBrushColor(val)
       this.activeColor = val
     },
-    // 设置画笔粗细
+    /**
+     * @desc: 设置画笔粗细
+     * @param {画笔粗细，取值1~100，参数类型：number} val
+     */
     setBrushSize(val) {
       this.activeWBView && this.activeWBView.setBrushSize(val)
       this.activeBrushSize = val
     },
-    // 设置文本大小
+    /**
+     * @desc: 设置文本大小
+     * @param {文本大小，取值12~100，参数类型：number} val
+     */
     setTextSize(val) {
       this.activeWBView && this.activeWBView.setTextSize(val)
       this.activeTextSize = val
     },
-    // 设置字体
+    /**
+     * @desc: 设置字体样式-粗体，斜体
+     * @param {设置样式类型：1粗体，2斜体，参数类型：string} type
+     * @param {设置样式状态，参数类型：boolean} state
+     */
     setTextStyle(type, state) {
       switch (type) {
         case 'bold':
@@ -863,7 +992,11 @@ export default {
       this.activeTextStyle = type
     },
 
-    // 设置白板缩放
+    /**
+     * @desc: 设置白板缩放
+     * @param {缩放倍数，不小于1，参数类型：number} zoom
+     * @return {*}
+     */
     selectViewZoom(zoom) {
       this.zoom = zoom
       const _zoom = +zoom / 100
@@ -879,19 +1012,30 @@ export default {
       this.zoom = num * 100
     },
 
-    // 动态ppt 上/下一步
+    /**
+     * @desc: 上一步
+     * 注意：仅针对动态PPT ZegoDocsViewFileTypeDynamicPPTH5 类型操作
+     */
     previousStep() {
       this.zgDocsView && this.zgDocsView.previousStep()
     },
+    /**
+     * @desc: 下一步
+     * 注意：仅针对动态PPT ZegoDocsViewFileTypeDynamicPPTH5 类型操作
+     */
     nextStep() {
       this.zgDocsView && this.zgDocsView.nextStep()
     },
 
     /**
      * @desc: 翻页
-     * @param {page} 当前页码
+     * @param {page} 希望滚动到的页码
+     * 注意：
+     *  Q:为什么白板不支持页的概念？
+     *  A:滚动比例更加灵活，可以适应各种场景，方便和文件联动。
      */
     flipPage(page) {
+      window.activeWBView = this.activeWBView
       if (!this.activeWBView || page < 1 || page > this.totalPage) return
       const percent = (page - 1) / this.totalPage
       const { direction } = this.activeWBView.getCurrentScrollPercent()
@@ -916,14 +1060,15 @@ export default {
 
     /**
      * @desc: 开关缩略图
-     * @param {val} 状态
+     * @param {val，参数类型:boolean} 状态
      */
     setThumbnailsVisible(val) {
       this.isThumbnailsVisible = val
     },
 
     /**
-     * @desc: 获取缩略图
+     * @desc: 获取当前文件缩略图列表，仅支持PDF，PPT，动态PPT 文件格式，可在文件加载成功后调用
+     * @retrn {文件缩略图URL数组}
      */
     getThumbnailUrlList() {
       if (this.zgDocsView) {
@@ -951,7 +1096,7 @@ export default {
 
     /**
      * @desc: 断开重连后更新白板列表和激活白板
-     * @param {isPullNew} 是否从服务器拉取新的数据
+     * @param {是否从服务器拉取新的数据}isPullNew
      */
     async reUpdateWBList(isPullNew = true) {
       console.warn('进入 reUpdateWBList')
@@ -979,7 +1124,6 @@ export default {
       const isExcelFile = fileInfo.fileType === 4
       this.isRemote = true
       const zgDocsView = this.docsClient.createView(this.parentId, id, isExcelFile ? fileInfo.fileName : '')
-      console.warn({ zgDocsView, docsClient: this.docsClient })
       try {
         const res = await zgDocsView.loadFile(fileInfo.fileID, fileInfo.authKey)
         this.splitExcelSheetSuffixHandle(res)
@@ -998,6 +1142,14 @@ export default {
      */
     stopPlay(num = 0) {
       this.zgDocsView && this.zgDocsView.stopPlay(num)
+    },
+
+    /**
+     * @desc: 修改矩形类型变量
+     * @param {类型} type
+     */
+    setGraphType(type) {
+      this.graphType = type
     }
   }
 }

@@ -1,115 +1,158 @@
+<!--
+ * @Description: 顶部工具栏（白板相关控制操作）
+-->
 <template>
   <div class="top-bar draggable-area">
-    <div v-if="noList" class="no-canvas-bar">课堂ID: {{ roomID }}</div>
+    <div v-if="noList" :class="['no-canvas-bar', classScene === 2 && role === 2 ? 'large-class' : '']">
+      课堂ID: {{ roomID }}
+    </div>
     <div v-else class="room-controller-whiteboard">
       <div class="whiteboard-bar-classid">
         <span>课堂ID：{{ roomID }}</span>
       </div>
-      <el-select
-        v-if="roomAuth.share"
-        :value="activeSelfWBID"
-        placeholder="请选择"
-        popper-class="whiteboard-name-select-list"
-        @change="handleWBSelect"
-      >
-        <el-option
-          v-for="item in computedViewList"
-          :key="item.selfWBID"
-          :value="item.selfWBID"
-          :label="item.name"
-          @click.native="wbItemClick"
-        >
-          <div class="wb-name-label">{{ item.name }}</div>
-          <div
-            class="delete-btn"
-            @click.stop="handleWBDelete(item)"
-            v-html="require('../../assets/icons/room/but_del.svg').default"
-          ></div>
-        </el-option>
-      </el-select>
-      <div v-if="roomAuth.share && activeViewIsExcel" class="excel-sheets">
+      <div class="controller" v-if="role === 1 || classScene !== 2">
         <el-select
-          :value="activeWBId"
+          v-if="roomAuth.share"
+          :value="activeSelfWBID"
           placeholder="请选择"
           popper-class="whiteboard-name-select-list"
-          @change="handleExcelSheetSelect"
+          @change="handleWBSelect"
         >
           <el-option
-            v-for="item in computedExcelSheets"
-            :key="item.whiteboardID"
-            :value="item.whiteboardID"
-            :label="item.fileName"
+            v-for="item in computedViewList"
+            :key="item.selfWBID"
+            :value="item.selfWBID"
+            :label="item.name"
+            @click.native="wbItemClick"
           >
-            <div class="label">{{ item.fileName }}</div>
+            <div class="wb-name-label">{{ item.name }}</div>
+            <div
+              class="delete-btn"
+              @click.stop="handleWBDelete(item)"
+              v-html="require('../../assets/icons/room/but_del.svg').default"
+            ></div>
           </el-option>
         </el-select>
-      </div>
-      <!-- 分页 -->
-      <div v-if="roomAuth.share && !activeViewIsExcel" class="page-bar">
-        <div
-          @click="handlePageChange_(-1)"
-          :class="['page-bar-arrow', 'arrow-prev']"
-          v-html="require('../../assets/icons/room/arrow_left.svg').default"
-        ></div>
-        <div class="pagebar-center">{{ `${currPage} / ${totalPage}` }}</div>
-        <div
-          @click="handlePageChange_(1)"
-          :class="['page-bar-arrow', 'arrow-next', currPage === totalPage && 'disabled']"
-          v-html="require('../../assets/icons/room/arrow_right.svg').default"
-        >
-          next
-        </div>
-      </div>
-      <!-- 缩放 -->
-      <div class="zoom-bar" v-if="computedViewList && computedViewList.length > 0">
-        <div
-          @click="handleZoomChange_(-1)"
-          :class="[
-            'zoom-bar-operation',
-            'zoom-add',
-            zoomIndex === 0 && 'disabled',
-            activeToolType === 256 && activeViewIsPPTH5 && 'disabled'
-          ]"
-          v-html="require('../../assets/icons/room/top_down.svg').default"
-        ></div>
-        <div class="zoombar-center">
+        <div v-if="roomAuth.share && activeViewIsExcel" class="excel-sheets">
           <el-select
-            v-model="zoom"
+            :value="activeWBId"
             placeholder="请选择"
-            popper-class="whiteboard-zoom-select-list"
-            :disabled="activeViewIsPPTH5 && activeToolType === 256"
-            @change="handleWBZoom"
+            popper-class="whiteboard-name-select-list"
+            @change="handleExcelSheetSelect"
           >
-            <el-option v-for="item in zoomList" :key="item" :value="item" :label="item + '%'"></el-option>
+            <el-option
+              v-for="item in computedExcelSheets"
+              :key="item.whiteboardID"
+              :value="item.whiteboardID"
+              :label="item.fileName"
+            >
+              <div class="label">{{ item.fileName }}</div>
+            </el-option>
           </el-select>
         </div>
+        <!-- 分页 -->
+        <div v-if="roomAuth.share && !activeViewIsExcel" class="page-bar">
+          <div
+            @click="handlePageChange_(-1)"
+            :class="['page-bar-arrow', 'arrow-prev']"
+            v-html="require('../../assets/icons/room/arrow_left.svg').default"
+          ></div>
+          <div class="pagebar-center">{{ `${currPage} / ${totalPage}` }}</div>
+          <div
+            @click="handlePageChange_(1)"
+            :class="['page-bar-arrow', 'arrow-next', currPage === totalPage && 'disabled']"
+            v-html="require('../../assets/icons/room/arrow_right.svg').default"
+          >
+            next
+          </div>
+        </div>
+        <!-- 缩放 -->
+        <div class="zoom-bar" v-if="computedViewList && computedViewList.length > 0">
+          <div
+            @click="handleZoomChange_(-1)"
+            :class="[
+              'zoom-bar-operation',
+              'zoom-add',
+              zoomIndex === 0 && 'disabled',
+              activeToolType === 256 && activeViewIsPPTH5 && 'disabled'
+            ]"
+            v-html="require('../../assets/icons/room/top_down.svg').default"
+          ></div>
+          <div class="zoombar-center">
+            <el-select
+              v-model="zoom"
+              placeholder="请选择"
+              popper-class="whiteboard-zoom-select-list"
+              :disabled="activeViewIsPPTH5 && activeToolType === 256"
+              @change="handleWBZoom"
+            >
+              <el-option v-for="item in zoomList" :key="item" :value="item" :label="item + '%'"></el-option>
+            </el-select>
+          </div>
+          <div
+            @click="handleZoomChange_(1)"
+            :class="[
+              'zoom-bar-operation',
+              'zoom-cut',
+              zoomIndex === zoomList.length - 1 && 'disabled',
+              activeToolType === 256 && activeViewIsPPTH5 && 'disabled'
+            ]"
+            v-html="require('../../assets/icons/room/top_add.svg').default"
+          ></div>
+        </div>
+        <!-- 略缩图 -->
         <div
-          @click="handleZoomChange_(1)"
-          :class="[
-            'zoom-bar-operation',
-            'zoom-cut',
-            zoomIndex === zoomList.length - 1 && 'disabled',
-            activeToolType === 256 && activeViewIsPPTH5 && 'disabled'
-          ]"
-          v-html="require('../../assets/icons/room/top_add.svg').default"
-        ></div>
+          v-if="roomAuth.share && (activeViewIsPDF || activeViewIsPPTH5 || activeViewIsPPT)"
+          @click="handleThumbnailsShow(thumbnailsVisible)"
+          :class="['thumb-button', thumbnailsVisible && 'active']"
+        >
+          <span class="button-icon" v-html="require('../../assets/icons/room/preview.svg').default"></span>
+          <span>预览</span>
+        </div>
       </div>
-      <!-- 略缩图 -->
-      <div
-        v-if="roomAuth.share && (activeViewIsPDF || activeViewIsPPTH5 || activeViewIsPPT)"
-        @click="handleThumbnailsShow(thumbnailsVisible)"
-        :class="['thumb-button', thumbnailsVisible && 'active']"
-      >
-        <span class="button-icon" v-html="require('../../assets/icons/room/preview.svg').default"></span>
-        <span>预览</span>
+      <div class="controller" v-else-if="role === 2 && classScene === 2">
+        <!-- 缩放 -->
+        <div class="zoom-bar" v-if="computedViewList && computedViewList.length > 0">
+          <div
+            @click="handleZoomChange_(-1)"
+            :class="[
+              'zoom-bar-operation',
+              'zoom-add',
+              zoomIndex === 0 && 'disabled',
+              activeToolType === 256 && activeViewIsPPTH5 && 'disabled'
+            ]"
+            v-html="require('../../assets/icons/room/top_down.svg').default"
+          ></div>
+          <div class="zoombar-center">
+            <el-select
+              v-model="zoom"
+              placeholder="请选择"
+              popper-class="whiteboard-zoom-select-list"
+              :disabled="activeViewIsPPTH5 && activeToolType === 256"
+              @change="handleWBZoom"
+            >
+              <el-option v-for="item in zoomList" :key="item" :value="item" :label="item + '%'"></el-option>
+            </el-select>
+          </div>
+          <div
+            @click="handleZoomChange_(1)"
+            :class="[
+              'zoom-bar-operation',
+              'zoom-cut',
+              zoomIndex === zoomList.length - 1 && 'disabled',
+              activeToolType === 256 && activeViewIsPPTH5 && 'disabled'
+            ]"
+            v-html="require('../../assets/icons/room/top_add.svg').default"
+          ></div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { debounce } from '@/utils/tool'
-import { roomStore } from '@/service/biz/room'
+import { debounce, storage } from '@/utils/tool'
+import { roomStore } from '@/service/store/roomStore'
 
 const zoomList = [100, 125, 150, 175, 200, 225, 250, 275, 300]
 export default {
@@ -121,7 +164,9 @@ export default {
       zoomIndex: 0, // 缩放默认第一个
       selectExcelId: null, //Excelid
       roomAuth: roomStore.auth, // 权限
-      noList: false // 是否列表为空，默认false
+      noList: false, // 是否列表为空，默认false
+      classScene: storage.get('loginInfo').classScene || 1, // 当前课堂场景
+      role: storage.get('loginInfo').role || 1 // 当前用户角色
     }
   },
   inject: ['zegoLiveRoom', 'zegoWhiteboardArea'],
@@ -136,7 +181,12 @@ export default {
      * @desc: 当前激活是否Excel
      */
     activeViewIsExcel() {
-      return this.zegoWhiteboardArea.activeViewIsExcel
+      if (this.zegoWhiteboardArea.activeWBView) {
+        const fileInfo = this.zegoWhiteboardArea.activeWBView.getFileInfo()
+        return fileInfo ? fileInfo.fileType === 4 : false
+      } else {
+        return false
+      }
     },
     /**
      * @desc: 当前激活是否PDF
@@ -188,7 +238,7 @@ export default {
         this.zegoWhiteboardArea.originWBViewList.find(
           item => item.whiteboardID === this.zegoWhiteboardArea.activeWBId
         ) || {}
-      const fileInfo = (activeItem.getFileInfo && activeItem.getFileInfo()) || {}
+      const fileInfo = (typeof activeItem.getFileInfo !== 'undefined' && activeItem.getFileInfo()) || {}
       return fileInfo.fileID || activeItem.whiteboardID
     },
     /**
@@ -256,14 +306,15 @@ export default {
     }
   },
   mounted() {
-    this.handlePageChange_ = debounce(this.handlePageChange, 800, true)
+    this.handlePageChange_ = debounce(this.handlePageChange, 500, true)
+    this.handleZoomChange_ = debounce(this.handleZoomChange, 500, true)
   },
   methods: {
     /**
      * @desc: 选择白板
      * @param {id} 目标id
      */
-    handleWBSelect(id) {
+    async handleWBSelect(id) {
       // 如果切换文件白板是动态ppt，需手动停止该文件音视频
       if (this.activeViewIsPPTH5) this.zegoWhiteboardArea.stopPlay()
       // 切换文件/白板需通过房间附加信息通知对端
@@ -272,6 +323,7 @@ export default {
       console.warn('handleWBSelect', activeItem.whiteboardID)
       this.zegoWhiteboardArea.selectRemoteView(activeItem.whiteboardID)
       this.zegoWhiteboardArea.notifyAllViewChanged()
+      this.zegoWhiteboardArea.updateActiveView(activeItem)
     },
     /**
      * @desc: 删除白板
@@ -347,17 +399,13 @@ export default {
       this.zoomIndex = this.zoomList.findIndex(i => i === this.zoom)
     },
 
-    handleZoomChange_(type) {
-      console.warn(this.activeViewIsPPTH5, this.activeToolType)
-      if (this.activeToolType === 256 && this.activeViewIsPPTH5) return
-      debounce(this.handleZoomChange(type), 500, true)
-    },
-
     /**
      * @desc: 缩放设置
      * @param {type} 放大/缩小
      */
     handleZoomChange(type) {
+      console.warn(this.activeViewIsPPTH5, this.activeToolType)
+      if (this.activeToolType === 256 && this.activeViewIsPPTH5) return
       let zoom
       if (type === 1 && this.zoomIndex <= this.zoomList.length - 1) {
         this.zoomIndex === this.zoomList.length - 1 ? (this.zoomIndex = this.zoomList.length - 1) : this.zoomIndex++
@@ -407,7 +455,12 @@ export default {
     @include wh(100%, 100%);
     @include sc(12px, #585c62);
     @include textCenter(40px);
-    background-color: #f4f5f8;
+    // background-color: #f4f5f8;
+    &.large-class {
+      text-align: left;
+      margin-left: 7%;
+      background-color: #fff;
+    }
   }
 
   .el-select,
@@ -419,6 +472,14 @@ export default {
 }
 
 .room-controller-whiteboard {
+  .controller {
+    @include flex-center();
+    width: 100%;
+    flex-shrink: 0;
+    position: relative;
+    height: 40px;
+    margin: 0;
+  }
   @include flex-center();
   width: 100%;
   flex-shrink: 0;

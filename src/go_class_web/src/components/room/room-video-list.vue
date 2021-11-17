@@ -1,14 +1,21 @@
+<!--
+ * @Description: 右侧坐席区组件
+-->
 <template>
   <div class="room-video-list">
     <ul class="video-preview-list">
       <room-video-item :stream="teacherStream" />
-      <room-video-item v-for="stream in stuStreamList" :key="stream.streamID" :stream="stream" />
+      <div v-if="classScene !==2 ">
+        <room-video-item v-for="stream in stuStreamList" :key="stream.streamID" :stream="stream" />
+      </div>
     </ul>
   </div>
 </template>
 
 <script>
+import { storage } from '@/utils/tool'
 import RoomVideoItem from './room-video-item'
+import { roomStore } from '@/service/store/roomStore'
 import {ROLE_TEACHER, STATE_OPEN} from '@/utils/constants'
 // 老师默认占一个麦位，创建一条默认无数据流
 const emptyTeacherStream = { streamID: '', user: { role: ROLE_TEACHER } }
@@ -19,65 +26,38 @@ export default {
   },
   data() {
     return {
-      memberList    : [],                    // 连麦成员列表
       teacherStream : emptyTeacherStream,    // 老师流
-      stuStreamList : []                     // 学生流列表
+      stuStreamList : [],                     // 学生流列表
+      classScene: storage.get('loginInfo').classScene  || 1
     }
   },
   inject: ['zegoLiveRoom'],
   computed: {
-    streamList() {
+    streamList() { // 流列表
       return this.zegoLiveRoom.streamList
+    },
+    memberList () { // 连麦成员列表
+      return roomStore.joinLiveList
     }
   },
   watch: {
-    streamList: function(newList) {
+    streamList: function(newList) { // 监听流变化
       const memberList = this.memberList.slice()
       newList = newList.slice()
       this.makeTeacherStream(newList, memberList)
       this.makeStuStreamList(newList, memberList)
     },
-    memberList: function(newList) {
+    memberList: function(newList) { // 监听成员状态变化
       const streamList = this.streamList.slice()
       this.makeTeacherStream(streamList, newList)
       this.makeStuStreamList(streamList, newList)
     }
   },
-  mounted() {
-    this.$bus.$on('roomJoinLivesChange', this.onRoomJoinLivesChange)
-    this.$bus.$on('userStateChange', this.onUserStateChange)
-  },
-  destroyed() {
-    this.$bus.$off('roomJoinLivesChange', this.onRoomJoinLivesChange)
-    this.$bus.$off('userStateChange', this.onUserStateChange)
-  },
   methods: {
     /**
-     * @desc 房间连麦成员列表变化监听
-     */
-    onRoomJoinLivesChange(res) {
-      this.$set(this, 'memberList', res)
-    },
-    /**
-     * @desc 成员 摄像头/麦克风/共享权限 状态变化监听
-     */
-    onUserStateChange(users, local) {
-      console.warn('onUserStateChange list', { users, local })
-      if (local) {
-        this.memberList.forEach(v => {
-          Object.assign(v, users[v.uid])
-          v.isVideoOpen = users[v.uid]?.camera === STATE_OPEN
-          v.isAudioOpen = users[v.uid]?.mic === STATE_OPEN
-        })
-        this.memberList = [...this.memberList]
-        console.log('this.memberList', this.memberList)
-      }
-    },
-
-    /**
      * @desc  获取老师流
-     * @param {streamList} 音视频sdk原始成员流
-     * @param {memberList} 后台返回房间连麦成员列表
+     * @param streamList - 音视频sdk原始成员流
+     * @param memberList - 后台返回房间连麦成员列表
      */
     makeTeacherStream(streamList, memberList) {
       if (!memberList.length) return
@@ -109,8 +89,8 @@ export default {
     },
     /**
      * @desc  获取学生流列表
-     * @param {streamList} 音视频sdk原始成员流
-     * @param {memberList} 后台返回成员连麦成员列表
+     * @param streamList - 音视频sdk原始成员流
+     * @param memberList - 后台返回成员连麦成员列表
      */
     makeStuStreamList(streamList, memberList) {
       let arr = []
@@ -134,7 +114,8 @@ export default {
 </script>
 <style lang="scss">
 .room-video-list {
-  @include wh(100%, 100%);
+  width: 100%;
+  // @include wh(100%, 100%);
   overflow-y: auto;
   background: rgba(251, 252, 255, 1);
 

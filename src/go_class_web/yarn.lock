@@ -10114,12 +10114,12 @@ yorkie@^2.0.0:
     normalize-path "^1.0.0"
     strip-indent "^2.0.0"
 
-zego-express-docsview-electron@^1.19.0:
+zego-express-docsview-electron@1.20.0:
   version "1.20.0"
-  resolved "https://registry.npmjs.org/zego-express-docsview-electron/-/zego-express-docsview-electron-1.20.0.tgz#90889c096e82f655decb1fa09c9efeb51a7b6dee"
-  integrity sha512-/IzkJ8w+Z4cm61+Pb9+h1evmrvrCVMifmcZJmPYbW45H+3n5gJecXmfzOw5CCzJPa+zu3m5r23tVNH6AuJHxqQ==
+  resolved "https://registry.nlark.com/zego-express-docsview-electron/download/zego-express-docsview-electron-1.20.0.tgz#90889c096e82f655decb1fa09c9efeb51a7b6dee"
+  integrity sha1-kIicCW6C9lXeyx+gnJ7+tRp7be4=
 
-zego-express-engine-electron@^0.22.1-196-whiteboard:
-  version "0.22.1-196-whiteboard"
-  resolved "https://registry.npmjs.org/zego-express-engine-electron/-/zego-express-engine-electron-0.22.1-196-whiteboard.tgz#343733bc5f0f7e935a49977668c21655d42e36dd"
-  integrity sha512-ZJiskU2nXvc1Urvk9xwvmJ3BqoBbOJiB6KKM6Adc8N+wI++059f9l5a7JGPdoIBtz0TIbKOoS8Ym3fnWxvj92Q==
+zego-express-engine-electron@0.22.3-231-whiteboard:
+  version "0.22.3-231-whiteboard"
+  resolved "https://registry.nlark.com/zego-express-engine-electron/download/zego-express-engine-electron-0.22.3-231-whiteboard.tgz#dd0099511c495b79b1684924b3221a39f468481e"
+  integrity sha1-3QCZURxJW3mxaEkksyIaOfRoSB4=

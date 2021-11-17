@@ -4,9 +4,6 @@
       <div class="dialog-content">
         <ul class="file-list">
           <li class="file-item" v-for="item in fileList" :key="item.name + item.id" @click="createDocView(item.id)">
-            <!-- <div :class="['state', item.isDynamic && 'dynamic']">
-              {{ item.isDynamic ? '动态' : '静态' }}
-            </div> -->
             <div :class="['state', item.isDynamic && 'dynamic', item.isH5 && 'h5']">
               {{ item.isH5 ? 'H5' : item.isDynamic && !item.isH5 ? '动态' : '静态' }}
             </div>
@@ -73,7 +70,6 @@ export default {
       } catch (e) {
         console.error('files createDocView', e)
       }
-      return false
     },
     closeDialog() {
       this.zegoWhiteboardArea.setFilesListDialogShow(false)

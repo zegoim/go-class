@@ -1,4 +1,6 @@
-export default class {
+import { ElectronLiveInterface } from '@/service/zego/interface/live'
+
+export default class extends ElectronLiveInterface {
   /**
    * 抹平回调接口
    * @param {事件名称} eventName
@@ -110,6 +112,28 @@ export default class {
           res.command = res.content
           callback && callback(data)
         })
+        break
+      case 'IMRecvBarrageMessage':
+        this._client.onEventHandler('onRecvBigRoomMessage', res => {
+          console.warn('onRecvBigRoomMessage', { res })
+          const { room_id, msg_list } = res
+          if (this.room_id == room_id) {
+            const { user_id, user_name, msg_type, msg_id } = msg_list[0]
+            const data = {
+              roomID: room_id,
+              fromUser: {
+                userID: user_id,
+                userName: user_name
+              },
+              message: msg_type,
+              messageID: msg_id
+            }
+            const chatData = [data]
+            console.warn({ chatData })
+            callback && callback(room_id, chatData)
+          }
+        })
+        break
     }
   }
 
@@ -192,7 +216,6 @@ export default class {
     console.log('electron_loginRoom', { userID })
     const { userUpdate, maxMemberCount } = config
     console.log({ userUpdate, maxMemberCount })
-    // this._client.setCustomToken({ third_party_token: token })
     this._client.setUser({
       user_id: userID,
       user_name: userName
@@ -368,5 +391,25 @@ export default class {
 
   logoutRoom() {
     this._client.logoutRoom(() => {})
+  }
+
+  sendBarrageMessage(message) {
+    // return this._client.sendBigRoomMessage(this.room_id, message)
+    return new Promise(resolve => {
+      this._client.onEventHandler('onSendBigRoomMessage', res => {
+        const { error_code, room_id, msg_id } = res
+        const v = {
+          errorCode: error_code,
+          roomId: room_id,
+          messageID: msg_id
+        }
+        resolve(v)
+      })
+      this._client.sendBigRoomMessage({
+        msg_type: 1,
+        msg_category: 1,
+        msg_content: message
+      })
+    })
   }
 }

@@ -1,37 +1,31 @@
+<!--
+ * @Description: 坐席区组件
+-->
 <template>
   <li class="video-item">
     <span v-if="isTeacher" class="role-tag">老师</span>
     <div class="no-stream-mask" v-if="isTeacherQuit">
       <div class="center-content">
-        <div
-            class="icon-camera-close"
-            v-html="require('../../assets/icons/room/seating_teacher.svg').default"
-        />
+        <div class="icon-camera-close" v-html="require('../../assets/icons/room/seating_teacher.svg').default" />
         <div class="tip">等待老师加入</div>
       </div>
     </div>
     <div class="no-video-mask" v-else-if="isTeacher && !isVideoOpen">
       <div class="center-content">
-        <div
-            class="icon-camera-close"
-            v-html="require('../../assets/icons/room/seating_teacher.svg').default"
-        />
+        <div class="icon-camera-close" v-html="require('../../assets/icons/room/seating_teacher.svg').default" />
       </div>
     </div>
     <div class="no-video-mask" v-if="!isTeacher && !isVideoOpen">
-      <div
-          class="icon-camera-close"
-          v-html="require('../../assets/icons/room/seating_student.svg').default"
-      />
+      <div class="icon-camera-close" v-html="require('../../assets/icons/room/seating_student.svg').default" />
     </div>
-    <room-controller-video :user="stream.user" v-if="!!stream.user.uid" :isTeacher="isTeacher"/>
+    <room-controller-video :user="stream.user" v-if="!!stream.user.uid" :isTeacher="isTeacher" />
   </li>
 </template>
 
 <script>
 import RoomControllerVideo from './room-controller-video'
-import {isFirefox} from '@/utils/browser'
-import {ROLE_TEACHER, STATE_OPEN, STATE_CLOSE} from '@/utils/constants'
+import { isFirefox } from '@/utils/browser'
+import { ROLE_TEACHER } from '@/utils/constants' // , STATE_OPEN, STATE_CLOSE
 
 export default {
   name: 'RoomVideoItem',
@@ -42,8 +36,8 @@ export default {
   },
   data() {
     return {
-      interaction: false,    // 是否已交互
-      isMuted: false     // 默认不静音
+      interaction: false, // 是否已交互
+      isMuted: false // 默认不静音
     }
   },
   computed: {
@@ -65,7 +59,7 @@ export default {
     },
     // 老师是否退出当前房间
     isTeacherQuit() {
-      return this.isTeacher && !this.stream.streamID
+      return this.isTeacher && !this.isAudioOpen && !this.isVideoOpen
     },
     // 当前房间是否销毁
     isDestroy() {
@@ -79,6 +73,7 @@ export default {
     isDestroy(newVal) {
       if (newVal) {
         if (this.stream.streamID) {
+          console.warn('isDestroy')
           if (this.stream.user.isMe) {
             this.zegoLiveRoom.handleDestroyStream(this.stream.streamID)
           } else {
@@ -89,7 +84,8 @@ export default {
     },
     isTeacherQuit(newVal) {
       if (newVal) {
-        // this.zegoLiveRoom.stopPlayingStream(this.stream.streamID)
+        console.warn('isTeacherQuit')
+        this.zegoLiveRoom.stopPlayingStream(this.stream.streamID)
         this.deleteVideoTag()
       }
     },
@@ -98,7 +94,7 @@ export default {
      * @param newVal {boolean} 摄像头是否开启
      */
     isVideoOpen(newVal) {
-      this.$bus.$emit('userStateChange', {[this.stream.user.uid]: {camera: newVal ? STATE_OPEN : STATE_CLOSE}}, false)
+      // this.zegoLiveRoom.handleDeviceStateChange('camera', newVal ? STATE_OPEN : STATE_CLOSE, false)
       if (newVal) {
         const $video = document.getElementById(this.stream.streamID)
         if ($video) {
@@ -113,18 +109,19 @@ export default {
      * @desc: 监听麦克风状态
      * @param newVal {boolean} 摄像头是否开启
      */
-    isAudioOpen(newVal) {
-      this.$bus.$emit('userStateChange', {[this.stream.user.uid]: {mic: newVal ? STATE_OPEN : STATE_CLOSE}}, false)
-    },
+    // isAudioOpen(newVal) {
+    // this.zegoLiveRoom.handleDeviceStateChange('mic', newVal ? STATE_OPEN : STATE_CLOSE, false)
+    // },
     /**
      * @desc: 监听流id变化
      * @param {value} 新的流
      * @return {oldValue} 旧的流
      */
-    'stream.streamID': function (value, oldValue) {
+    'stream.streamID': function(value, oldValue) {
       // tip:重新拉流之前需把旧的流停止拉取，不然会重复拉流
       if (!value) {
-        this.zegoLiveRoom.stopPlayingStream(oldValue)
+        this.stream.user.isMe ? this.zegoLiveRoom.stopPreview() : this.zegoLiveRoom.stopPlayingStream(oldValue)
+        console.warn('stream.streamID')
         this.deleteVideoTag(oldValue)
       }
       this.$nextTick().then(() => this.pullVideo(value))
@@ -135,7 +132,6 @@ export default {
     this.onMuteSpeaker()
   },
   beforeDestroy() {
-    // tip:electron集成相关操作，web集成可不管
     if (this.$video?.nodeName === 'CANVAS') {
       if (this.stream.user.isMe) {
         this.zegoLiveRoom.stopPreview()
@@ -143,7 +139,7 @@ export default {
       } else {
         this.stream.streamID && this.zegoLiveRoom.stopPlayingStream(this.stream.streamID)
       }
-      this.zegoLiveRoom.loseCanvasContext({canvas: this.$video}, () => {
+      this.zegoLiveRoom.loseCanvasContext({ canvas: this.$video }, () => {
         this.$video = null
       })
       return
@@ -161,8 +157,7 @@ export default {
         const $video = document.getElementById(this.stream.streamID)
         if (!$video) return
         if ($video?.nodeName == 'CANVAS') {
-          // tip:electron集成相关操作，web集成可不管
-          this.zegoLiveRoom.enableSpeaker({enable: isOpen})
+          this.zegoLiveRoom.enableSpeaker({ enable: isOpen })
         } else if ($video?.nodeName == 'VIDEO') {
           console.warn('onMuteSpeaker 修改muted', this.stream.user.isMe ? true : this.isMuted)
           // tip:本端播放自己流的video muted属性设置都是为true，播放其他流的video的muted属性则根据扬声器状态来设置
@@ -182,15 +177,14 @@ export default {
       const className = 'video' + (this.stream.type === 'push' ? ' pull-stream' : '')
       // tip:如果是本端拉自己的流则直接预览即可，如果是要拉对端的流则使用startPlayingStream播放流
       this.stream.user.isMe
-          ? this.zegoLiveRoom.startPreview(streamID, this.$el)
-          : await this.zegoLiveRoom.startPlayingStream(streamID, {}, this.$el)
+        ? this.zegoLiveRoom.startPreview(streamID, this.$el)
+        : await this.zegoLiveRoom.startPlayingStream(streamID, {}, this.$el)
       this.$video = document.getElementById(streamID)
       this.$video.setAttribute('class', className)
       console.warn('this.isMuted', this.isMuted)
       console.warn('pullVideo 修改muted', this.stream.user.isMe ? true : this.isMuted)
       // tip:本端播放自己流的video muted属性设置都是为true，播放其他流的video的muted属性则根据扬声器状态来设置
       this.$video.muted = this.stream.user.isMe ? true : this.isMuted
-      // tip:electron集成相关操作，web集成可不管
       if (this.$video.nodeName === 'CANVAS') return
       this.autoPlay()
     },
@@ -235,19 +229,19 @@ export default {
       if (!$video && $video.tagName !== 'CANVAS') return
       console.warn('firefox try play', $video)
       $video
-          .play()
-          .then(() => {
-            console.warn('firefox', '播放成功')
-            clearTimeout($video.tryPlaytimer)
-            console.warn('tryFirefoxPlay 修改muted', this.stream.user.isMe ? true : this.isMuted)
-            $video.muted = this.stream.user.isMe ? true : this.isMuted
-          })
-          .catch(e => {
-            console.warn('firefox', '播放失败', e)
-            $video.tryPlaytimer = setTimeout(() => {
-              this.tryFirefoxPlay($video)
-            }, 200)
-          })
+        .play()
+        .then(() => {
+          console.warn('firefox', '播放成功')
+          clearTimeout($video.tryPlaytimer)
+          console.warn('tryFirefoxPlay 修改muted', this.stream.user.isMe ? true : this.isMuted)
+          $video.muted = this.stream.user.isMe ? true : this.isMuted
+        })
+        .catch(e => {
+          console.warn('firefox', '播放失败', e)
+          $video.tryPlaytimer = setTimeout(() => {
+            this.tryFirefoxPlay($video)
+          }, 200)
+        })
     },
 
     /**
@@ -292,7 +286,7 @@ export default {
     @include abs-pos(0, 0, 0, 0);
     @include flex-center();
     padding: 0 40px;
-    background-color: rgba(251, 252, 255, 1);
+    background-color: #f3f6ff;
     z-index: 2;
 
     .icon-camera-close {

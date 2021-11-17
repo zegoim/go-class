@@ -1,3 +1,6 @@
+<!--
+ * @Description: 网络错误弹窗组件
+-->
 <template>
   <div class="room-dialog-error">
     <el-dialog

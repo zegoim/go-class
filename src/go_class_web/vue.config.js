@@ -44,12 +44,11 @@ module.exports = {
   pluginOptions: {
     electronBuilder: {
       // List native deps here if they don't work
-      externals: ['zegoliveroom', 'zegodocsview', 'zego-express-engine-electron', 'zego-express-docsview-electron'],
+      externals: ['zego-express-docsview-electron', 'zego-express-engine-electron', 'zegoliveroom'],
       extraResources: [
-        './node_modules/zegoliveroom/**',
-        './node_modules/zegodocsview/**',
-        './node_modules/zego-express-engine-electron/**',
         './node_modules/zego-express-docsview-electron/**',
+        './node_modules/zego-express-engine-electron/**',
+        './node_modules/zegoliveroom/**',
       ],
       mainProcessWatch: [
         'src/main/config.js',

@@ -28,7 +28,7 @@ import ZegoWhiteboardArea from '@/components/zego/zego-whiteboard-area'
 import RoomControllerWhiteboard from '@/components/room/room-controller-whiteboard'
 import RoomControllerFeature from '@/components/room/room-controller-feature'
 import { storage } from '@/utils/tool'
-import { roomStore } from '@/service/biz/room'
+import { roomStore } from '@/service/store/roomStore'
 
 export default {
   name: 'PageLayoutRoom',
@@ -40,8 +40,8 @@ export default {
     ZegoWhiteboardArea
   },
   mounted() {
-    const { roomId, userId, userName, role } = storage.get('loginInfo')
-    roomStore.init({ roomId, uid: userId, name: userName, role, route: localStorage.route })
+    const { roomId, userId, userName, role, classScene } = storage.get('loginInfo')
+    roomStore.init({ roomId, uid: userId, name: userName, role, route: this.$route.meta.from, room_type: classScene })
     localStorage.route = ''
   }
 }

@@ -59,6 +59,17 @@ export default class extends ElectronLiveInterface {
           }
         })
         break
+      case 'onIMRecvBarrageMessage':
+        this._client.on('onIMRecvBarrageMessage', res => {
+          console.warn('onIMRecvBarrageMessage back', { res })
+          try {
+            const { roomID, messageList } = res || {}
+            callback && callback(roomID, messageList)
+          } catch (e) {
+            console.error('onIMRecvBarrageMessage', e)
+          }
+        })
+        break
       default:
         this._client.on(eventName, res => {
           const values = Object.values(res)
@@ -107,8 +118,8 @@ export default class extends ElectronLiveInterface {
       if (isLogin) {
         console.warn('has login!!!')
       }
-      const { token1 } = this.context.state.tokenInfo
-      config = { isUserStatusNotify: true, maxMemberCount: 10, token: token1, ...config }
+      // token 默认为空，表示不鉴权
+      config = { isUserStatusNotify: true, maxMemberCount: 10, token: '', ...config }
       const { isMe, ...v } = this.context.state.user
       console.log(isMe)
       this._client.on('onRoomStateUpdate', res => {
@@ -243,6 +254,10 @@ export default class extends ElectronLiveInterface {
 
   logoutRoom(roomId) {
     this._client.logoutRoom(roomId)
+  }
+
+  sendBarrageMessage(message) {
+    return this._client.sendBarrageMessage(this.room_id, message)
   }
 
   // 对照 - start

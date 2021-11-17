@@ -1,3 +1,6 @@
+<!--
+ * @Description: 缩略图组件
+-->
 <template>
   <el-drawer title="预览" :modal="false" :visible="visible" direction="rtl" size="100%" :show-close="false">
     <ul class="swiper-ul" ref="swiper" id="swiper">
