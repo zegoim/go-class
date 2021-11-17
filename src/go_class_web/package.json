@@ -6,9 +6,9 @@
   "author": "zego fontend",
   "scripts": {
     "lint": "vue-cli-service lint",
-    "electron:build:mac": "vue-cli-service electron:build --macos --mode local",
-    "electron:build:win": "vue-cli-service electron:build --windows --mode local",
-    "electron:serve": "vue-cli-service electron:serve --mode local",
+    "electron:build:mac": "vue-cli-service electron:build --macos --mode development",
+    "electron:build:win": "vue-cli-service electron:build --windows --mode development",
+    "electron:serve": "vue-cli-service electron:serve --mode development",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
     "tips:以下依赖，打包的时候添加到dependencies中, 安装依赖时删除": "不然构建时找不到依赖",
@@ -23,8 +23,8 @@
     "element-ui": "^2.13.2",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
-    "zego-express-docsview-electron": "2.15.0-1606",
-    "zego-express-engine-electron": "0.25.2-662-whiteboard"
+    "zego-express-docsview-electron": "2.1.5",
+    "zego-express-engine-electron": "0.25.2-663-whiteboard"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
