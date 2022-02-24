@@ -24,6 +24,7 @@ func (this *BeegoLoader) Load(c *conf.Configs) error {
 	if nil != err {
 		panic(err)
 	}
+	c.SmallRoomCfgs.AppSignature = beego.AppConfig.String("SmallClass::AppSignature")
 	c.SmallRoomCfgs.AppSecret = beego.AppConfig.String("SmallClass::AppSecret")
 	c.SmallRoomCfgs.AppBizType = beego.AppConfig.DefaultInt("SmallClass::AppBizType", 1)
 	c.SmallRoomCfgs.AppMode = beego.AppConfig.String("SmallClass::LiveRoomMode")
@@ -43,6 +44,7 @@ func (this *BeegoLoader) Load(c *conf.Configs) error {
 	if nil != err {
 		panic(err)
 	}
+	c.LargeRoomCfgs.AppSignature = beego.AppConfig.String("LargeClass::AppSignature")
 	c.LargeRoomCfgs.AppSecret = beego.AppConfig.String("LargeClass::AppSecret")
 	c.LargeRoomCfgs.AppBizType = beego.AppConfig.DefaultInt("LargeClass::AppBizType", 1)
 	c.LargeRoomCfgs.AppMode = beego.AppConfig.String("LargeClass::LiveRoomMode")

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"go_class_server/go_class_room/controllers/base"
 	"go_class_server/go_class_room/protocol"
 	"go_class_server/go_class_room/service"
@@ -36,6 +37,11 @@ func (c *RoomController) LoginRoom() {
 		c.Error(e)
 	}
 
+	var appToken string
+	if common.IsNeedAppToken(req.CommonData.Platform) {
+		appToken = room.GetAppToken(fmt.Sprintf("%d", req.UID))
+	}
+
 	resp := protocol.LoginRoomResp{
 		Ret: protocol.CommonResult{
 			Code:    0,
@@ -45,10 +51,12 @@ func (c *RoomController) LoginRoom() {
 			MaxJoinLiveNum int32 `json:"max_join_live_num"`
 			protocol.RoomState
 			protocol.PersonalState
+			AppToken string `json:"app_token,omitempty"`
 		}{
 			MaxJoinLiveNum: int32(room.GetRoomCfgs(c.Ctx.Request.Context()).MaxJoinLiveNum),
 			RoomState:      service.ConvertModelRoomState2Protocol(roomState),
 			PersonalState:  service.ConvertModelPersonalState2Protocol(personalState),
+			AppToken:       appToken,
 		},
 	}
 	c.Succeed(resp)

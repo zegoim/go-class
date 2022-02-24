@@ -82,6 +82,7 @@ func (c *PersonalController) SetUserInfo() {
 	}})
 }
 
+// 心跳
 func (c *PersonalController) Heartbeat() {
 	defer c.PrintPanicLog()
 

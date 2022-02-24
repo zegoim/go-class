@@ -7,11 +7,12 @@ type ConfigsLoader interface {
 }
 
 type LiveRoomConfigs struct {
-	AppId      int64
-	AppSecret  string
-	AppBizType int
-	EndPoint   string
-	AppMode    string
+	AppId        int64
+	AppSignature string
+	AppSecret    string
+	AppBizType   int
+	EndPoint     string
+	AppMode      string
 }
 
 type RoomConfigs struct {

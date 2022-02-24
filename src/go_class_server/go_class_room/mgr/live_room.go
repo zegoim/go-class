@@ -15,6 +15,7 @@ import (
 	"go_class_server/go_class_room/conf"
 	"go_class_server/go_class_room/protocol"
 	"go_class_server/go_class_room/resource"
+	"go_class_server/utils/encryptUtil"
 	"go_class_server/utils/stringUtil"
 	"strings"
 	"time"
@@ -23,17 +24,19 @@ import (
 )
 
 type LiveRoomMgr struct {
-	appId      int64
-	appSecret  string
-	appBizType int
-	endpoint   string
+	appId        int64
+	appSecret    string
+	appSignature string
+	appBizType   int
+	endpoint     string
 }
 
 func LiveRoom(cfgs conf.LiveRoomConfigs) *LiveRoomMgr {
 	mgr := &LiveRoomMgr{
-		appId:      cfgs.AppId,
-		appSecret:  cfgs.AppSecret,
-		appBizType: cfgs.AppBizType,
+		appId:        cfgs.AppId,
+		appSecret:    cfgs.AppSecret,
+		appSignature: cfgs.AppSignature,
+		appBizType:   cfgs.AppBizType,
 	}
 	mgr.endpoint = getLiveRoomEndPoint(cfgs.AppId, cfgs.AppMode, cfgs.EndPoint)
 	return mgr
@@ -123,6 +126,11 @@ func (this *LiveRoomMgr) GetAccessToken() string {
 	}
 
 	return accessToken
+}
+
+func (this *LiveRoomMgr) GetAppToken(userId string) string {
+	token, _ := encryptUtil.MakeAppToken(uint32(this.appId), this.appSignature, userId, 3600*3)
+	return token
 }
 
 func (this *LiveRoomMgr) SendMessageToRoomUsers(ctx context.Context, roomId, msg string, uids ...string) (int, error) {

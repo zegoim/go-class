@@ -44,6 +44,6 @@ type CommonRsp struct {
 }
 
 const (
-	NEGATIVE = 1
-	POSITIVE = 2
+	NEGATIVE = 1 // 否定
+	POSITIVE = 2 // 肯定
 )

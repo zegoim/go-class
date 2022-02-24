@@ -22,10 +22,10 @@ func Init() {
 		beego.NSRouter("/set_user_info", &controllers.PersonalController{}, "post:SetUserInfo"), // 设置用户状态
 		beego.NSRouter("/heartbeat", &controllers.PersonalController{}, "post:Heartbeat"),       // 心跳
 
-		beego.NSRouter("/start_share", &controllers.ShareController{}, "post:StartShare"), // 开始共享
-		beego.NSRouter("/stop_share", &controllers.ShareController{}, "post:StopShare"),   // 结束共享
+		beego.NSRouter("/start_share", &controllers.ShareController{}, "post:StartShare"), // 开始共享 暂时没用
+		beego.NSRouter("/stop_share", &controllers.ShareController{}, "post:StopShare"),   // 结束共享 暂时没用
 
-		beego.NSRouter("/send_message", &controllers.ImController{}, "post:SendMessage"), // 发送聊天消息
+		beego.NSRouter("/send_message", &controllers.ImController{}, "post:SendMessage"), // 发送聊天消息 暂时没用
 	)
 	beego.AddNamespace(nsEduRoom)
 

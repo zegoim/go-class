@@ -22,6 +22,7 @@ type LoginRoomResp struct {
 		MaxJoinLiveNum int32 `json:"max_join_live_num"`
 		RoomState
 		PersonalState
+		AppToken string `json:"app_token,omitempty"`
 	} `json:"data"`
 }
 
