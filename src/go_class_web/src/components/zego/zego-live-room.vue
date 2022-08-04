@@ -18,6 +18,7 @@ import RoomDialogLoading from '@/components/room/room-dialog-loading'
 import RoomDialogError from '@/components/room/room-dialog-error'
 import RoomDialogMessage from '@/components/base/base-dialog-message'
 import { postRoomHttp, roomStore, setGoclassEnv } from '@/service/biz/room'
+import { STATE_OPEN } from '@/utils/constants'
 
 export default {
   name: 'ZegoLiveRoom',
@@ -50,7 +51,9 @@ export default {
       messages: [], // 房间消息
       sendLoadingTimer: null, //发送消息loading
       sendLoadingInterval: 5, //发送消息loading
-      timeOutMessage: ''
+      timeOutMessage: '',
+      hasPush: false, // 是否推过流，防止首次推流回包之前执行mute,
+      roomAuth: roomStore.auth, // 房间权限
     }
   },
   provide() {
@@ -211,6 +214,13 @@ export default {
         console.warn('publishStreamId', this.publishStreamId)
         if (result.state === 'PUBLISHING') {
           // redo
+          if(!this.hasPush) {
+            this.hasPush = true;
+            let isCamaraOpen = !this.roomAuth.camera == STATE_OPEN;
+            let isMicrophoneOpen = !this.roomAuth.mic == STATE_OPEN
+            this.client.express('mutePublishStreamVideo', isCamaraOpen)
+            this.client.express('mutePublishStreamAudio', isMicrophoneOpen)
+          }
         }
       })
       // 监听房间状态
@@ -383,17 +393,23 @@ export default {
            * 单独开启某个设备（摄像头或者麦克风）在创建流的时候摄像头和麦克风状态都必须设置为true，然后再根据设备状态更新流状态
            */
           await this.createPushStream({ isVideoOpen, isAudioOpen })
-          await this.client.express('mutePublishStreamVideo', isSendVideoStream)
-          await this.client.express('mutePublishStreamAudio', isSendAudioStream)
+          if(this.hasPush) {
+            await this.client.express('mutePublishStreamVideo', isSendVideoStream)
+            await this.client.express('mutePublishStreamAudio', isSendAudioStream)
+          }
         } else {
           // 更新摄像头麦克风状态
           if (flag === 'video' || (isVideoOpen && isAudioOpen)) {
             // 是否停止发送视频流 -> true-表示不发送视频流 false-表示发送视频流
-            this.client.express('mutePublishStreamVideo', isSendVideoStream)
+            if(this.hasPush) {
+              this.client.express('mutePublishStreamVideo', isSendVideoStream)
+            }
             this.handleSelfVideoToggle(isVideoOpen)
           }
           if (flag === 'audio' || (isVideoOpen && isAudioOpen)) {
-            this.client.express('mutePublishStreamAudio', isSendAudioStream)
+            if(this.hasPush) {
+              this.client.express('mutePublishStreamAudio', isSendAudioStream)
+            }
             this.handleSelfAudioToggle(isAudioOpen)
           }
         }
